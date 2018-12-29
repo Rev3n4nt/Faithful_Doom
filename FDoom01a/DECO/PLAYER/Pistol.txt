@@ -1,0 +1,38 @@
+ACTOR PerkPistol : Pistol replaces Pistol
+{
+	decal bulletchip
+	States
+	{
+	Spawn:
+		PSTO a -1
+		stop
+	Ready:
+		PISG A 1 A_WeaponReady
+		Loop
+	Deselect:
+		PISG A 1 A_Lower
+		Loop
+	Select:
+		PISG A 1 A_Raise
+		Loop
+	Fire:
+		PISG A 2
+		//PISG A 1
+		//PISG H 1
+		PISG F 2
+		PISG B 0 A_FirePistol
+		PISG B 2
+		PISG C 1
+		PISG CD 2
+		PISG E 3
+		PISG E 2 A_ReFire
+		PISG D 3 A_refire
+		//PISG F 2 A_ReFire
+		//PISG H 3 A_refire
+		Goto Ready
+	Flash:
+		PISF B 2 Bright A_Light2
+		PISF A 1 Bright A_Light1
+		Goto LightDone
+		}
+}

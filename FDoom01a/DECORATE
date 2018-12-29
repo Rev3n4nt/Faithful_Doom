@@ -1,0 +1,13 @@
+/*IMPORTANT:
+If you want to disable certain parts of the mod, such as 
+monsters or effects, you can do so by deleting or commenting 
+out certain decorate files listed below. This will sever
+the mod's ability to override certain parts of the game,
+and may help Smooth Doom be compatible with other mods.
+
+The decorate files below are organized so that it will
+be easy to tell which files control what aspects of the
+mod.*/
+
+//WEAPON DECORATE (remove to disable Smooth Doom weapons)
+#include "deco/Player/Doomguy.txt"
