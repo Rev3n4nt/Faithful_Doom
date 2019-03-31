@@ -1,12 +1,16 @@
-# Faithful_Doom
-Faithful Doom mod
+"______    _ _   _      __       _  ______ _____  ________  ___ 
+"|  ___|  (_) | | |    / _|     | | |  _  \  _  ||  _  |  \/  | 
+"| |_ __ _ _| |_| |__ | |_ _   _| | | | | | | | || | | | .  . | 
+"|  _/ _` | | __| '_ \|  _| | | | | | | | | | | || | | | |\/| | 
+"| || (_| | | |_| | | | | | |_| | | | |/ /\ \_/ /\ \_/ / |  | | 
+"\_| \__,_|_|\__|_| |_|_|  \__,_|_| |___/  \___/  \___/\_|  |_/ 
                                                                
 ===========================================================================
 Advanced engine needed  : GZDoom 3.2.5 or newer
 ===========================================================================
-Title                   : Faithful Doom
+Title                   : Faithful Doom (version: see at GAMEINFO)
 Filename                : FDoom*.pk3
-Release date & version  : (see at GAMEINFO)
+Release date            : (see at GAMEINFO)
 Authors                 : Farid Kemyakov aka 'Rev3n4nt' 
 Email Address           : rev3n4nt@gmail.com
 Other Files By Author   : FDoom*_HD.pk3
@@ -27,7 +31,7 @@ PLEASE REPORT ANY BUGS YOU FIND!
 
 Optionally mod goes with HD mid-frames - FDoom03_HD.pk3.
 
-Faithful Doom mod for GZDoom Forum thread:
+Faithful Doom mod Forum thread:
 https://www.doomworld.com/forum/topic/103824-faithful-doom-mod/
 ===========================================================================
 Credits :

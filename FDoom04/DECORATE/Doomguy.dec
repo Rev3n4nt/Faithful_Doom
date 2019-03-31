@@ -1,0 +1,39 @@
+//ACTOR PerkDPlayer : Doomplayer replaces Doomplayer
+Actor FDoomPlayer : Doomplayer
+{
+	player.startitem "WPistol"
+	player.startitem "WFist"
+	Player.StartItem "Clip", 50
+	player.startitem "SSGClip", 2
+	player.startitem "Fist"
+	player.displayname "Faithful Marine"
+	Player.WeaponSlot 1, WFist, CSaw
+   	Player.WeaponSlot 2, WPistol
+	Player.WeaponSlot 3, WShotgun, SSG
+	Player.WeaponSlot 4, WChaingun
+	Player.WeaponSlot 5, RocketGun
+	Player.WeaponSlot 6, PlasmaGun
+	Player.WeaponSlot 7, BFG
+	States
+	{
+	Death:
+		PD71 A 3
+		PD71 B 3 A_PlayerScream
+		PD71 C 3 A_NoBlocking
+		PD71 DEFGH 3
+		PD71 I -1
+		Stop	
+	}
+}
+
+ACTOR PerkBerserk : Berserk replaces Berserk
+{
+	States
+	{
+	Pickup:
+		TNT1 A 0 A_GiveInventory("PowerStrength")
+		TNT1 A 0 HealThing(100, 0)
+		TNT1 A 0 A_SelectWeapon("Fist")
+		Stop
+	}
+}
