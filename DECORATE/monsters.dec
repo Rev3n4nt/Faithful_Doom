@@ -1,0 +1,71 @@
+Actor DH_ZombieMan : ZombieMan replaces ZombieMan 3004
+{
+	States
+	{
+	Missile:
+		POSS E 10 A_FaceTarget
+		POSS F 8 Bright A_PosAttack
+		POSS E 8 
+		POSS AABBCCDD 4 A_Chase
+		goto See
+	}
+}
+
+Actor DH_ChaingunGuy : ChaingunGuy replaces ChaingunGuy 65
+{
+	States
+	{
+	Missile:
+		CPOS E 10 A_FaceTarget
+	State_417:
+		CPOS FE 4 Bright A_CPosAttack
+		CPOS F 1 Bright A_CPosRefire
+		goto State_417
+	}
+}
+
+Actor DH_SpiderMastermind : SpiderMastermind replaces SpiderMastermind 7
+{
+	States
+	{
+	Missile:
+		SPID A 20 A_FaceTarget
+	State_616:
+		SPID GH 4 Bright A_SPosAttack
+		SPID H 1 Bright A_SpidRefire
+		goto State_616
+	}
+}
+
+Actor DH_Arachnotron : Arachnotron replaces Arachnotron 68
+{
+	States
+	{
+	Missile:
+		BSPI A 20 A_FaceTarget
+	State_648:
+		BSPI G 4 Bright A_BspiAttack
+		BSPI H 4 Bright 
+		BSPI H 1 Bright A_SpidRefire
+		goto State_648
+	}
+}
+
+Actor DH_Cyberdemon : Cyberdemon replaces Cyberdemon 16
+{
+	States
+	{
+	Missile:
+		CYBR E 6 A_FaceTarget
+		CYBR F 12 Bright A_CyberAttack
+		CYBR E 12 A_FaceTarget
+		CYBR F 12 Bright A_CyberAttack
+		CYBR E 12 A_FaceTarget
+		CYBR F 12 Bright A_CyberAttack
+		CYBR A 3 A_Hoof
+		CYBR ABBCC 3 A_Chase
+		CYBR D 3 A_Metal
+		CYBR D 3 A_Chase
+		goto See
+	}
+}

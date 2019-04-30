@@ -1,0 +1,99 @@
+class BFG : BDoomWeapon replaces BFG9000
+{
+Default {
+	damagetype "plasma";
+	weapon.bobstyle "smooth";
+	weapon.bobspeed 0.8;
+	+FLOATBOB;
+	Height 20;
+	weapon.ammotype2 "Cell";
+	weapon.ammouse2 1;
+	weapon.ammogive2 0;
+	Weapon.AmmoUse 40;
+	Weapon.AmmoGive 40;
+	Weapon.AmmoType "Cell";
+	+WEAPON.NOAUTOFIRE;
+	Inventory.PickupMessage "$GOTBFG9000";
+	Tag "$TAG_BFG9000";	
+	Weapon.Selectionorder 280;
+	inventory.pickupsound "pickups/bfg";
+	ProjectileKickback 100;
+	weapon.kickback 30;
+	decal "ArachnotronPlasmaSplat";
+	weapon.slotnumber 7;
+	}
+states
+	{
+	Spawn:
+		BFUG A 1;
+		loop;
+	Select:
+		TNT1 A 0 {
+			If(fdoom_weapons==1)
+				A_PlaySound("weapons/bfg/draw");
+			}
+		BFGG A 1 A_Raise();
+		wait;
+	Deselect:
+		TNT1 A 0 {
+			A_StopSound(5);
+			}
+		BFGG A 1 A_Lower();
+		wait;
+	Ready:
+		BFGG A 1 {
+			if (fdoom_weapons == 1)
+				A_WeaponReady();
+			else
+				A_WeaponReady(WRF_NOSECONDARY);
+			}
+		loop;
+	Fire:
+		TNT1 A 0 {
+			if (fdoom_weapons == 0)
+				A_playsound("weapons/bfgf");
+			else
+				A_PlaySound("weapons/bfg/start",5);
+			}
+
+		BFGG AB 3;
+		BFGG A 3;
+		BFGG B 3;
+		BFGG AB 2;
+		BFGG K 1;
+		BFGG J 1;//J
+		
+		BFGG C 1 bright;// A_GunFlash
+		BFGx a 1 bright;
+		BFGG D 2 bright;
+		BFGG EF 2 bright;
+
+		BFGG G 5 bright {
+			A_FireBFG();
+			if (fdoom_weapons == 1)
+				A_PlaySound("weapons/bfg/fire",5);
+			}
+			
+		BFGG H 1 offset (0, 37);
+		BFGG H 1 offset (0, 37);
+		BFGG I 1 offset (0, 35);
+		BFGG I 1 offset (0, 35);
+		BFGG I 1 offset (0, 35);
+		BFGG B 3 offset (0, 34);
+		BFGG B 2;
+		TNT1 A 0 A_ReFire();
+		TNT1 A 0 {
+			If(fdoom_weapons==1)
+				A_Playsound("weapons/bfg/cool");
+			}
+		BFGG A 3 offset (0, 33);
+		BFGG A 15;
+		goto ready;
+	Flash:
+		TNT1 A 5 bright A_Light1();
+		TNT1 A 4 bright A_light2();
+		TNT1 A 3 bright A_light1();
+		TNT1 A 3 bright A_light2();
+		goto lightdone;
+	}
+}

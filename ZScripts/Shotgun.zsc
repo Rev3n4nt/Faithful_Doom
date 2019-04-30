@@ -1,0 +1,99 @@
+Class WShotgun : BDoomWeapon replaces Shotgun
+{
+Default
+	{
+	Weapon.AmmoType2	"Shell";
+	Weapon.AmmoGive2	8;
+	Inventory.PickupMessage "$GOTSHOTGUN";
+	Obituary "$OB_MPSHOTGUN";
+	Tag "$TAG_SHOTGUN";
+	weapon.selectionorder 130;
+	+WEAPON.NOALERT //for melee
+	weapon.slotnumber 3;
+	weapon.slotpriority 0;
+	}
+override void Tick()
+	{
+	If (Owner)
+		return;
+	else
+		{
+			pickupsound = "weapons/shotgun/pump";
+			if (bDROPPED == true)
+				AmmoGive1 = 4;
+			else
+				AmmoGive1 = 8;
+		}
+	Super.Tick();
+	}
+override void DoEffect()
+	{
+	if (owner)
+		{
+			Ammo1 = ammo(Owner.FindInventory("Shell"));
+			AmmoUse1 = 1;
+			Ammo2 = null;
+			bNOAUTOFIRE = false;
+			bAMMO_OPTIONAL = false;
+		}
+	Super.DoEffect();
+	}
+States
+{
+	Spawn:
+		SHOT A 1;
+		loop;
+	Ready:
+		SHTG A 1 A_WeaponReady(WRF_NOSECONDARY);
+		loop;
+	Deselect:
+		SHTG A 1 A_Lower();
+		wait;
+	Select:
+		TNT1 A 0 { if (fdoom_weapons == 1)
+					A_PlaySound("weapons/shotgun/draw");
+				}
+		SHTG AAAAAAAA 1 A_Raise();
+		goto ready;
+	Fire: //fire 37 tics, refire 7 tics;
+		SHTG A 3 { 
+				A_AlertMonsters();
+				if(fdoom_weapons == 1) {
+					A_PlaySound("weapons/shotgun/fire"); }
+				else {
+					A_PlaySound("weapons/shotgf");}
+				
+				}
+		SHTG A 3 {
+				A_gunflash();
+				If(fdoom_tracers==1) {
+					A_FireBullets (5.6, 0, 7, 5, "EnShotPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ,0,"BulletTracer",0,0); }
+				else {
+					A_FireBullets (5.6, 0, 7, 5, "EnShotPuff",FBF_NORANDOMPUFFZ); }
+				}
+//
+		SHTG AEFBBGGC 1;
+		SHTG H 2 {
+				if (fdoom_weapons == 1) {
+					 A_playsound("weapons/shotgun/pump",5); }
+				}
+		SHTG H 3;
+		SHTG D 0 A_WeaponOffset(-4,46);//-4,-14
+		SHTG D 3 { 
+				If(fdoom_debris==1)
+					A_Eject("ShotgunCasing",20,frandom(-7,-8),6.5,frandom(0,1),FRandom(3,5),frandom(3,4));
+				}
+		SHTG H 0 A_WeaponOffset(0,32);//0,0
+		SHTG HCGGBBFFE 1;
+		SHTG EAA 2 {
+			if (fdoom_weapons == 1)
+				A_WeaponReady(WRF_NOPRIMARY);
+			}
+		SHTG A 7 A_ReFire();
+		Goto Ready;
+	Flash:
+		SHTF B 3 bright A_Light2();
+		SHTF A 2 bright A_Light1();
+		goto lightdone;
+}
+}

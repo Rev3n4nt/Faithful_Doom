@@ -1,0 +1,171 @@
+actor NewGreenArmor : greenarmor replaces greenarmor
+{
+states
+	{
+	spawn:
+	garm abcdefg 4
+	garm h 4
+	garm fedcb 4
+	loop
+	}
+}
+
+actor NewBlueArmor : bluearmor replaces bluearmor
+{
+states
+	{
+	spawn:
+	blar abcdefg 4
+	blar h 4
+	blar fedcb 4
+	loop
+	}
+}
+
+actor NewFlask : healthbonus replaces healthbonus
+{
+states
+	{
+	spawn:
+	bonu abcdefgfedcb 3
+	loop
+	}
+}
+
+actor NewHelmet : armorbonus replaces armorbonus
+{
+states
+	{
+	spawn: 
+	TNT1 A 0
+	HELB abcdefghgfedcb 3
+	loop
+	}
+}
+
+ACTOR NewRedCard : redcard replaces redcard
+{
+  States
+  {
+  Spawn:
+	RDCK abc 4
+	RDCK d 4 bright
+	RDCK ef 4
+    Loop
+  }
+}
+
+ACTOR NewBlueCard : bluecard replaces bluecard
+{
+  States
+  {
+  Spawn:
+	BLCK abc 4
+	BLCK d 4 bright
+	BLCK ef 4
+    Loop
+  }
+}
+
+ACTOR NewYellowCard : yellowcard replaces yellowcard
+{
+  States
+  {
+  Spawn:
+	YLCK ab 4
+	YLCK cd 4 bright
+	YLCK ef 4
+	YLCK gh 4 Bright
+    Loop
+  }
+}
+
+ACTOR NewSkullRed : redskull replaces redskull
+{
+  states
+  {
+  Spawn:
+	RSKK A 10
+    RSKK B 10
+	RSKK C 10
+    Loop
+  }
+}
+
+ACTOR NewSkullBlu : blueskull replaces blueskull
+{
+  states
+  {
+  Spawn:
+	BSKK A 10
+	BSKK B 10
+    BSKK C 10
+    Loop
+  }
+}
+
+ACTOR NewSkullYel : yellowskull replaces yellowskull
+{
+  states
+  {
+  Spawn:
+	YSKK A 10
+    YSKK B 10
+	YSKK C 10
+    Loop
+  }
+}
+
+actor NewSoulSphere : soulsphere replaces soulsphere
+{
++FLOATBOB
+states
+	{
+	spawn:
+	SOUL abcdefgfedcb 4 bright
+	loop
+	}
+}
+
+actor NewMegaSphere : megasphere replaces megasphere
+{
++FLOATBOB
+states
+	{
+	spawn:
+	MEGA abcdefgfedcb 4 bright
+	loop
+	}
+}
+
+actor NewBlurSphere : blursphere replaces blursphere
+{
++FLOATBOB
+states
+	{
+	spawn:
+	NVIS abcdefgfedcb 4 bright
+	loop
+	}
+}
+
+actor NewInvulSphere : InvulnerabilitySphere replaces InvulnerabilitySphere
+{
++FLOATBOB
+states
+	{
+	spawn:
+	NVUL abcdefedcb 4 bright
+	loop
+	}
+}
+
+actor NewCmap : allmap replaces allmap
+{
+states
+	{
+	spawn:
+	CMAP abcdefgh 3 bright
+	loop
+	}
+}

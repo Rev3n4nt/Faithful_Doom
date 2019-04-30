@@ -1,0 +1,35 @@
+//		CHANGE.LOG:
+
+30, Apr, 2019	//	version 0.5
+--    Added monsters hd version for 8-side rotate sprites (unfinished)
+--    Added items hd version with smooth sprites (unfinished)
+--    Fixed Filtering for HIRES on FDOOM_HD
+--    Added some sprites & ported code from "Doom 2 Minor Sprite Fix"mod ( I converted dehacked to ZScript). contains fixed offsets for images.
+
+31, Mar, 2019	//	version 0.4
+--	Ported weapons code to ZScript
+--	Added Bullet Tracers, aim exactly at the same place where the hitscan bullet hits, + option Faithful Doom Settings
+--	Added alternative sounds for Enhanced weaponset
+--	Added empty casings
+
+03, Mar, 2019	//	version 0.3
+--	Added fixed Rocket_launcher sprites + HD version
+--	Added fist sprites & sound (as it should've been in vanilla)
+--	Added missing super shotgun HD mid-frames
+
+02, Feb, 2019	//	version 0.2
+--	Added Super Shotgun HD mid-frames, bfg animation and HD mid-frames.
+--	Fixed so﻿me issues with chaingun frames
+
+05, Jan, 2019	//	version 0.1
+--	Added super shotgun animations & alt fire - toggleable in options menu
+
+04, Jan, 2019	//	version 0.1b
+--	Added more animation sprites for weapons: shotgun, chaingun, rocket launcher.
+--	Created more decorates
+
+29, Dec, 2018	//	version 0.1a
+--	All weapons nested from vanilla & enhanced with additional animation frames
+--	Few sprites for pistol & plasmagun have been redrawn, with better detail and some variations.
+
+https://www.doomworld.com/forum/topic/103824-faithful-doom-mod/

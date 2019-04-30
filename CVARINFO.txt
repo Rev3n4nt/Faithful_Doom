@@ -1,0 +1,4 @@
+//server int  fdoom_debrisnum 	= 300;
+server bool fdoom_debris 		= true;
+server bool fdoom_tracers 		= true;
+server int fdoom_weapons 		= 0;
