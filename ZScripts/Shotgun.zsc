@@ -67,9 +67,9 @@ States
 		SHTG A 3 {
 				A_gunflash();
 				If(fdoom_tracers==1) {
-					A_FireBullets (5.6, 0, 7, 5, "EnShotPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ,0,"BulletTracer",0,0); }
+					A_FireBullets (5.6, 0, 7, 5, "FBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ,0,"BulletTracer",0,0); }
 				else {
-					A_FireBullets (5.6, 0, 7, 5, "EnShotPuff",FBF_NORANDOMPUFFZ); }
+					A_FireBullets (5.6, 0, 7, 5, "FBulletPuff",FBF_NORANDOMPUFFZ); }
 				}
 //
 		SHTG AEFBBGGC 1;

@@ -142,10 +142,7 @@ states
 		TNT1 A 1;
 		stop;
 	Death:
-		TNT1 A 1 {
-			if (frandom(0.0,1.0) > 0.8)
-				A_SpawnProjectile("RicochetBullet",0,0,random(0,360),2,random(-40,40));
-			}
+		TNT1 A 1;
 		stop;
 	}
 }
@@ -194,7 +191,7 @@ override void Tick() {
 states
 	{
 	Death:
-		TNT1 A 1 A_SpawnItemEx("EnBulletPuff",0,0,0,0,0,0,0,SXF_SETTARGET|SXF_ORIGINATOR);
+		TNT1 A 1;
 		stop;
 	}
 }

@@ -43,7 +43,7 @@ states
 	}
 }
 
-ACTOR NewRedCard : redcard replaces redcard
+actor NewRedCard : redcard replaces redcard
 {
   States
   {
@@ -55,7 +55,7 @@ ACTOR NewRedCard : redcard replaces redcard
   }
 }
 
-ACTOR NewBlueCard : bluecard replaces bluecard
+actor NewBlueCard : bluecard replaces bluecard
 {
   States
   {
@@ -67,7 +67,7 @@ ACTOR NewBlueCard : bluecard replaces bluecard
   }
 }
 
-ACTOR NewYellowCard : yellowcard replaces yellowcard
+actor NewYellowCard : yellowcard replaces yellowcard
 {
   States
   {
@@ -80,7 +80,7 @@ ACTOR NewYellowCard : yellowcard replaces yellowcard
   }
 }
 
-ACTOR NewSkullRed : redskull replaces redskull
+actor NewSkullRed : redskull replaces redskull
 {
   states
   {
@@ -92,7 +92,7 @@ ACTOR NewSkullRed : redskull replaces redskull
   }
 }
 
-ACTOR NewSkullBlu : blueskull replaces blueskull
+actor NewSkullBlu : blueskull replaces blueskull
 {
   states
   {
@@ -104,7 +104,7 @@ ACTOR NewSkullBlu : blueskull replaces blueskull
   }
 }
 
-ACTOR NewSkullYel : yellowskull replaces yellowskull
+actor NewSkullYel : yellowskull replaces yellowskull
 {
   states
   {

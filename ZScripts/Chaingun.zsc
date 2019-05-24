@@ -75,9 +75,9 @@ states
 			else
 				A_FirePistol();
 			If(fdoom_tracers==1)
-				A_FireBullets (5.6, 0, 1, 5, "EnBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ,0,"BulletTracer",0,0) ;
+				A_FireBullets (5.6, 0, 1, 5, "FBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ,0,"BulletTracer",0,0) ;
 			else
-				A_FireBullets (5.6, 0, 1, 5, "EnBulletPuff",FBF_NORANDOMPUFFZ);
+				A_FireBullets (5.6, 0, 1, 5, "FBulletPuff",FBF_NORANDOMPUFFZ);
 			}
 		CHGG C 1;
 		TNT1 A 0 { 
@@ -95,9 +95,9 @@ states
 			else
 				A_FirePistol();
 			If(fdoom_tracers==1)
-				A_FireBullets (5.6, 0, 1, 5, "EnBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ,0,"BulletTracer",0,0) ;
+				A_FireBullets (5.6, 0, 1, 5, "FBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ,0,"BulletTracer",0,0) ;
 			else
-				A_FireBullets (5.6, 0, 1, 5, "EnBulletPuff",FBF_NORANDOMPUFFZ);
+				A_FireBullets (5.6, 0, 1, 5, "FBulletPuff",FBF_NORANDOMPUFFZ);
 			}
 		CHGG C 1;
 		TNT1 A 0 { 
