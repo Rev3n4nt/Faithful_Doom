@@ -1,0 +1,16 @@
+Class TM_Bif_spawned_stone : Actor {
+	Default
+	{
+		+FORCEXYBILLBOARD;
+		Scale 0.5;
+		//DistanceCheck "user_MaxDrawDistanceStones";
+	}
+	States
+	{
+		Spawn:
+		"####" "#"  1 NODELAY A_SetScale(frandom(0.25, 0.75));
+		//"####" "##########" 2 A_FadeTo(1.0, 0.1)
+		"####" "#" -1;
+		Stop;
+	}
+}

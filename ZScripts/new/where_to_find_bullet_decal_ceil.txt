@@ -1,0 +1,52 @@
+Searching 4105 files for "BULLETDECAL1"
+
+D:\Games\GzDoom\others_mods\Brutal_doom\Brutal_Doom_Black_Edition.11\BDBE_v3.1d_Final\modeldef.txt:
+  556     Path "models/bulletdecals"    // Path to model in PK3
+  557     Model 0 "buldecground1"    // Model index, model file
+  558:    Skin 0 "BULLETDECAL1.png"     // Model index, texture (can be in any format supported by GZDoom)
+  559     Scale 5.0 5.0 5.0            // Scale values
+  560     ZOffset 0.1
+  ...
+  567     Path "models/bulletdecals"    // Path to model in PK3
+  568     Model 0 "buldecceil1"    // Model index, model file
+  569:    Skin 0 "BULLETDECAL1.png"     // Model index, texture (can be in any format supported by GZDoom)
+  570     Scale 5.0 5.0 5.0            // Scale values
+  571     ZOffset 0.1
+
+2 matches in 1 file
+
+
+Searching 4105 files for "DetectFloorBullet"
+
+D:\Games\GzDoom\others_mods\Brutal_doom\Brutal_Doom_Black_Edition.11\BDBE_v3.1d_Final\DECORATE.FlatDecals:
+    1: ACTOR DetectFloorBullet
+    2  {
+    3   game Doom
+
+D:\Games\GzDoom\others_mods\Brutal_doom\Brutal_Doom_Black_Edition.11\BDBE_v3.1d_Final\modeldef.txt:
+  552  
+  553  /*
+  554: Model DetectFloorBullet     // Name of actor in DECORATE
+  555  {
+  556     Path "models/bulletdecals"    // Path to model in PK3
+
+D:\Games\GzDoom\others_mods\Brutal_doom\Brutal_Doom_Black_Edition.11\BDBE_v3.1d_Final\PUFF.txt:
+  290      TNT1 A 0 A_CheckFloor("SpawnFloor")
+  291      TNT1 A 0 A_SpawnItem ("YellowFlareSmall", 0)
+  292: 	TNT1 A 0 A_SpawnItemEx ("DetectFloorBullet",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0)
+  293  	TNT1 A 0 A_SpawnItemEx ("DetectCeilBullet",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0)
+  294  	TNT1 A 0 A_SpawnItemEx ("UnderwaterHitPuff",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0)
+  ...
+  327  	TNT1 A 0 A_JumpIfInventory("IsOverSludge", 1, "SpawnSludge")
+  328  	
+  329: 	TNT1 A 0 A_SpawnItemEx ("DetectFloorBullet",0,0,5,0,0,0,0,SXF_NOCHECKPOSITION,0)
+  330  	TNT1 A 0 A_SpawnItemEx ("DetectCeilBullet",0,0,0,-5,0,0,0,SXF_NOCHECKPOSITION,0)
+  331  	TNT1 A 0 A_SpawnItemEx ("UnderwaterHitPuff",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0)
+  ...
+  381  	//TNT1 A 0 A_Explode(4, 15)
+  382      TNT1 A 0 A_SpawnItem ("YellowFlareSmall", 0)
+  383: 	TNT1 A 0 A_SpawnItemEx ("DetectFloorBullet",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0)
+  384  	TNT1 A 0 A_SpawnItemEx ("DetectCeilBullet",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0)
+  385  	TNT1 A 0 A_SpawnItemEx ("UnderwaterHitPuff",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0)
+
+5 matches across 3 files

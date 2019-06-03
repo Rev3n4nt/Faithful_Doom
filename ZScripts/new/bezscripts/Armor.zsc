@@ -1,0 +1,259 @@
+enum ArmorStoreValues
+{
+	ArmorShardCap = 	5,
+	LightArmorCap =		75,
+	MediumArmorCap =	110,
+	HeavyArmorCap =		150,
+	MegaSphereArmorCap = 200,
+	AbsoluteArmorCap = 	225,
+};
+
+Class TakeAllArmor: CustomInventory
+{
+	Default
+	{
+		+INVENTORY.ALWAYSPICKUP
+	}
+	States
+	{
+		Pickup:
+		TNT1 A 0
+		{
+			A_SetInventory("Armor", 0);
+			A_SetInventory("ArmorBonus", 0);
+			A_SetInventory("BasicArmor", 0);
+			A_SetInventory("BasicArmorBonus", 0);
+			A_SetInventory("ArmorShard", 0);
+			A_SetInventory("LightArmor", 0);
+			A_SetInventory("MediumArmor", 0);
+			A_SetInventory("HeavyArmor", 0);
+		//	A_SetInventory("MegaSphereArmor", 0);
+			A_SetInventory("AbsoluteArmor", 0);
+			return true;
+		}
+		Stop;
+	}
+}
+
+Class beBasicArmorPickup: BasicArmorBonus
+{
+	
+	Default
+	{
+//	Inventory.Game Doom;
+//	Inventory.SpawnID 22;
+	Radius 20;
+	Height 16;
+	Inventory.Pickupmessage "$GOTARMBONUS";
+	Inventory.Icon "ARM1A0";
+	Armor.Savepercent 66.6;
+	Armor.Saveamount 2;
+	Armor.Maxsaveamount 400;
+//	beBasicArmorPickup.maxAbsorb 0;
+//	beBasicArmorPickup.maxFullAbsorb 0;	
+//	+COUNTITEM;
+	-INVENTORY.ALWAYSPICKUP;
+	Inventory.PickupSound "BONUSARMOR";
+	}
+	
+	override bool Use (bool pickup)
+	{
+		let armor = BasicArmor(Owner.FindInventory("BasicArmor"));
+		bool result = false;
+
+		// This should really never happen but let's be prepared for a broken inventory.
+		if (armor == null)
+		{
+			armor = BasicArmor(Spawn("BasicArmor"));
+			armor.BecomeItem ();
+			armor.Amount = 0;
+			armor.MaxAmount = MaxSaveAmount;
+			Owner.AddInventory (armor);
+		}
+
+		if (BonusCount > 0 && armor.BonusCount < BonusMax)
+		{
+			armor.BonusCount = min(armor.BonusCount + BonusCount, BonusMax);
+			result = true;
+		}
+
+		int saveAmount = min(SaveAmount, MaxSaveAmount);
+
+		if (saveAmount <= 0)
+		{ // If it can't give you anything, it's as good as used.
+			return BonusCount > 0 ? result : true;
+		}
+
+		// If you already have more armor than this item can give you, you can't
+		// use it.
+		if (armor.Amount >= MaxSaveAmount + armor.BonusCount)
+		{
+			return result;
+		}
+
+		if (armor.Amount <= 0)
+		{ // Should never be less than 0, but might as well check anyway
+			armor.Amount = 0;
+			armor.Icon = Icon;
+			armor.SavePercent = clamp(SavePercent, 0, 100) / 100;
+			armor.MaxAbsorb = MaxAbsorb;
+			armor.ArmorType = GetClassName();
+			armor.MaxFullAbsorb = MaxFullAbsorb;
+			armor.ActualSaveAmount = MaxSaveAmount;
+		}
+		else
+		{
+			armor.Icon = Icon;
+			armor.SavePercent = clamp(SavePercent, 0, 100) / 100;
+			armor.ArmorType = GetClassName();
+		}
+
+		armor.Amount = min(armor.Amount + saveAmount, MaxSaveAmount + armor.BonusCount);
+		armor.MaxAmount = max(armor.MaxAmount, MaxSaveAmount);
+		return true;
+	}
+	
+	States
+	{
+		Spawn:
+			TNT1 A 0 A_JumpIf(GetCvar("beedgreensindeeb") == 1,"Null");
+			BON2 AAABCDB 2; //A_SpawnItem("GreenFlareSmall",0,7)
+			Loop;
+	}
+}
+
+Class ArmorShard: beBasicArmorPickup replaces ArmorBonus
+{
+	Default
+	{
+		Armor.Saveamount ArmorShardCap;
+	}
+}
+
+Class LightArmor: beBasicArmorPickup
+{
+	Default
+	{
+		Armor.Saveamount LightArmorCap;
+		Scale 1.3;
+		Radius 20;
+		Height 16;
+		Inventory.Pickupmessage "Picked up the Light Armor";
+		Inventory.Icon "ARM1A0";
+		Inventory.PickupSound "GREENARMOR";
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 0 A_JumpIf(GetCvar("beedgreensindeeb") == 1,"Null");
+			TNT1 A 0 A_CheckSight("Spawn2");
+			ARM1 A 10;
+			ARM1 BBBBBB 2 bright A_SpawnItem("GreenFlareMedium",0,10);
+		loop;
+		
+		Spawn2:
+			ARM1 A 19;
+		Goto Spawn;
+	}
+}
+
+Class MediumArmor: beBasicArmorPickup
+{
+	Default
+	{
+		Armor.Saveamount MediumArmorCap;
+		Radius 20;
+		Height 20;
+		Scale 1.30;
+		+FLOORCLIP;
+		+DONTGIB;
+		Inventory.Pickupmessage "Picked up the Medium Combat Armor";
+		Inventory.PickupSound "CARMOR";
+		Inventory.Icon "ARM1A0";
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 0 A_JumpIf(GetCvar("beedgreensindeeb") == 1,"Null");
+			TNT1 A 0 A_CheckSight ("Spawn2");
+			4RM3 ABAB 3 bright;
+			TNT1 A 0 A_SpawnItem("RedFlareMedium",0,10);
+		loop;
+	
+		Spawn2:
+			4RM3 A 19;
+		Goto Spawn;
+	}
+}
+
+Class HeavyArmor: beBasicArmorPickup
+{
+	Default
+	{
+		Armor.Saveamount HeavyArmorCap;
+		Scale 1.3;
+		Radius 20;
+		Height 16;
+		Inventory.Pickupmessage "Picked up the Heavy Armor";
+		Inventory.Icon "ARM1A0";
+		Inventory.PickupSound "BLUEARMOR";
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 0 A_JumpIf(GetCvar("beedgreensindeeb") == 1,"Spawn3");
+			TNT1 A 0 A_CheckSight("Spawn2");
+			ARM2 A 10;
+			ARM2 BBBBB 2 bright A_SpawnItem("BlueFlareMedium3",0,10);
+		loop;
+		Spawn2:
+			ARM2 A 19;
+		Goto Spawn;
+		Spawn3:	
+			TNT1 A 0 A_Jump(200,"Null");
+			TNT1 A 0 A_SpawnItemEx("BEFlaskUpgrade");
+		Stop;
+	}
+}
+
+Class MegaSphereArmor: HeavyArmor
+{
+	Default
+	{
+		Armor.Saveamount MegaSphereArmorCap;
+	}
+}
+
+Class AbsoluteArmor: beBasicArmorPickup
+{
+	Default
+	{
+		Armor.Saveamount AbsoluteArmorCap;
+		Radius 20;
+		Height 20;
+		Scale 0.85;
+		+FLOORCLIP;
+		+DONTGIB;
+		Inventory.Pickupmessage "Picked up the Siege Armor";
+		Inventory.PickupSound "SARMOR";
+		Inventory.Icon "ARM1A0";
+	}
+	States
+	{
+		Spawn:
+			TNT1 A 0 A_JumpIf(GetCvar("beedgreensindeeb") == 1,"Spawn3");
+			TNT1 A 0 A_CheckSight ("Spawn2");
+			5RM3 A 10;
+			5RM3 BBBBB 3 bright;
+		loop;
+	
+		Spawn2:
+			5RM3 AB 10;
+		Goto Spawn;
+		
+		Spawn3:	
+			TNT1 A 0 A_Jump(200,"Null");
+			TNT1 A 0 A_SpawnItemEx("BEFlaskUpgrade");
+		Stop;
+	}
+}

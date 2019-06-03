@@ -1,0 +1,132 @@
+/*struct Coords
+{
+	double x;
+	double y;
+	double left;
+	double right;
+	double top;
+	double bottom;
+}
+
+
+Class FlareBaseClass : Actor
+{
+	bool bDrawFlare;
+	string sFlareGraphics;
+	double dFlareZoffset;
+	
+	property DrawFlare : bDrawFlare;
+	property FlareGraphics : sFlareGraphics;
+	property FlareZoffset : dFlareZoffset;
+	Default
+	{
+		+NOGRAVITY;	
+		radius 1;
+		height 1;
+		alpha 0.4;
+		scale 0.4;
+	}
+}
+*/
+Class FireFlameZ : Actor
+{
+	int RollSpeed;
+	double ThisScale;
+	double lifeTime;
+	Default
+	{
+		Scale 0.25;
+		+NoInteraction;
+		+Rollsprite
+		+FORCEXYBILLBOARD
+		-SOLID;
+		RenderStyle "Add";
+		//DistanceCheck "user_MaxDrawDistanceTorchFire";
+	}
+	Override void PostBeginPlay()
+	{
+		RollSpeed = Random(-30, 30);
+		ThisScale = 0.25;
+		lifeTime = 0.1;
+		A_SetRoll(random(0, 360));
+		Super.PostBeginPlay();
+	}	
+	void ParticleLife()
+	{
+		ThisScale = ThisScale-0.03;
+		if(ThisScale<0){ThisScale=0;}
+		A_SetScale(ThisScale);
+		A_SetRoll(roll+RollSpeed,SPF_INTERPOLATE);
+		A_fadeOut(lifeTime);
+	}	
+	States
+	{
+		Spawn:
+			ILM1 A 2 ParticleLife();//{ParticleLife();}
+			LOOP;	
+	}
+}
+
+Class FireFlameTest : FireFlameZ
+{
+	Override void PostBeginPlay()
+	{
+		RollSpeed = Random(-30, 30);
+		ThisScale = 0.25;
+		lifeTime = 0.01;
+		A_SetRoll(random(0, 360));
+		Super.PostBeginPlay();
+	}
+}
+
+/*
+Class Flare_General_Test : FlareBaseClass
+{
+	Default
+	{
+	+NOINTERACTION;
+	+NOGRAVITY;
+	+CLIENTSIDEONLY;
+	renderstyle "Add";
+	radius 1;
+	height 1;
+	alpha 0.4;
+	scale 0.4;
+	FlareBaseClass.DrawFlare true;
+	FlareBaseClass.FlareGraphics "FLARE";
+	FlareBaseClass.FlareZoffset 0;	
+	}
+}
+
+Class LensFlareAltTest2 : FlareBaseClass
+{
+	Default
+	{
+	FlareBaseClass.DrawFlare true;
+	FlareBaseClass.FlareGraphics "FLARE";
+	FlareBaseClass.FlareZoffset 0;		
+	}
+states
+	{
+	Spawn:
+		TNT1 A 6 bright;
+		Stop;
+	}
+}
+
+Class RocketFlare : FlareBaseClass
+{
+	Default
+	{
+	FlareBaseClass.DrawFlare true;
+	FlareBaseClass.FlareGraphics "FLARE2";
+	FlareBaseClass.FlareZoffset 0;		
+	}
+	states
+	{
+	Spawn:
+		TNT1 A 3 bright;
+		Stop;
+	}	
+}
+*/

@@ -1,0 +1,264 @@
+class BEMessageBox : MessageBoxMenu
+{
+	String message, activatesnd;
+	bool quit;
+
+	double scale, messagescale, promptscale, yesnoscale;
+	double ratio, width, height;
+
+	override void Init(Menu parent, String msg, int messagemode, bool playsound, Name cmd, voidptr native_handler)
+	{
+		// Initialize everything through the real message box code
+		Super.Init(parent, msg, messagemode, playsound, cmd, native_handler);
+
+		scale = 1.0;		// Set the base scale that affects the overall message box
+		messagescale = 0.5;	// Set the relative scale for the message text
+		promptscale = 0.5;	// Set the relative scale for the one-line action prompt at the bottom of the message box
+		yesnoscale = 0.75;	// Set the relative scale of the yes/no selector
+
+		// Store the message as a string, and duplicate it as originalmessage for checking later
+		message = msg;
+		String originalmessage = message;
+
+		// Undo the line breaks and messages that are added to the end of messages
+		message.Replace("\n\n" .. Stringtable.Localize("$DOSY"), "");
+		if (message != originalmessage) { quit = true; } // Hacky detection of if this is an exit prompt - those are the only ones that use the $DOSY prompt
+
+		message.Replace("\n\n" .. Stringtable.Localize("$PRESSKEY"), "");
+		message.Replace("\n\n" .. Stringtable.Localize("$PRESSYN"), "");
+
+		if (quit) // If this was an exit prompt use ROTT-style grouped smessages/icons/sounds
+		{
+			// Pick a random message index from 1 to 7
+			int messageindex = gametic % 7 + 1;	
+
+			// Use that index to pick the message, icon, and sound to display		
+		//	message = "\cC" .. Stringtable.Localize("$QUITMSG" .. messageindex);
+		//	icon = "QUIT0" .. messageindex;
+			activatesnd = "menu/prompt" .. messageindex;
+		}
+		else // Otherwise, use the message that was passed originally
+		{
+			// Get rid of single line breaks where they are hard-coded, since line length matters now...
+			message.Replace("\n\n", "*^*"); // Hacky handling to temporarily replace the double line breaks so they can be retained later
+			message.Replace("\n", " "); // Get rid of all of the regular line breaks
+			message.Replace("*^*", "\n\n"); // Restore the double line breaks.
+
+			// Set the icon based on message mode...  mMessageMode 1 is a notification, 0 is a yes/no prompt
+		//	icon = mMessageMode ? "PIC_EXCL" : "PIC_QUES";
+		}
+	}
+
+	override void Drawer()
+	{
+		int i;
+		double x, y;
+
+		// Calculate width and height to keep the image at the same relative size, regardless of aspect ratio
+		ratio = screen.GetAspectRatio();
+		width = ratio > 1.25 ? 200 * ratio : 320;
+		height = ratio < 1.25 ? 320 / ratio : 200;
+
+		double fontheight;
+
+		// Load the background image (hard-coded as MSG_BACK)
+		TextureID tex = TexMan.CheckForTexture("MSG_BACK", TexMan.Type_MiscPatch);
+		if (tex.IsValid()) { screen.DrawTexture(tex, false, (width / 2) / scale, (height / 2) / scale, DTA_Clean, true, DTA_CenterOffset, true, DTA_KeepRatio, true, DTA_VirtualWidthF, width / scale, DTA_VirtualHeightF, height / scale); }
+
+
+		// Load the icon image
+	//	TextureID tex2 = TexMan.CheckForTexture(icon, TexMan.Type_MiscPatch);
+	//	if (tex2.IsValid()) { screen.DrawTexture(tex2, false, (width / 2) / scale - 57, (height / 2) / scale, DTA_Clean, true, DTA_CenterOffset, true, DTA_KeepRatio, true, DTA_VirtualWidthF, width / scale, DTA_VirtualHeightF, height / scale); };
+
+		fontheight = SmallFont.GetHeight();
+
+		// Scale the line breaks based on the desired end-state scale of the message, disabled
+	//	mMessage = SmallFont.BreakLines(Stringtable.Localize(message), int(106 / messagescale));
+
+		// If there is a message and you didn't somehow pass a blank string...
+		if (mMessage.Count())
+		{
+			// Horizontally and vertically align just above centerline
+			x = (width / 2) / (messagescale * scale) -  messagescale;
+			y = (height / 2) / (messagescale * scale) - messagescale; //(fontheight / 2) / messagescale;
+
+			// Message will be vertically centered, so position the cursor higher based on how many lines are in the message
+			int c = mMessage.Count();
+			for (i = 0; i < c; i++) { y -= fontheight / 2; }
+			for (i = 0; i < c; i++) // Draw each line of the message, manually incrementing the y location by lineheight for each row of text
+			{
+				screen.DrawText (SmallFont, Font.CR_WHITE, x - mMessage.StringWidth(i)/2, y, mMessage.StringAt(i), DTA_Clean, true, DTA_KeepRatio, true, DTA_VirtualWidthF, width / (messagescale * scale), DTA_VirtualHeightF, height / (messagescale * scale));
+				y += fontheight;
+			}	
+		}
+
+		fontheight = SmallFont.GetHeight();
+
+		String prompt;
+
+		// Set the prompt message based on the type of message this is
+		if (quit) { prompt = Stringtable.Localize("$DOSY"); }
+		else { prompt = mMessagemode == 1 ? Stringtable.Localize("$PRESSKEY") : Stringtable.Localize("$PRESSYN"); }
+
+		// Cleanup the default strings, just for presentation sake...  Probably better to do this in LANGUAGE, but this is easier.
+		prompt.Replace("(", "");
+		prompt.Replace(")", "");
+		prompt.Replace(".", "");
+
+		// Center the text and align it to the bottom of the message box
+		x = (width / 2) / (promptscale * scale) - SmallFont.StringWidth(prompt) / 2;
+		y = (height / 2) / (promptscale * scale) + (32 / promptscale) - fontheight;
+
+		// Draw the prompt string
+		screen.DrawText (SmallFont, Font.CR_GOLD, x, y-10, prompt, DTA_Clean, true, DTA_KeepRatio, true, DTA_VirtualWidthF, width / (promptscale * scale), DTA_VirtualHeightF, height / (promptscale * scale));
+
+		// If there needs to be a yes/no selector...
+		if (mMessagemode == 0)
+		{
+			// Position it at the bottom left of the message box
+			x = (width / 2) / (scale * yesnoscale) + (62 / yesnoscale);
+			y = (height / 2) / (scale * yesnoscale) + (30 / yesnoscale) - fontheight * 2;
+
+			// Draw it using the function below - the return values are used in the mouse handling to left/right bound the mouse click detection
+			[mMouseLeft, mMouseRight] = DrawYesNo(x, y, yesnoscale);
+		}
+	}
+
+	int, int DrawYesNo(double x, double y, double yesnoscale = 1.0)
+	{
+		double fontheight = SmallFont.GetHeight();
+
+		// Set where the top of the mouse checking bound will be
+		mMouseY = int(y * yesnoscale * scale);
+
+		// Draw Yes and No, with colors based on which one is actively selected
+		screen.DrawText(SmallFont, messageSelection == 0? OptionMenuSettings.mFontColorSelection : OptionMenuSettings.mFontColor, x + 8	, y - 1.5, Stringtable.Localize("$TXT_YES"), DTA_Clean, true, DTA_KeepRatio, true, DTA_VirtualWidthF, width / (yesnoscale * scale), DTA_VirtualHeightF, height / (yesnoscale * scale));
+		screen.DrawText(SmallFont, messageSelection == 1? OptionMenuSettings.mFontColorSelection : OptionMenuSettings.mFontColor, x + 8, y - 1.5 + fontheight, Stringtable.Localize("$TXT_NO"), DTA_Clean, true, DTA_KeepRatio, true, DTA_VirtualWidthF, width / (yesnoscale * scale), DTA_VirtualHeightF, height / (yesnoscale * scale));
+
+		// Draw the blinking cursor 
+		if (messageSelection >= 0 && (Menu.MenuTime() % 8) < 4)
+		{
+			screen.DrawText(ConFont, OptionMenuSettings.mFontColorSelection, x, y - 1.5 + fontheight * messageSelection, "\xd", DTA_CellX, int(8 * (yesnoscale * scale) * CleanXfac), DTA_CellY, int(8 * (yesnoscale * scale) * CleanYfac), DTA_VirtualWidthF, width / (yesnoscale * scale), DTA_VirtualHeightF, height / (yesnoscale * scale), DTA_KeepRatio, true);
+		}
+
+		// Figure out how wide the mouse checking area needs to be
+		double offset = max(SmallFont.StringWidth(Stringtable.Localize("$TXT_YES")), SmallFont.StringWidth(Stringtable.Localize("$TXT_NO")));
+
+		// Return the left and right bounds of where mouse click checks need to be valid
+		return int(x * yesnoscale * scale), int((x + 8 + offset) * yesnoscale * scale);
+	}
+	
+	bool CheckAspectRatio(double width,double height)
+	{
+		return screen.GetAspectRatio() == (width/height) ? true : false;
+	}
+
+	// This is mostly original code, just with the altered scaling algorithm and with commented code removed
+	override bool MouseEvent(int type, int x, int y)
+	{
+		if (mMessageMode == 1)
+		{
+			if (type == MOUSE_Click)
+			{
+				return MenuEvent(MKEY_Enter, true);
+			}
+			return false;
+		}
+		else
+		{
+			int sel = -1;
+			int fh = SmallFont.GetHeight() + 1;
+
+			if (width == 0) width = 1;
+			if (height == 0) height = 1;
+
+			// convert x/y from screen to virtual coordinates
+			x = int(x / (screen.GetWidth() / width));
+			y = int(y / (screen.GetHeight() / height));
+		//	x = ((x	/ (screen.GetWidth() / width)) * CleanXfac) ;//+ 160;
+		//	y = ((y / (screen.GetHeight() / height)) * CleanYfac);// + 100;	
+		
+		/*	int posOffset;
+			
+			if(CheckAspectRatio(4,3))
+			{
+				Console.Printf("4/3");
+			}
+			if(CheckAspectRatio(5,4))
+			{
+				Console.Printf("5/4");
+			}			
+			if(CheckAspectRatio(16,9))
+			{
+				Console.Printf("16/9");
+			}			
+			if(CheckAspectRatio(16,10))
+			{
+				Console.Printf("16/10");
+			}
+			if(CheckAspectRatio(17,10))
+			{
+				Console.Printf("17/10");
+			}
+			if(CheckAspectRatio(21,9))
+			{
+				Console.Printf("4/3");
+			}
+		
+			x = ((x - (screen.GetWidth() / 2)) / CleanXfac) + posOffset;
+			y = ((y - (screen.GetHeight() / 2)) / CleanYfac) + 98;*/
+			
+			if (x >= mMouseLeft && x <= mMouseRight && y >= mMouseY && y < mMouseY + 2 * fh)
+			{
+				sel = y >= mMouseY + fh;
+			}
+			if (sel != -1 && sel != messageSelection)
+			{
+				//S_Sound (CHAN_VOICE | CHAN_UI, "menu/cursor", snd_menuvolume, ATTN_NONE);
+			}			
+			messageSelection = sel;
+			if (type == MOUSE_Release)
+			{
+				return MenuEvent(MKEY_Enter, true);
+			}
+			return true;
+		}
+	}
+
+
+	// This is mostly original code, just with the sound play call added.  Note that this still depends on the original
+	// Handler being called because the 105 tic delay before exit that allows sounds to play is there in the C code.
+	override void HandleResult(bool res)
+	{
+		if (Handler != null)
+		{
+			if (res) 
+			{
+			//	if (!(activatesnd == "")) { S_Sound(activatesnd, CHAN_VOICE | CHAN_UI, snd_menuvolume, ATTN_NONE); }
+				CallHandler(Handler);
+			}
+			else
+			{
+				Close();
+				CloseSound();
+			}
+		}
+		else if (mParentMenu != NULL)
+		{
+			if (mMessageMode == 0)
+			{
+				if (mAction == 'None') 
+				{
+					mParentMenu.MenuEvent(res? MKEY_MBYes : MKEY_MBNo, false);
+					Close();
+				}
+				else 
+				{
+					Close();
+					if (res) SetMenu(mAction, -1);
+				}
+				CloseSound();
+			}
+		}
+	}
+}

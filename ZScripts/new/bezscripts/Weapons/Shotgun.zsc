@@ -1,0 +1,811 @@
+// --------------------------------------------------------------------------
+//
+// Shotgun
+//
+// --------------------------------------------------------------------------
+
+Class Shot_Gun : BEWeapon //Replaces Shotgun
+{
+	bool isBurstTwo;
+	int shootsCount;
+	Default
+	{
+	//	Game Doom
+	//	SpawnID 27;
+		Weapon.SelectionOrder 9;
+		Weapon.AmmoUse1 0;
+		Weapon.AmmoUse2 0;
+		Weapon.AmmoGive1 4;
+		Weapon.AmmoGive2 0;
+		Weapon.AmmoType1 "Shell2";
+		Weapon.AmmoType2 "ShotgunAmmo";
+		Inventory.PickupMessage "$GOTSHOTGUN";
+		Inventory.PickupSound "SHGPCK";
+		Obituary "$OB_MPSHOTGUN";
+		AttackSound "None";
+		+WEAPON.NOALERT;
+		+WEAPON.NOAUTOAIM;
+		+WEAPON.NOAUTOFIRE;
+		+FORCEXYBILLBOARD;
+	//	+WEAPON.NO_AUTO_SWITCH
+		Scale 0.9;
+	}
+	States
+	{
+
+ /*   ShakeLeft:
+		TNT1 A 0
+		TNT1 A 0 A_TakeInventory("ImpactMovesSling")
+	//	TNT1 A 0 A_JumpIfInventory("UseShotgunStrap", 1, 2)
+	//	Goto OkToFire
+		TNT1 A 0
+		SHTI GH 2 A_WeaponReady(WRF_ALLOWRELOAD)
+		
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick")
+   //     TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt")
+  //      TNT1 A 0 A_JumpIfInventory("Reloading",1,"Reload")
+		TNT1 A 0 A_JumpIfInventory("Salute1", 1, "Salute")
+		TNT1 A 0 A_JumpIfInventory("Salute2", 1, "Salute")
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade")
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch")
+		SHTI IJK 2 A_WeaponReady(WRF_ALLOWRELOAD)
+		TNT1 A 0 A_TakeInventory("ImpactMovesSling")
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick")
+  //      TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt")
+  //      TNT1 A 0 A_JumpIfInventory("Reloading",1,"Reload")
+		TNT1 A 0 A_JumpIfInventory("Salute1", 1, "Salute")
+		TNT1 A 0 A_JumpIfInventory("Salute2", 1, "Salute")
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade")
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch")
+		ShakeRight:
+		TNT1 A 0
+		TNT1 A 0 A_TakeInventory("ImpactMovesSling")
+	//	TNT1 A 0 A_JumpIfInventory("UseShotgunStrap", 1, 2)
+	//	Goto OkToFire
+		TNT1 A 0
+		SHSS A 2 A_WeaponReady(WRF_ALLOWRELOAD)
+	    TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick")
+  //      TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt")
+   //     TNT1 A 0 A_JumpIfInventory("Reloading",1,"Reload")
+		TNT1 A 0 A_JumpIfInventory("Salute1", 1, "Salute")
+		TNT1 A 0 A_JumpIfInventory("Salute2", 1, "Salute")
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade")
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch")
+		TNT1 A 0 A_JumpIfInventory("ImpactMovesSling", 1, "ShakeLeft")
+		SHSS B 2 A_WeaponReady(WRF_ALLOWRELOAD)
+	    TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick")
+  //      TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt")
+   //     TNT1 A 0 A_JumpIfInventory("Reloading",1,"Reload")
+		TNT1 A 0 A_JumpIfInventory("Salute1", 1, "Salute")
+		TNT1 A 0 A_JumpIfInventory("Salute2", 1, "Salute")
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade")
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch")
+		TNT1 A 0 A_JumpIfInventory("ImpactMovesSling", 1, "ShakeLeft")
+	    SHSS C 2 A_WeaponReady(WRF_ALLOWRELOAD)
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick")
+    //    TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt")
+  //      TNT1 A 0 A_JumpIfInventory("Reloading",1,"Reload")
+		TNT1 A 0 A_JumpIfInventory("Salute1", 1, "Salute")
+		TNT1 A 0 A_JumpIfInventory("Salute2", 1, "Salute")
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade")
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch")
+	    SHSS D 2 A_WeaponReady(WRF_ALLOWRELOAD)
+		Goto Ready+14*/
+ 		
+	Ready:
+        TNT1 AAAA 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		TNT1 A 0 A_JumpIfInventory("NeverSelectedShotgun",1,"WarmUp");
+        TNT1 A 4 A_PlaySound("SHGPCK");
+		SHTG CBA 0;
+        SHSS ABCD 1 A_JumpIfInventory("GoFatality", 1, "Steady");
+        TNT1 AAAAAAAAAAAAAAA 0;
+	ReallyReady:
+        TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+     //   TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt")
+   //     TNT1 A 0 A_JumpIfInventory("Reloading",1,"Reload")
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+	//	TNT1 A 0 A_JumpIfInventory("ImpactMovesSling", 1, "ShakeLeft")
+
+	//	TNT1 A 0 A_JumpIfInventory("ShotgunWasEmpty", 1, "Pump2")
+		SHTG A 1 A_WeaponReady(WRF_ALLOWRELOAD|WRF_ALLOWUSER1);
+        
+		Loop;
+	
+	OkToFire2:
+		SHTG A 1 { A_WeaponReady(WRF_ALLOWRELOAD|WRF_ALLOWUSER1); } //A_PlaySound("weapons/empty");
+		TNT1 A 0 A_PlaySound("weapons/empty");
+		TNT1 A 0 A_Takeinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+		TNT1 A 0 A_Takeinventory("ADSmode",1);
+		Goto ReallyReady;
+
+	OkToFire3:
+		TNT1 A 0 A_JumpIf(CountInv("PowerD4DFS") == 1,"Reload");
+		SHTG A 1 { A_WeaponReady(WRF_ALLOWRELOAD|WRF_ALLOWUSER1); } //A_PlaySound("weapons/empty");
+		TNT1 A 0 A_Takeinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+		TNT1 A 0 A_Takeinventory("ADSmode",1);
+		Goto ReallyReady;
+	
+	Ready2:
+        TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+    //    TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt")
+        TNT1 A 0 A_JumpIfInventory("Reloading",1,"Reload");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+	//	TNT1 A 0 A_JumpIfInventory("ImpactMovesSling", 1, "ShakeAiming")
+		SHT8 A 1 A_WeaponReady(WRF_ALLOWRELOAD|WRF_ALLOWUSER1);
+		Loop;
+	
+	
+	Deselect:
+			TNT1 A 0 A_Takeinventory("HasCutingWeapon",1);
+			TNT1 A 0 A_Takeinventory("HasPlasmaWeapon",1);
+			TNT1 A 0 A_TakeInventory("IsWeaponLong",1);
+			TNT1 A 0 A_Takeinventory("Zoomed",1);
+			TNT1 A 0 A_TakeInventory("TossGrenade", 1);
+			TNT1 A 0 A_Takeinventory("ADSmode",1);
+	//	TNT1 A 0 A_Takeinventory("UseShotgunStrap",1)
+        TNT1 A 0 A_ZoomFactor(1.0);
+		SHSS DCBA 1;
+		TNT1 AAAAAAAAAAAAAAAAAA 0 A_Lower;
+		TNT1 A 1;
+		Wait;
+	
+	Select:
+		TNT1 A 0 A_Takeinventory("HasCutingWeapon",1);
+		TNT1 A 0 A_Takeinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 A_Takeinventory("FistsSelected",1);
+		TNT1 A 0 A_Takeinventory("SawSelected",1);
+		TNT1 A 0 A_Giveinventory("ShotgunSelected",1);
+		TNT1 A 0 A_Takeinventory("SSGSelected",1);
+		TNT1 A 0 A_Takeinventory("MinigunSelected",1);
+		TNT1 A 0 A_Takeinventory("PlasmaGunSelected",1);
+		TNT1 A 0 A_Takeinventory("RocketLauncherSelected",1);
+		TNT1 A 0 A_Takeinventory("GrenadeLauncherSelected",1);
+		TNT1 A 0 A_Takeinventory("BFGSelected",1);
+		TNT1 A 0 A_Takeinventory("BFG10kSelected",1);
+		TNT1 A 0 A_Takeinventory("RailGunSelected",1);
+		TNT1 A 0 A_Takeinventory("SubMachineGunSelected",1);
+		TNT1 A 0 A_Takeinventory("RevenantLauncherSelected",1);
+		TNT1 A 0 A_Takeinventory("LostSoulSelected",1);
+		TNT1 A 0 A_Takeinventory("FlameCannonSelected",1);
+		TNT1 A 0 A_Takeinventory("HasBarrel",1);
+		TNT1 A 0 A_TakeInventory("TossGrenade", 1);
+		TNT1 A 0 A_Takeinventory("Zoomed",1);
+		TNT1 A 0 A_Takeinventory("ADSmode",1);
+       		 TNT1 A 0 A_ZoomFactor(1.0);
+		TNT1 A 0 A_GiveInventory("IsWeaponLong",1);
+		TNT1 AAAAAAAAAAAAAAAAAAAAAAA 0 A_Raise;
+		Goto Ready;
+		
+	User1:
+		TNT1 A 0 A_Takeinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+		TNT1 A 0 A_Takeinventory("ADSmode",1);
+		TNT1 A 0
+		{
+			if(GetCvar("be_noautoreload") == 1 && CountInv("ShotgunAmmo") < 2 && GetCvar("begunnergameplaymode") == 0)
+			{
+					if (GetPlayerInput(MODINPUT_OLDBUTTONS) & BT_USER1)
+					{ return ResolveState("ReallyReady"); }
+					return ResolveState("OkToFire2");				
+			}
+			return ResolveState(Null);
+		}
+        TNT1 A 0 A_JumpIfInventory("ShotgunAmmo",2,2);
+        Goto Reload;
+        TNT1 AAAA 0;
+        TNT1 A 0 A_AlertMonsters;
+        TNT1 A 0 A_PlaySound("Weapons/sg/double", 1);
+		TNT1 A 0 A_Quake(8, 8, 0, 32);
+	//	TNT1 A 0 A_Recoil(cos(pitch)*7)
+		TNT1 A 0 A_ZoomFactor(0.915);
+		TNT1 A 0 A_SetBlend("orange",0.1,8);
+	//	TNT1 AAAAAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles", random(-17,17), 0, -1, random(-17,17))
+		RIFF AA 0 A_FireProjectileSmoke(0.2,0.17,true,0.55);//A_FireProjectile("GunFireSmoke3", 0, 0, 0, 0, 0, 0)
+		RIFF A 0 A_FireProjectile("DistantFireShotgunSound", random(-1,1), 0, 0, -12, 0, random(-1,1));
+        TNT1 A 0;
+		TNT1 A 0 A_SpawnItemEx("PlayerMuzzle1",30,5,30);
+		TNT1 AAAAAAAAAAAAAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles", random(-12,12), 0, -1, 0, 0, random(-9,9));
+		TNT1 AAAAAAAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles2", random(-12,12), 0, -1, 0, 0, random(-9,9));	
+		//TNT1 AAAAAAAAAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles", random(-15,15), 0, -1, 0, 0, random(-10,10))
+		TNT1 AAAAA 0; //A_FireProjectile("Tracer", random(-3,3), 0, -1, -12, 0, random(-5,5))
+		//RIFF AAAAAA 0 A_FireProjectile("WallPenetrationHitscan", random(-3,3), 0, -1, 0, 0, random(-3,3))
+        //TNT1 A 0 ACS_Execute(374, 0, 0, 0, 0)
+		//TNT1 A 0 A_FireProjectile("ShakeYourAssDouble", 0, 0, 0, 0)
+		TNT1 A 0 A_Takeinventory("ShotgunAmmo",2);
+		SHTF A 0 BRIGHT A_firebullets (0,0,1,10,"shotpuff",0,180);
+		SHTF A 2 BRIGHT A_FireBullets(6,6,20,int(8 - (GetDistance(true, AAPTR_TARGET) / SSGDROPOFF ) ), "ShotgunPuff",0,0,"Tracer",-12,-1);//A_FireBullets (GetCvar("be_sht_f1anghorspr"), GetCvar("be_sht_f1angverspr"), GetCvar("be_sht_f1numberbul"), GetCvar("be_sht_f1damage"), "ShotgunPuff",0,0,"Tracer",-12,-1)//A_FireBullets (CallACS("Fire1HAngleSpr", 0, 0, 0), CallACS("Fire1VAngleSpr", 0, 0, 0), CallACS("Fire1BulletNum"), CallACS("Fire1Damage"), "ShotgunPuff",0,0,"Tracer",-12,-1)
+		TNT1 A 0 A_SetPitch(-10.0 + pitch);
+        SHTF B 2 BRIGHT A_SetTics(CountInv("PowerD4DFS") ? 1 : 2);
+		TNT1 A 0 A_ZoomFactor(0.955);
+		SHTF C 1 A_SetPitch(+1.0 + pitch);
+		
+		SHTF DE 1 A_SetPitch(+1.0 + pitch);
+		
+		TNT1 A 0 A_ZoomFactor(0.975);
+		SHTG A 1 Offset(12,36) A_FireProjectileSmoke(0.2,0.17,true,0.55); // <-- New frames
+		TNT1 A 0 A_ZoomFactor(0.985);
+        SHTG A 1 Offset(10,38) A_FireProjectileSmoke(0.2,0.17,true,0.55); // 
+		TNT1 A 0 A_ZoomFactor(0.995);
+        SHTG A 1 Offset(8,40) A_FireProjectileSmoke(0.2,0.17,true,0.55); //
+		TNT1 A 0 A_ZoomFactor(1.0);
+        SHTG A 1 Offset(6,42) A_FireProjectileSmoke(0.2,0.17,true,0.55); //
+		SHTG A 1 Offset(4,44) A_FireProjectileSmoke(0.2,0.17,true,0.55); //
+        SHTG A 1 Offset(2,46) A_FireProjectileSmoke(0.2,0.17,true,0.55); //
+        SHTG A 1 Offset(1,44) A_FireProjectileSmoke(0.2,0.17,true,0.55); //
+		SHTG A 1 Offset(1,42) A_FireProjectileSmoke(0.2,0.17,true,0.55); //
+        SHTG A 1 Offset(1,40) A_FireProjectileSmoke(0.2,0.17,true,0.55); //	
+		SHTG A 2 Offset(0,38) {  A_SetPitch(+3.0 + pitch); A_FireProjectileSmoke(0.2,0.17,true,0.55); }
+		SHTG AA 2 Offset(0,36) { A_SetPitch(+1.0 + pitch); A_FireProjectileSmoke(0.2,0.17,true,0.55); }
+		SHTG A 1 Offset(0,32);
+		SHTG AA 10 A_FireProjectileSmoke(0.2,0.17,true,0.55)	;
+		Goto Pump4;
+	
+	User2:
+		TNT1 A 0 A_ZoomFactor(1.0);
+		SHSS D 0
+		{
+			if(!BurstEnabled())
+			{
+				A_Print("You dont find burst upgrade");
+				return ResolveState("OkToFire3");
+			}
+			if(invoker.isBurstTwo)
+			{
+				A_Print("Weapon Upgrade disabled");
+				invoker.isBurstTwo = false;
+			}
+			else 
+			{
+				A_Print("Weapon Upgrade enabled");
+				invoker.isBurstTwo = true;
+			}
+			return ResolveState(Null);
+		}
+		SHSS DCBA 1 A_WeaponReady(WRF_NOFIRE|WRF_NOSWITCH);
+		Goto Ready;
+	
+    Fire:
+        TNT1 A 0 A_Takeinventory("Reloading",1);
+		TNT1 A 0
+		{
+			if(GetCvar("be_noautoreload") == 1 && CountInv("ShotgunAmmo") == 0 && CountInv("PowerD4DFS") == 0 && GetCvar("begunnergameplaymode") == 0)
+			{
+					if (GetPlayerInput(MODINPUT_OLDBUTTONS) & BT_ATTACK)
+					{ return ResolveState("ReallyReady"); }
+					return ResolveState("OkToFire2");				
+			}
+			return ResolveState(Null);
+		}
+		TNT1 A 0 A_JumpIfInventory("Zoomed",1,"Fire2");
+        TNT1 A 0 A_JumpIfInventory("ShotgunAmmo",1,2);
+        Goto Reload;
+        TNT1 AAAA 0;
+		TNT1 A 0 A_JumpIfInventory("ShotgunWasEmpty", 1, "Pump2");
+        //TNT1 AA 0 A_FireProjectile("SmokeSpawner",0,0,0,5)
+		//TNT1 A 0 A_SetAngle(random(2, -2) + angle)
+		//TNT1 A 0 A_SetPitch(random(2, -2) + pitch)
+        TNT1 A 0 A_AlertMonsters;
+        TNT1 A 0 A_PlaySound("weapons/sg", 1);
+		TNT1 A 0 A_ZoomFactor(0.955,ZOOM_NOSCALETURNING);
+		TNT1 A 0 A_SetBlend("orange",0.1,8);
+		TNT1 A 0 A_Quake(4, 4, 0, 32);
+		RIFF AA 0 A_FireProjectileSmoke(0.2,0.17,true,0.55);//A_FireProjectile("GunFireSmoke3", 0, 0, 0, 0, 0, 0)
+		RIFF A 0 A_FireProjectile("DistantFireShotgunSound", random(-1,1), 0, 0, -12, 0, random(-1,1));
+        TNT1 A 0;
+		TNT1 A 0 A_SpawnItemEx("PlayerMuzzle1",30,5,30);
+		TNT1 AAAAAAAAAAAAAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles", random(-12,12), 0, -1, 0, 0, random(-9,9));
+		TNT1 AAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles2", random(-12,12), 0, -1, 0, 0, random(-9,9));		
+		//TNT1 AAAAAAAAAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles", random(-15,15), 0, -1, 0, 0, random(-10,10))
+		TNT1 AAAAA 0; //A_FireProjectile("Tracer", random(-3,3), 0, -1, -12, 0, random(-5,5))
+		//RIFF AAAAAA 0 A_FireProjectile("WallPenetrationHitscan", random(-3,3), 0, -1, 0, 0, random(-3,3))
+        //TNT1 A 0 ACS_Execute(374, 0, 0, 0, 0)
+		//TNT1 A 0 A_FireProjectile("ShakeYourAssDouble", 0, 0, 0, 0)
+		TNT1 A 0 A_Takeinventory("ShotgunAmmo",1);
+		SHTF A 2 BRIGHT 
+		{
+			if(invoker.isBurstTwo) A_FireBullets(8,8,10,6, "ShotgunPuff",0,0,"Tracer",-12,-1);
+			else A_FireBullets(5,5,10,7, "ShotgunPuff",0,0,"Tracer",-12,-1);
+		}//A_FireBullets (GetCvar("be_sht_f1anghorspr"), GetCvar("be_sht_f1angverspr"), GetCvar("be_sht_f1numberbul"), GetCvar("be_sht_f1damage"), "ShotgunPuff",0,0,"Tracer",-12,-1)//A_FireBullets (CallACS("Fire1HAngleSpr", 0, 0, 0), CallACS("Fire1VAngleSpr", 0, 0, 0), CallACS("Fire1BulletNum"), CallACS("Fire1Damage"), "ShotgunPuff",0,0,"Tracer",-12,-1)
+		TNT1 A 0 A_SetPitch(-8.0 + pitch);
+        SHTF B 2 BRIGHT A_SetTics(CountInv("PowerD4DFS") ? 0 : 2);
+		TNT1 A 0 A_ZoomFactor(1.0,ZOOM_NOSCALETURNING);
+		
+		SHTF C 1 A_SetPitch(+1.0 + pitch);
+		
+		SHTF DE 1 A_SetPitch(+1.0 + pitch);
+		
+		
+		SHTG A 1 A_SetPitch(+3.0 + pitch);
+		SHTG AA 1 { A_SetPitch(+1.0 + pitch); A_SetTics(CountInv("PowerD4DFS") ? 0 : 1); }
+		SHTG A 0
+		{
+			if(invoker.isBurstTwo)
+			{
+				invoker.shootsCount++;
+				A_Refire();
+			}
+		}
+		SHTG A 0 
+		{
+			if(invoker.isBurstTwo)
+			{
+				for(int i = 0; i < invoker.shootsCount; i++)
+				{
+					A_FireProjectile("ShotCaseSpawn",40,0,8,-18);
+				}
+				invoker.shootsCount = 0;
+				return ResolveState("ReadyToFireAgain");
+			}
+			return ResolveState(Null);
+		}
+		//TNT1 A 0 A_Jump(128, "Pump1")
+		Goto Pump1;
+		
+   Pump1:	
+   TNT1 A 0 A_GiveInventory ("Pumping", 1);
+   
+   SHTG BCDEFG 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   TNT1 A 0 A_FireProjectile("ShotCaseSpawn",40,0,8,-18);
+   SHTG H 1 { A_PlaySound("weapons/sgpump", 3); A_SetTics(CountInv("PowerD4DFS") ? 0 : 1); }
+   //TNT1 A 0 A_SetPitch(+1 + pitch)
+   SHTG IJ 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   //TNT1 A 0 A_SetPitch(-1 + pitch)
+   SHTG KL 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   SHTG KJIH 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   TNT1 A 0 A_Takeinventory("ShotgunWasEmpty",1);
+   SHTG GFEDC 1 { A_JumpIfInventory("Kicking",1,"DoKick"); A_SetTics(CountInv("PowerD4DFS") ? 0 : 1); }
+   Goto ReadyToFireAgain;
+   
+
+   Pump4:	
+   TNT1 A 0 A_GiveInventory ("Pumping", 1);
+   
+   SHTG BCDEFG 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   TNT1 AA 0 A_FireProjectile("ShotCaseSpawn",40,0,8,-18);
+   SHTG H 1 { A_PlaySound("weapons/sgpump", 3); A_SetTics(CountInv("PowerD4DFS") ? 0 : 1); }
+   //TNT1 A 0 A_SetPitch(+1 + pitch)
+   SHTG IJ 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   //TNT1 A 0 A_SetPitch(-1 + pitch)
+   SHTG KL 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   SHTG KJIH 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   TNT1 A 0 A_Takeinventory("ShotgunWasEmpty",1);
+   SHTG GFEDC 1 { A_JumpIfInventory("Kicking",1,"DoKick"); A_SetTics(CountInv("PowerD4DFS") ? 0 : 1); }
+   Goto ReadyToFireAgain;
+   
+   Pump2:	
+   TNT1 A 0 A_GiveInventory ("Pumping", 1);
+   TNT1 A 0 A_TakeInventory("Reloading", 1);
+	    TNT1 A 0 A_Takeinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+   SHTG FG 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   SHTG H 1 { A_PlaySound("weapons/sgpump", 3); A_SetTics(CountInv("PowerD4DFS") ? 0 : 1); }
+   //TNT1 A 0 A_SetPitch(+1 + pitch)
+   SHTG IJ 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   //TNT1 A 0 A_SetPitch(-1 + pitch)
+   SHTG KL 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   SHTG KJIH 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   TNT1 A 0 A_Takeinventory("ShotgunWasEmpty",1);
+   SHTG GFEDC 1 { A_JumpIfInventory("Kicking",1,"DoKick"); A_SetTics(CountInv("PowerD4DFS") ? 0 : 1); }
+   Goto ReadyToFireAgain;
+   
+	
+	Pump3:
+		SHTG H 0 A_PlaySound("weapons/sgpump");
+		SHTG CDEFGHIJKLKJIHGFEDCBA 1;
+	
+	ReadyToFireAgain:	
+   //SHTG A 6 <-- Old frame
+        SHTG A 1 Offset(10,36); // <-- New frames
+        SHTG A 1 Offset(9,40); //
+        SHTG A 1 Offset(4,40); //
+        SHTG A 1 Offset(0,32); //
+        SHTG A 0 A_Refire;
+        SHTG A 0; //A_Refire
+		Goto ReallyReady;
+		
+	Fire2:
+        TNT1 A 0 A_Takeinventory("Reloading",1);
+        TNT1 A 0 A_JumpIfInventory("ShotgunAmmo",1,2);
+        Goto Reload;
+        TNT1 AAAA 0;
+		TNT1 A 0 A_JumpIfInventory("ShotgunWasEmpty", 1, "Pump2");
+        //TNT1 AA 0 A_FireProjectile("SmokeSpawner",0,0,0,5)
+        TNT1 A 0 A_AlertMonsters;
+		TNT1 A 0 A_Quake(4, 4, 0, 32);
+		TNT1 A 0 A_ZoomFactor(1.05,ZOOM_NOSCALETURNING);
+		TNT1 A 0 A_SetBlend("orange",0.1,8);
+		RIFF AA 0 A_FireProjectileSmoke(0.2,0.17,true,0.55,0.1,0.005,STYLE_Translucent,"SMK9",FRAME_A,0,2);//A_FireProjectile("GunFireSmoke3", 0, 0, 0, 2, 0, 0)
+		RIFF A 0 A_FireProjectile("DistantFireShotgunSound", random(-1,1), 0, 0, -12, 0, random(-1,1));
+        TNT1 A 0 A_PlaySound("weapons/sg", 1);
+        TNT1 A 0;
+		TNT1 A 0 A_SpawnItemEx("PlayerMuzzle1",30,0,45);
+		SHTG A 0 A_FireBullets(3,3,10,7, "ShotgunPuff",0,0,"Tracer",0,-1);//A_FireBullets (GetCvar("be_sht_f2anghorspr"), GetCvar("be_sht_f2angverspr"), GetCvar("be_sht_f2numberbul"), GetCvar("be_sht_f2damage"), "ShotgunPuff",0,0,"Tracer",0,-1) //A_FireBullets (CallACS("Fire2HAngleSpr"), CallACS("Fire2VAngleSpr"), CallACS("Fire2BulletNum"), CallACS("Fire2Damage"), "ShotgunPuff",0,0,"Tracer",0,-1)
+		//TNT1 AAAAAAAAAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles", random(-15,15), 0, -1, 0, 0, random(-10,10))
+		TNT1 AAAAA 0; //A_FireProjectile("Tracer", random(-5,5), 0, -1, 0, 0, random(-5,5))
+		TNT1 A 0 A_SetPitch(-12.0 + pitch);
+		//TNT1 A 0 A_FireProjectile("ShakeYourAssDouble", 0, 0, 0, 0)
+		TNT1 A 0 A_Takeinventory("ShotgunAmmo",1);
+        SHT8 FF 1 BRIGHT A_SetPitch(+2.0 + pitch);
+		SHT8 GGAA 1 A_SetPitch(+2.0 + pitch);
+        SHT8 ADE 2	A_SetTics(CountInv("PowerD4DFS") ? 2 : 1);
+   TNT1 A 0 A_GiveInventory ("Pumping", 1);
+   SHTG BCDEFG 1 A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+   TNT1 A 0 A_FireProjectile("ShotCaseSpawn",40,0,8,-18);
+   SHTG H 1 A_PlaySound("weapons/sgpump");
+   SHTG IJKL 1 ;
+        TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+        SHTG KJIHGFEDCB 1;
+TNT1 A 0 A_ZoomFactor(1.2);
+SHT8 ED 1;
+TNT1 A 0 A_Refire;
+		Goto Ready2;
+	
+	
+	
+	
+	AltFire:
+        // TNT1 A 0
+		// {
+			// if(invoker.isBurstTwo)
+			// {
+				// Return ResolveState("AltFireBurst");
+			// }
+			// return ResolveState(Null);
+		// }
+		TNT1 A 0;
+		TNT1 A 0 A_JumpIfInventory("Zoomed",1,8);
+		TNT1 A 0 A_PlaySound("IronSights", 0);
+		TNT1 A 0 A_Giveinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.2);
+	//	TNT1 A 0 A_Giveinventory("ADSmode",1)
+        SHT8 E 1;
+        Goto Ready2;
+        TNT1 AAAAAA 0;
+        SHT8 D 1;
+		TNT1 A 0 A_Takeinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+		TNT1 A 0 A_Takeinventory("ADSmode",1);
+        Goto ReallyReady;
+
+	AltFireBurst:
+        TNT1 A 0 A_Takeinventory("Reloading",1);
+		TNT1 A 0 A_JumpIf(GetCvar("be_noautoreload") == 1 && CountInv("ShotgunAmmo") < 2 && CountInv("PowerD4DFS") == 0 && GetCvar("begunnergameplaymode") == 0,"OkToFire2");
+		TNT1 A 0 A_JumpIfInventory("Zoomed",1,"Fire2");
+        TNT1 A 0 A_JumpIfInventory("ShotgunAmmo",1,2);
+        Goto Reload;
+        TNT1 AAAA 0;
+		TNT1 A 0 A_JumpIfInventory("ShotgunWasEmpty", 1, "Pump2");
+        //TNT1 AA 0 A_FireProjectile("SmokeSpawner",0,0,0,5)
+		//TNT1 A 0 A_SetAngle(random(2, -2) + angle)
+		//TNT1 A 0 A_SetPitch(random(2, -2) + pitch)
+        TNT1 A 0 A_AlertMonsters;
+        TNT1 A 0 A_PlaySound("weapons/sg", 1);
+		TNT1 A 0 A_ZoomFactor(0.955,ZOOM_NOSCALETURNING);
+		TNT1 A 0 A_SetBlend("skyblue",0.1,8);
+		TNT1 A 0 A_Quake(4, 4, 0, 32);
+		RIFF AA 0 A_FireProjectileSmoke(0.2,0.17,true,0.55);//A_FireProjectile("GunFireSmoke3", 0, 0, 0, 0, 0, 0)
+		RIFF A 0 A_FireProjectile("DistantFireShotgunSound", random(-1,1), 0, 0, -12, 0, random(-1,1));
+        TNT1 A 0;
+		TNT1 A 0 A_SpawnItemEx("PlayerMuzzle1",30,5,30);
+		TNT1 AAAAAAAAAAAAAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles", random(-12,12), 0, -1, 0, 0, random(-9,9));
+		TNT1 AAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles2", random(-12,12), 0, -1, 0, 0, random(-9,9));		
+		//TNT1 AAAAAAAAAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles", random(-15,15), 0, -1, 0, 0, random(-10,10))
+		TNT1 AAAAA 0; //A_FireProjectile("Tracer", random(-3,3), 0, -1, -12, 0, random(-5,5))
+		//RIFF AAAAAA 0 A_FireProjectile("WallPenetrationHitscan", random(-3,3), 0, -1, 0, 0, random(-3,3))
+        //TNT1 A 0 ACS_Execute(374, 0, 0, 0, 0)
+		//TNT1 A 0 A_FireProjectile("ShakeYourAssDouble", 0, 0, 0, 0)
+		TNT1 A 0 A_Takeinventory("ShotgunAmmo",2);
+		SHTF A 2 BRIGHT A_FireProjectile("FreezerBall");
+		//A_FireBullets (GetCvar("be_sht_f1anghorspr"), GetCvar("be_sht_f1angverspr"), GetCvar("be_sht_f1numberbul"), GetCvar("be_sht_f1damage"), "ShotgunPuff",0,0,"Tracer",-12,-1)//A_FireBullets (CallACS("Fire1HAngleSpr", 0, 0, 0), CallACS("Fire1VAngleSpr", 0, 0, 0), CallACS("Fire1BulletNum"), CallACS("Fire1Damage"), "ShotgunPuff",0,0,"Tracer",-12,-1)
+		TNT1 A 0 A_SetPitch(-8.0 + pitch);
+        SHTF B 2 BRIGHT A_SetTics(CountInv("PowerD4DFS") ? 0 : 2);
+		TNT1 A 0 A_ZoomFactor(1.0,ZOOM_NOSCALETURNING);
+		
+		SHTF C 1 A_SetPitch(+1.0 + pitch);
+		
+		SHTF DE 1 A_SetPitch(+1.0 + pitch);
+		
+		
+		SHTG A 1 A_SetPitch(+3.0 + pitch);
+		SHTG AA 1 { A_SetPitch(+1.0 + pitch); A_SetTics(CountInv("PowerD4DFS") ? 0 : 1); }
+		//TNT1 A 0 A_Jump(128, "Pump1")
+		Goto Pump1;
+		
+	WarmUp:
+	TNT1 A 0;
+	TNT1 A 0 A_TakeInventory ("NeverSelectedShotgun", 1);
+   TNT1 A 0 A_TakeInventory("Reloading", 1);
+	    TNT1 A 0 A_Takeinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+	SHSS EFGHIJKLM 1;
+   SHTG FG 1;
+   SHTG H 1 A_PlaySound("weapons/sgpump", 3);
+   //TNT1 A 0 A_SetPitch(+1 + pitch)
+   SHTG IJ 1;
+   //TNT1 A 0 A_SetPitch(-1 + pitch)
+   SHTG KL 1;
+   SHTG KJIH 1;
+   TNT1 A 0 A_Takeinventory("ShotgunWasEmpty",1);
+   SHTG GFEDC 1 A_JumpIfInventory("Kicking",1,"DoKick");
+   Goto ReadyToFireAgain;
+	
+	Spawn:
+		SHTC A -1;
+		Stop;
+    
+	   FlashKicking:
+		AUSK A 1; 
+		AUSK B 1;
+		AUSK C 1; 
+		AUSK D 3;
+		AUSK E 3;
+		AUSK D 3; 
+		AUSK C 1;
+		AUSK B 1; 
+		AUSK A 1;
+		TNT1 A 0;
+		SHTG AAA 1;
+		Stop;
+
+	
+	AirKick:
+	    TNT1 A 0 A_jumpifinventory("PowerStrength",1,"SuperAirKick");
+		TNT1 A 0 A_PlaySound("KICK");
+		TNT1 A 0 A_Recoil (-6);
+		KICK JKLMN 1;
+        RIFF A 0 A_FireProjectile("AirKickAttack", 0, 0, 0, -31);
+        KICK O 3;
+		KICK A 0 A_Takeinventory("Kicking",1);
+		KICK PQRST 2;
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		Goto Ready+14;
+		
+	SuperAirKick:
+		TNT1 A 0 A_PlaySound("KICK");
+		TNT1 A 0 A_Recoil (-6);
+		KICK JKLMN 1;
+        RIFF A 0 A_FireProjectile("SuperAirKickAttack", 0, 0, 0, -31);
+        KICK O 3;
+		KICK A 0 A_Takeinventory("Kicking",1);
+		KICK PQRST 2;
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		Goto Ready+14;
+
+	 TurboReload:
+		RIFG A 0 A_JumpIf(CountInv("Shell2") == 0, "ReallyReady");
+		SHTG BC 0;
+	TurboBullets:	
+		TNT1 A 0;
+		TNT1 A 0 A_JumpIfInventory("ShotgunAmmo",12,"FinishTurboReload");
+        TNT1 A 0 A_JumpIfInventory("Shell2",1,3);
+        Goto FinishTurboReload;
+        TNT1 AAAA 0;
+        TNT1 A 0 A_Giveinventory("ShotgunAmmo",2);
+		TNT1 A 0 A_Takeinventory("Shell2",1);
+		Goto TurboBullets;
+	FinishTurboReload:
+		SHTG A 1 A_Refire;
+		Goto ReallyReady;
+		
+
+    ReloadWithNoAmmoLeft:
+    Reload:
+	    TNT1 A 0;
+	    TNT1 A 0;
+		TNT1 A 0 A_TakeInventory("Reloading", 1);
+	    TNT1 A 0 A_Takeinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+		SHTG A 1 A_WeaponReady;
+		TNT1 A 0
+		{
+			if(invoker.isBurstTwo && invoker.shootsCount > 0)
+			{
+				for(int i = 0; i < invoker.shootsCount; i++)
+				{
+					A_FireProjectile("ShotCaseSpawn",40,0,8,-18);
+				}
+				invoker.shootsCount = 0;
+			}
+		}
+		TNT1 A 0 A_JumpIfInventory("PowerD4DFS",1,"TurboReload");
+		TNT1 A 0 A_JumpIf(GetCvar("begunnergameplaymode") == 1,"TurboReload");
+		TNT1 A 0 A_JumpIfInventory("ShotgunAmmo",12,"Pump3");
+		TNT1 A 0 A_JumpIfInventory("ShotgunAmmo", 1, "ReloadNormally");
+		TNT1 A 0 A_GiveInventory("ShotgunWasEmpty", 1);
+	ReloadNormally:
+		
+		TNT1 A 0 A_JumpIf( CountInv("Shell2") == 0,"ReallyReady");
+		SHTG B 1;
+		TNT1 A 0 A_GiveInventory ("Pumping", 1);
+		SHTG CDE 1;
+		SSHR A 0;
+	ReloadLoop:
+		"####" A 0 A_JumpIf(CountInv("ShotgunAmmo") == 12 || CountInv("Shell2") == 0, "FinishReload");
+		"####" ABJKC 2
+		{
+			if (GetPlayerInput(INPUT_BUTTONS) & BT_ATTACK) // && !(GetPlayerInput(INPUT_OLDBUTTONS) & BT_ATTACK))
+			{
+				return ResolveState("Pump2");
+			//	A_Log("You are holding it!");
+			}
+			else
+			{
+				return ResolveState(Null);
+			}			
+		}
+        "####" D 1;
+		"####" A 0
+		{
+			A_PlaySound("insertshell");
+			if( CountInv("Shell2") == 1 || CountInv("ShotgunAmmo") == 11)
+			{
+				A_Giveinventory("ShotgunAmmo",1);
+				A_Takeinventory("Shell2",1);
+			}
+			else
+			{
+				A_Giveinventory("ShotgunAmmo",2);
+				A_Takeinventory("Shell2",2);				
+			}
+		}
+        "####" EFGHI 2
+		{
+			if (GetPlayerInput(INPUT_BUTTONS) & BT_ATTACK) // && !(GetPlayerInput(INPUT_OLDBUTTONS) & BT_ATTACK))
+			{
+				return ResolveState("Pump2");
+			//	A_Log("You are holding it!");
+			}
+			else
+			{
+				return ResolveState(Null);
+			}			
+		}		
+        "####" A 1
+		{
+			if (GetPlayerInput(INPUT_BUTTONS) & BT_ATTACK) // && !(GetPlayerInput(INPUT_OLDBUTTONS) & BT_ATTACK))
+			{
+				return ResolveState("Pump2");
+			//	A_Log("You are holding it!");
+			}
+			else
+			{
+				return ResolveState(Null);
+			}
+		}
+        "####" A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+		Goto ReloadLoop;
+	
+	FinishReload:
+		TNT1 A 0 A_JumpIfInventory("ShotgunWasEmpty", 1, "Pump2");
+		SHTG FEDCBA 1 A_WeaponReady;
+		Goto ReallyReady;		
+/*		
+	ReloadNormally:	
+        TNT1 A 0 A_JumpIfInventory("Shell2",1,3);
+        Goto ReallyReady;
+        TNT1 AA 0;
+		SHTG B 1 ;//A_PlaySound("weapons/sgpump")
+		TNT1 A 0 A_GiveInventory ("Pumping", 1);
+		SHTG CDE 1;
+
+        TNT1 AAAA 0;
+        TNT1 A 0 A_JumpIfInventory("Shell2",1,2);
+        Goto Reload+53;
+        TNT1 AAAAA 0;
+
+
+		TNT1 A 0 A_GiveInventory ("Pumping", 1);
+        TNT1 A 0 A_JumpIfInventory("ShotgunAmmo",12,23);
+		//TNT1 A 0 A_JumpIfInventory("Shell2",0,23)
+        TNT1 A 0;
+
+        SSHR ABC 3  A_SetTics(CountInv("PowerD4DFS") ? 1 : 3);
+		{
+			A_SetTics(CountInv("PowerD4DFS") ? 1 : 3);
+			if (GetPlayerInput(INPUT_BUTTONS) & BT_ATTACK) // && !(GetPlayerInput(INPUT_OLDBUTTONS) & BT_ATTACK))
+			{
+				return state("Pump2");
+			//	A_Log("You are holding it!");
+			}
+			else
+			{
+				return state(0);
+			}			
+		}	
+        SSHR D 1
+		{
+			if (GetPlayerInput(INPUT_BUTTONS) & BT_ATTACK) // && !(GetPlayerInput(INPUT_OLDBUTTONS) & BT_ATTACK))
+			{
+				return ResolveState("Pump2");
+			//	A_Log("You are holding it!");
+			}
+			else
+			{
+				return ResolveState(Null);
+			}			
+		}
+		TNT1 A 0 A_PlaySound("insertshell");
+        TNT1 A 0 A_Giveinventory("ShotgunAmmo",2);
+		TNT1 A 0 A_Takeinventory("Shell2",1);	
+        SSHR EFG 2
+		{
+			if (GetPlayerInput(INPUT_BUTTONS) & BT_ATTACK) // && !(GetPlayerInput(INPUT_OLDBUTTONS) & BT_ATTACK))
+			{
+				return ResolveState("Pump2");
+			//	A_Log("You are holding it!");
+			}
+			else
+			{
+				return ResolveState(Null);
+			}			
+		}		
+        SSHR A 1
+		{
+			if (GetPlayerInput(INPUT_BUTTONS) & BT_ATTACK) // && !(GetPlayerInput(INPUT_OLDBUTTONS) & BT_ATTACK))
+			{
+				return ResolveState("Pump2");
+			//	A_Log("You are holding it!");
+			}
+			else
+			{
+				return ResolveState(Null);
+			}
+		}
+        TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+
+
+        Goto Reload+18;
+        TNT1 AAAAA 0;
+		TNT1 A 0 A_Takeinventory("Reloading",1);
+		TNT1 AAAAA 0;
+		TNT1 A 0 A_JumpIfInventory("ShotgunWasEmpty", 1, "Pump2");
+		SHTG FEDCBA 1 A_WeaponReady;
+		TNT1 A 0 A_Takeinventory("Reloading",1);
+		TNT1 A 0 A_JumpIfInventory("ShotgunWasEmpty", 1, "Pump2");
+		TNT1 A 0; //A_Giveinventory("SGFullReloaded",1)
+		Goto ReallyReady;
+/*		
+		
+	//AltFire:  Slam Fire Mode. Never used
+	    TNT1 A 0 A_Takeinventory("Reloading",1);
+		TNT1 A 0 A_JumpIfInventory("Zoomed",1,"Fire2");
+        TNT1 A 0 A_JumpIfInventory("ShotgunAmmo",1,2);
+        Goto Reload;
+        TNT1 AAAA 0;
+        //TNT1 AA 0 A_FireProjectile("SmokeSpawner",0,0,0,5)
+		TNT1 A 0 A_SetAngle(random(3, -3) + angle);
+		TNT1 A 0 A_SetPitch(random(3, -3) + pitch);
+        TNT1 A 0 A_AlertMonsters;
+        TNT1 A 0 A_PlaySound("weapons/sg", 1);
+        TNT1 A 0;
+		TNT1 A 0 A_SpawnItemEx("PlayerMuzzle1",30,5,30);
+		//TNT1 AAAAAAAAAAAA 0 BRIGHT A_FireProjectile("ShotgunParticles", random(-15,15), 0, -1, 0, 0, random(-10,10))
+		TNT1 AAAAA 0 A_FireProjectile("Tracer", random(-5,5), 0, -1, -12, 0, random(-5,5));
+        //TNT1 A 0 ACS_Execute(374, 0, 0, 0, 0)
+		//TNT1 A 0 A_FireProjectile("ShakeYourAssDouble", 0, 0, 0, 0)
+		TNT1 A 0 A_Takeinventory("ShotgunAmmo",1);
+		SHTG A 0 A_FireBullets (2.0, 2.0, 8, 8, "ShotgunPuff");
+		TNT1 A 0 A_SetPitch(-8.0 + pitch);
+        SHTF B 1 BRIGHT;
+		
+		SHTF C 1 A_SetPitch(+1.0 + pitch);
+		
+		SHTF DE 1 A_SetPitch(+1.0 + pitch);
+		
+		
+		SHTG A 1 A_SetPitch(+3.0 + pitch);
+		SHTG AA 1 A_SetPitch(+1.0 + pitch);
+		
+		SHSL A 1;
+        TNT1 A 0 A_PlaySound("weapons/sgpump", 3);
+		SHSL BC 1;
+		TNT1 A 0 A_FireProjectile("ShotCaseSpawn",0,0,-4,-4);
+		SHSL DEDCBA 1;
+		SHTG A 1;
+		TNT1 A 0 A_Refire;
+		Goto AltFire;*/
+	}
+}

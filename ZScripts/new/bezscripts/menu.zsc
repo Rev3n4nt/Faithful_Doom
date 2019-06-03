@@ -1,0 +1,1110 @@
+//THANKS NASH :)
+ 
+class BeMainMenu : OptionMenu version("2.5")
+{
+	override void Drawer ()
+	{
+		Super.Drawer();
+
+		String s;
+
+		switch (mDesc.mSelectedItem)
+		{
+		case 7:
+			s = StringTable.Localize("$BDHOWMUCHBLOOD");
+			break;
+		case 9:
+			s = StringTable.Localize("$BDJANITOR");
+			break;
+		case 15:
+			s = StringTable.Localize("$BDBULLETPEN");
+			break;
+		Default:
+			s = "";
+			break;
+		}
+
+		screen.DrawText (SmallFont, OptionMenuSettings.mFontColorValue,
+			(screen.GetWidth() - SmallFont.StringWidth (s) * CleanXfac_1) / 2,
+			screen.GetHeight() - (SmallFont.GetHeight() * 8),
+			s,
+			DTA_CleanNoMove_1, true);
+
+		s = "";
+	}
+}
+
+Class BeChallengesMenu: OptionMenu version("2.5")
+{
+	override void Drawer ()
+	{
+		Super.Drawer();
+
+		String s;
+
+		switch (mDesc.mSelectedItem)
+		{
+		case 1:
+			s = StringTable.Localize("$BECHANHELLBOUND");
+			break;
+		case 3:
+			s = StringTable.Localize("$BECHANDAMNATION");
+			break;
+		case 5:
+			s = StringTable.Localize("$BECHANDESPAIR"); //
+			break;
+		case 7:
+			s = StringTable.Localize("$BECHANPHANTASM");
+			break;
+		case 9:
+			s = StringTable.Localize("$BECHANHELLTIME");
+			break;
+		case 11:
+			s = StringTable.Localize("$BECHANOBLIVION");
+			break;
+		case 13:
+			s = StringTable.Localize("$BECHANBERSERK");
+			break;
+		case 17:
+			s = StringTable.Localize("$BECHANBLINKING");
+			break;
+		case 19:
+			s = StringTable.Localize("$BECHANUNSTOP");
+			break;
+		case 21:
+			s = StringTable.Localize("$BECHANVETERAN");
+			break;
+		case 23:
+			s = StringTable.Localize("$BECHANGUNNER");
+			break;
+		case 25:
+			s = StringTable.Localize("$BENOARMORPENALTY");
+			break;
+		case 27:
+			s = StringTable.Localize("$BENOARMORTILT");
+			break;
+		Default:
+			s = "";
+			break;
+		}
+
+		switch (mDesc.mSelectedItem)
+		{
+		case 1:
+			screen.DrawText (SmallFont, OptionMenuSettings.mFontColorValue,
+			(screen.GetWidth() - SmallFont.StringWidth (s) * CleanXfac_1)/2,
+			screen.GetHeight() - (SmallFont.GetHeight() * 8),
+			s,
+			DTA_CleanNoMove_1, true);	
+		break;
+		
+		case 3:
+			screen.DrawText (SmallFont, OptionMenuSettings.mFontColorValue,
+			(screen.GetWidth() - SmallFont.StringWidth (s) * CleanXfac_1) / 4,
+			screen.GetHeight() - (SmallFont.GetHeight() * 16),
+			s,
+			DTA_CleanNoMove_1, true);	
+		break;
+		
+		case 5:	
+		case 7:
+		case 9:
+		case 11:
+		case 13:
+		case 17:
+		case 19:
+		case 21:
+		case 23:
+		case 25:
+		case 27:
+			screen.DrawText (SmallFont, OptionMenuSettings.mFontColorValue,
+			(screen.GetWidth() - SmallFont.StringWidth (s) * CleanXfac_1) / 2,
+			screen.GetHeight() - (SmallFont.GetHeight() * 8),
+			s,
+			DTA_CleanNoMove_1, true);			
+		break;
+		}
+			s = "";
+	}
+}
+
+class BEMAINMENUGAME : ListMenu version("2.5")
+{
+	override void Drawer ()
+	{
+		Super.Drawer();
+
+		String s;
+
+		switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			s = StringTable.Localize("$BEMAINMENUNEWGAME");
+			break;
+		case 1:
+			s = StringTable.Localize("$BEMAINMENULIMBOOO");
+			break;
+		case 2:
+			if(Cvar.FindCvar("PlayDPWH").GetInt() == 1)
+			{
+				s = StringTable.Localize("$BEMAINMENUDPWH");
+				break;
+			}
+			else
+			{
+				s = StringTable.Localize("$BEMAINMENULBLACKT");
+				break;
+			}
+		case 3:
+			s = StringTable.Localize("$BEMAINMENUVIVESEC");
+			break;
+		case 4:
+			s = StringTable.Localize("$BEMAINMENUQUITMEE");
+			break;	
+		Default:
+			s = "";
+			break;
+		}
+
+		screen.DrawText (SmallFont, OptionMenuSettings.mFontColorValue,
+			(screen.GetWidth() - SmallFont.StringWidth (s) * CleanXfac_1) / 2,
+			screen.GetHeight() - (SmallFont.GetHeight() * 8),
+			s,
+			DTA_CleanNoMove_1, true);
+
+		s = "";
+	}
+	override bool MenuEvent (int mkey, bool fromcontroller)
+	{
+		int oldSelect = mDesc.mSelectedItem;
+		int startedAt = mDesc.mSelectedItem;
+		if (startedAt < 0) startedAt = 0;
+
+		switch (mkey)
+		{
+		case MKEY_Up:
+			do
+			{
+				if (--mDesc.mSelectedItem < 0) mDesc.mSelectedItem = mDesc.mItems.Size()-1;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			
+			switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			MenuSound("menu/benewgame");
+			break;
+		case 1:
+			MenuSound("menu/limbo");
+			break;
+		case 2:
+			MenuSound("menu/blacktract");
+			break;			
+		case 3:
+			MenuSound("menu/vivisection");
+			break;
+		case 4:
+			MenuSound("menu/bequitgame");
+			break;	
+		}
+			return true;
+
+		case MKEY_Down:
+			do
+			{
+				if (++mDesc.mSelectedItem >= mDesc.mItems.Size()) mDesc.mSelectedItem = 0;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			MenuSound("menu/benewgame");
+			break;
+		case 1:
+			MenuSound("menu/limbo");
+			break;
+		case 2:
+			MenuSound("menu/blacktract");
+			break;			
+		case 3:
+			MenuSound("menu/vivisection");
+			break;
+		case 4:
+			MenuSound("menu/bequitgame");
+			break;
+		}
+			return true;
+
+		case MKEY_Enter:
+			if(Cvar.FindCvar("PlayDPWH").GetInt() == 1 && mDesc.mSelectedItem == 2)
+			{
+				MenuSound("menu/beentersetting");
+				Menu.SetMenu("DPWHperformance");
+				return true;
+			}		
+			if (mDesc.mSelectedItem >= 0 && mDesc.mItems[mDesc.mSelectedItem].Activate())
+			{
+				MenuSound("menu/beentersetting");
+			}
+			return true;
+		default:
+			return Super.MenuEvent(mkey, fromcontroller);
+		}
+	}
+	
+	override bool MouseEvent(int type, int x, int y)
+	{
+		int sel = -1;
+
+		// convert x/y from screen to virtual coordinates, according to CleanX/Yfac use in DrawTexture
+		x = ((x - (screen.GetWidth() / 2)) / CleanXfac) + 160;
+		y = ((y - (screen.GetHeight() / 2)) / CleanYfac) + 100;
+
+		if (mFocusControl != NULL)
+		{
+			mFocusControl.MouseEvent(type, x, y);
+			return true;
+		}
+		else
+		{
+			if ((mDesc.mWLeft <= 0 || x > mDesc.mWLeft) &&
+				(mDesc.mWRight <= 0 || x < mDesc.mWRight))
+			{
+				for(int i=0;i<mDesc.mItems.Size(); i++)
+				{
+					if (mDesc.mItems[i].CheckCoordinate(x, y))
+					{
+						if (i != mDesc.mSelectedItem)
+						{
+						//	MenuSound("menu/cursor");
+		switch (i)
+		{
+		case 0:
+			MenuSound("menu/benewgame");
+			break;
+		case 1:
+			MenuSound("menu/limbo");
+			break;
+		case 2:
+			MenuSound("menu/blacktract");	
+			break;			
+		case 3:
+			MenuSound("menu/vivisection");
+			break;
+		case 4:
+			MenuSound("menu/bequitgame");
+			break;	
+		}					
+						}
+						
+						mDesc.mSelectedItem = i;
+						mDesc.mItems[i].MouseEvent(type, x, y);
+						return true;
+					}
+				}
+			}
+		}
+		mDesc.mSelectedItem = -1;
+		return Super.MouseEvent(type, x, y);
+	}
+	
+}
+
+Class BEPLAYERCLASSMENUz: ListMenu version("2.5")
+{
+
+	override bool MenuEvent (int mkey, bool fromcontroller)
+	{
+		int oldSelect = mDesc.mSelectedItem;
+		int startedAt = mDesc.mSelectedItem;
+		if (startedAt < 0) startedAt = 0;
+
+		switch (mkey)
+		{
+		case MKEY_Up:
+			do
+			{
+				if (--mDesc.mSelectedItem < 0) mDesc.mSelectedItem = mDesc.mItems.Size()-1;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			
+			switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			MenuSound("menu/besubmenusel");
+			break;
+		case 1:
+			MenuSound("menu/besubmenusel");
+			break;
+		}
+			return true;
+
+		case MKEY_Down:
+			do
+			{
+				if (++mDesc.mSelectedItem >= mDesc.mItems.Size()) mDesc.mSelectedItem = 0;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			MenuSound("menu/besubmenusel");
+			break;
+		case 1:
+			MenuSound("menu/besubmenusel");
+			break;
+		}
+			return true;
+
+		case MKEY_Enter:
+			if (mDesc.mSelectedItem >= 0 && mDesc.mItems[mDesc.mSelectedItem].Activate())
+			{
+				MenuSound("menu/besubmenuselop");
+			}
+			return true;
+		default:
+			return Super.MenuEvent(mkey, fromcontroller);
+		}
+	}
+	
+	override bool MouseEvent(int type, int x, int y)
+	{
+		int sel = -1;
+
+		// convert x/y from screen to virtual coordinates, according to CleanX/Yfac use in DrawTexture
+		x = ((x - (screen.GetWidth() / 2)) / CleanXfac) + 160;
+		y = ((y - (screen.GetHeight() / 2)) / CleanYfac) + 100;
+
+		if (mFocusControl != NULL)
+		{
+			mFocusControl.MouseEvent(type, x, y);
+			return true;
+		}
+		else
+		{
+			if ((mDesc.mWLeft <= 0 || x > mDesc.mWLeft) &&
+				(mDesc.mWRight <= 0 || x < mDesc.mWRight))
+			{
+				for(int i=0;i<mDesc.mItems.Size(); i++)
+				{
+					if (mDesc.mItems[i].CheckCoordinate(x, y))
+					{
+						if (i != mDesc.mSelectedItem)
+						{
+							MenuSound("menu/besubmenusel");					
+						}
+						
+						mDesc.mSelectedItem = i;
+						mDesc.mItems[i].MouseEvent(type, x, y);
+						return true;
+					}
+				}
+			}
+		}
+		mDesc.mSelectedItem = -1;
+		return Super.MouseEvent(type, x, y);
+	}	
+
+}
+
+Class BELSMENUGAME: ListMenu version("2.5")
+{
+	override void Drawer ()
+	{
+		Super.Drawer();
+
+		String s;
+
+		switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			s = StringTable.Localize("$BEMAINMENULOADGAM");
+			break;
+		case 1:
+			s = StringTable.Localize("$BEMAINMENUSAVEGAM");
+			break;
+		Default:
+			s = "";
+			break;
+		}
+
+		screen.DrawText (SmallFont, OptionMenuSettings.mFontColorValue,
+			(screen.GetWidth() - SmallFont.StringWidth (s) * CleanXfac_1) / 2,
+			screen.GetHeight() - (SmallFont.GetHeight() * 8),
+			s,
+			DTA_CleanNoMove_1, true);
+
+		s = "";
+	}
+	
+	override bool MenuEvent (int mkey, bool fromcontroller)
+	{
+		int oldSelect = mDesc.mSelectedItem;
+		int startedAt = mDesc.mSelectedItem;
+		if (startedAt < 0) startedAt = 0;
+
+		switch (mkey)
+		{
+		case MKEY_Up:
+			do
+			{
+				if (--mDesc.mSelectedItem < 0) mDesc.mSelectedItem = mDesc.mItems.Size()-1;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			
+			switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			MenuSound("menu/besubmenusel");
+			break;
+		case 1:
+			MenuSound("menu/besubmenusel");
+			break;
+		}
+			return true;
+
+		case MKEY_Down:
+			do
+			{
+				if (++mDesc.mSelectedItem >= mDesc.mItems.Size()) mDesc.mSelectedItem = 0;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			MenuSound("menu/besubmenusel");
+			break;
+		case 1:
+			MenuSound("menu/besubmenusel");
+			break;
+		}
+			return true;
+
+		case MKEY_Enter:
+			if (mDesc.mSelectedItem >= 0 && mDesc.mItems[mDesc.mSelectedItem].Activate())
+			{
+				MenuSound("menu/besubmenuselop");
+			}
+			return true;
+		default:
+			return Super.MenuEvent(mkey, fromcontroller);
+		}
+	}
+	
+	override bool MouseEvent(int type, int x, int y)
+	{
+		int sel = -1;
+
+		// convert x/y from screen to virtual coordinates, according to CleanX/Yfac use in DrawTexture
+		x = ((x - (screen.GetWidth() / 2)) / CleanXfac) + 160;
+		y = ((y - (screen.GetHeight() / 2)) / CleanYfac) + 100;
+
+		if (mFocusControl != NULL)
+		{
+			mFocusControl.MouseEvent(type, x, y);
+			return true;
+		}
+		else
+		{
+			if ((mDesc.mWLeft <= 0 || x > mDesc.mWLeft) &&
+				(mDesc.mWRight <= 0 || x < mDesc.mWRight))
+			{
+				for(int i=0;i<mDesc.mItems.Size(); i++)
+				{
+					if (mDesc.mItems[i].CheckCoordinate(x, y))
+					{
+						if (i != mDesc.mSelectedItem)
+						{
+							MenuSound("menu/besubmenusel");					
+						}
+						
+						mDesc.mSelectedItem = i;
+						mDesc.mItems[i].MouseEvent(type, x, y);
+						return true;
+					}
+				}
+			}
+		}
+		mDesc.mSelectedItem = -1;
+		return Super.MouseEvent(type, x, y);
+	}	
+	
+	
+}
+
+Class BEPREOPMENU: ListMenu version("2.5")
+{
+	override void Drawer ()
+	{
+		Super.Drawer();
+
+		String s;
+
+		switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			s = StringTable.Localize("$BEMAINMENUPREOPOP");
+			break;
+		case 1:
+			s = StringTable.Localize("$BEMAINMENUPREOPBD");
+			break;
+		Default:
+			s = "";
+			break;
+		}
+
+		screen.DrawText (SmallFont, OptionMenuSettings.mFontColorValue,
+			(screen.GetWidth() - SmallFont.StringWidth (s) * CleanXfac_1) / 2,
+			screen.GetHeight() - (SmallFont.GetHeight() * 8),
+			s,
+			DTA_CleanNoMove_1, true);
+
+		s = "";
+	}
+	
+	override bool MenuEvent (int mkey, bool fromcontroller)
+	{
+		int oldSelect = mDesc.mSelectedItem;
+		int startedAt = mDesc.mSelectedItem;
+		if (startedAt < 0) startedAt = 0;
+
+		switch (mkey)
+		{
+		case MKEY_Up:
+			do
+			{
+				if (--mDesc.mSelectedItem < 0) mDesc.mSelectedItem = mDesc.mItems.Size()-1;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			
+			switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			MenuSound("menu/besubmenusel");
+			break;
+		case 1:
+			MenuSound("menu/besubmenusel");
+			break;
+		}
+			return true;
+
+		case MKEY_Down:
+			do
+			{
+				if (++mDesc.mSelectedItem >= mDesc.mItems.Size()) mDesc.mSelectedItem = 0;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			MenuSound("menu/besubmenusel");
+			break;
+		case 1:
+			MenuSound("menu/besubmenusel");
+			break;
+		}
+			return true;
+
+		case MKEY_Enter:
+			if (mDesc.mSelectedItem >= 0 && mDesc.mItems[mDesc.mSelectedItem].Activate())
+			{
+				MenuSound("menu/besubmenuselop");
+			}
+			return true;
+		default:
+			return Super.MenuEvent(mkey, fromcontroller);
+		}
+	}
+	
+	override bool MouseEvent(int type, int x, int y)
+	{
+		int sel = -1;
+
+		// convert x/y from screen to virtual coordinates, according to CleanX/Yfac use in DrawTexture
+		x = ((x - (screen.GetWidth() / 2)) / CleanXfac) + 160;
+		y = ((y - (screen.GetHeight() / 2)) / CleanYfac) + 100;
+
+		if (mFocusControl != NULL)
+		{
+			mFocusControl.MouseEvent(type, x, y);
+			return true;
+		}
+		else
+		{
+			if ((mDesc.mWLeft <= 0 || x > mDesc.mWLeft) &&
+				(mDesc.mWRight <= 0 || x < mDesc.mWRight))
+			{
+				for(int i=0;i<mDesc.mItems.Size(); i++)
+				{
+					if (mDesc.mItems[i].CheckCoordinate(x, y))
+					{
+						if (i != mDesc.mSelectedItem)
+						{
+							MenuSound("menu/besubmenusel");					
+						}
+						
+						mDesc.mSelectedItem = i;
+						mDesc.mItems[i].MouseEvent(type, x, y);
+						return true;
+					}
+				}
+			}
+		}
+		mDesc.mSelectedItem = -1;
+		return Super.MouseEvent(type, x, y);
+	}	
+	
+	
+}
+
+class BEOPTIONMENUS : OptionMenu version("2.5")
+{
+	override void Drawer ()
+	{
+		Super.Drawer();
+
+		// help text
+		String s;
+
+		// This is a shitty way to do tooltips.
+		// The proper way is to make a new widget that allows you to
+		// set the help text in its Init method but that would've required
+		// me to rewrite from scratch all the widgets I need (because you
+		// can't override Menu's Init method).
+		//
+		// Doing it this way, if you were to shuffle around the order of the
+		// widgets in the menu, the help text would be completely unsynchronized
+		switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			s = StringTable.Localize("$BEOPMENUCONT");
+			break;
+		case 1:
+			s = StringTable.Localize("$BEOPMENUMOUSE");
+			break;	
+		case 2:
+			s = StringTable.Localize("$BEOPMENUJOY");
+			break;
+		case 4:
+			s = StringTable.Localize("$BEOPMENUPLAYER");
+			break;
+		case 5:
+			s = StringTable.Localize("$BEOPMENUGAMEPL");
+			break;
+		case 6:
+			s = StringTable.Localize("$BEOPMENUCOMPA");
+			break;
+		case 7:
+			s = StringTable.Localize("$BEOPMENUAUTOM");
+			break;
+		case 8:
+			s = StringTable.Localize("$BEOPMENUHUD");
+			break;
+		case 9:
+			s = StringTable.Localize("$BEOPMENUMISC");
+			break;
+		case 10:
+			s = StringTable.Localize("$BEOPMENUNETWORK");
+			break;
+		case 11:
+			s = StringTable.Localize("$BEOPMENUSOUND");
+			break;
+		case 12:
+			s = StringTable.Localize("$BEOPMENUDISPL");
+			break;
+		case 13:
+			s = StringTable.Localize("$BEOPMENUVIDOP");
+			break;
+		case 14:
+			s = StringTable.Localize("$BEOPMENURENDER");
+			break;
+		case 16:
+			s = StringTable.Localize("$BEOPMENUDEF");
+			break;
+		case 17:
+			s = StringTable.Localize("$BEOPMENUSAVED");
+			break;
+		case 18:
+			s = StringTable.Localize("$BEOPMENUCONSOL");
+			break;			
+		Default:
+			s = "";
+			break;
+		}
+
+		screen.DrawText (SmallFont, OptionMenuSettings.mFontColorValue,
+			(screen.GetWidth() - SmallFont.StringWidth (s) * CleanXfac_1) / 2,
+			screen.GetHeight() - (SmallFont.GetHeight() * 8),
+			s,
+			DTA_CleanNoMove_1, true);
+
+		s = "";
+	}
+}
+ 
+Class BEPRECLASSMENU: ListMenu version("2.5")
+{
+	override void Drawer ()
+	{
+		Super.Drawer();
+
+		String s;
+
+		switch (mDesc.mSelectedItem)
+		{
+		case 1:
+			s = StringTable.Localize("$BEPRECLASSSELECTCHAN");
+			break;
+		case 0:
+			s = StringTable.Localize("$BEPRECLASSSELCLASSSEL");
+			break;
+		Default:
+			s = "";
+			break;
+		}
+
+		screen.DrawText (SmallFont, OptionMenuSettings.mFontColorValue,
+			(screen.GetWidth() - SmallFont.StringWidth (s) * CleanXfac_1) / 2,
+			screen.GetHeight() - (SmallFont.GetHeight() * 8),
+			s,
+			DTA_CleanNoMove_1, true);
+
+		s = "";
+	}
+	
+	override bool MenuEvent (int mkey, bool fromcontroller)
+	{
+		int oldSelect = mDesc.mSelectedItem;
+		int startedAt = mDesc.mSelectedItem;
+		if (startedAt < 0) startedAt = 0;
+
+		switch (mkey)
+		{
+		case MKEY_Up:
+			do
+			{
+				if (--mDesc.mSelectedItem < 0) mDesc.mSelectedItem = mDesc.mItems.Size()-1;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			
+			switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			MenuSound("menu/besubmenusel");
+			break;
+		case 1:
+			MenuSound("menu/besubmenusel");
+			break;
+		}
+			return true;
+
+		case MKEY_Down:
+			do
+			{
+				if (++mDesc.mSelectedItem >= mDesc.mItems.Size()) mDesc.mSelectedItem = 0;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			switch (mDesc.mSelectedItem)
+		{
+		case 0:
+			MenuSound("menu/besubmenusel");
+			break;
+		case 1:
+			MenuSound("menu/besubmenusel");
+			break;
+		}
+			return true;
+
+		case MKEY_Enter:
+			if (mDesc.mSelectedItem >= 0 && mDesc.mItems[mDesc.mSelectedItem].Activate())
+			{
+				MenuSound("menu/besubmenuselop");
+			}
+			return true;
+		default:
+			return Super.MenuEvent(mkey, fromcontroller);
+		}
+	}
+	
+	override bool MouseEvent(int type, int x, int y)
+	{
+		int sel = -1;
+
+		// convert x/y from screen to virtual coordinates, according to CleanX/Yfac use in DrawTexture
+		x = ((x - (screen.GetWidth() / 2)) / CleanXfac) + 160;
+		y = ((y - (screen.GetHeight() / 2)) / CleanYfac) + 100;
+
+		if (mFocusControl != NULL)
+		{
+			mFocusControl.MouseEvent(type, x, y);
+			return true;
+		}
+		else
+		{
+			if ((mDesc.mWLeft <= 0 || x > mDesc.mWLeft) &&
+				(mDesc.mWRight <= 0 || x < mDesc.mWRight))
+			{
+				for(int i=0;i<mDesc.mItems.Size(); i++)
+				{
+					if (mDesc.mItems[i].CheckCoordinate(x, y))
+					{
+						if (i != mDesc.mSelectedItem)
+						{
+							MenuSound("menu/besubmenusel");					
+						}
+						
+						mDesc.mSelectedItem = i;
+						mDesc.mItems[i].MouseEvent(type, x, y);
+						return true;
+					}
+				}
+			}
+		}
+		mDesc.mSelectedItem = -1;
+		return Super.MouseEvent(type, x, y);
+	}	
+	
+	
+}
+
+
+Class BESTARTGAME: ListMenu version("2.5")
+{
+
+	override bool MenuEvent (int mkey, bool fromcontroller)
+	{
+		int oldSelect = mDesc.mSelectedItem;
+		int startedAt = mDesc.mSelectedItem;
+		if (startedAt < 0) startedAt = 0;
+
+		switch (mkey)
+		{
+		case MKEY_Up:
+			do
+			{
+				if (--mDesc.mSelectedItem < 0) mDesc.mSelectedItem = mDesc.mItems.Size()-1;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			MenuSound("menu/cursor");
+			return true;
+
+		case MKEY_Down:
+			do
+			{
+				if (++mDesc.mSelectedItem >= mDesc.mItems.Size()) mDesc.mSelectedItem = 0;
+			}
+			while (!mDesc.mItems[mDesc.mSelectedItem].Selectable() && mDesc.mSelectedItem != startedAt);
+			if (mDesc.mSelectedItem == startedAt) mDesc.mSelectedItem = oldSelect;
+			MenuSound("menu/cursor");
+			return true;
+
+		case MKEY_Enter:
+			if (mDesc.mSelectedItem >= 0 && mDesc.mItems[mDesc.mSelectedItem].Activate())
+			{
+				if(CVar.FindCVar("bdbeonesoulmmodeen").GetInt() == 1)
+				{
+				CVar.FindCvar("bdplayerisalivebebe").SetInt(1);
+				}
+				MenuSound("menu/choose");
+			}
+			return true;
+
+		default:
+			return Super.MenuEvent(mkey, fromcontroller);
+		}
+	}
+}
+
+
+Class BEDeleteSaveMenu: LoadSaveMenu version("2.5")
+{
+//	int CurrentSaves;
+	
+	override void Init(Menu parent, ListMenuDescriptor desc)
+	{
+		Super.Init(parent, desc);
+		TopItem = 0;
+	//	CurrentSaves = 0;
+		Selected = manager.ExtractSaveData (-1);
+	}
+	
+	override bool MouseEvent(int type, int x, int y)
+	{
+	//	Selected = -1;
+		
+		return false;
+	}
+	
+		override bool MenuEvent (int mkey, bool fromcontroller)
+	{
+/*		if (Super.MenuEvent(mkey, fromcontroller)) 
+		{
+			return false;
+		}
+		if (Selected == -1)
+		{
+			return false;
+		}
+
+		if (mkey == MKEY_Enter)
+		{
+			return false;
+		}
+		else if (mkey == MKEY_Back)
+		{
+			return false;
+		}
+		else if  (mkey == MKEY_Up)
+		{
+			return false;
+		}
+		else if (mkey == MKEY_Down)
+		{
+			return false;
+		}
+		else if  (mkey == MKEY_PageUp)
+		{
+			return false;
+		}
+		else if (mkey == MKEY_PageDown)
+		{
+			return false;
+		}
+		else if (mkey == MKEY_Input)
+		{
+			return false;
+		}
+		else if (mkey == MKEY_Abort)
+		{
+			return false;
+		}
+		else if (mkey == MKEY_MBYes)
+		{
+			return false;
+		}*/
+		return false;
+	}
+	
+	override void Drawer ()
+	{	
+	
+		if (Selected < manager.SavegameCount() ) //&& CurrentSaves > 0
+		{
+			Selected = manager.RemoveSaveSlot (Selected);
+	//		CurrentSaves--;
+		}
+	
+		if ( manager.SavegameCount() == 0) //(CurrentSaves <= 0 && allsaved == true)||
+		{
+	//		CurrentSaves = 0;
+	//		allsaved = false;
+			Close();
+			return;
+		}
+	
+		Super.Drawer();
+
+		SaveGameNode node;
+		
+		int i;
+		int j;
+		bool didSeeSelected = false;
+
+		// Draw picture area
+		if (gameaction == ga_loadgame || gameaction == ga_loadgamehidecon || gameaction == ga_savegame)
+		{
+			return;
+		}
+
+		Screen.DrawFrame (savepicLeft, savepicTop, savepicWidth, savepicHeight);
+		if (!manager.DrawSavePic(savepicLeft, savepicTop, savepicWidth, savepicHeight))
+		{
+			screen.Clear (savepicLeft, savepicTop, savepicLeft+savepicWidth, savepicTop+savepicHeight, 0, 0);
+
+			if (manager.SavegameCount() > 0)
+			{
+				String text = (Selected == -1 || !manager.GetSavegame(Selected).bOldVersion)? Stringtable.Localize("$MNU_NOPICTURE") : Stringtable.Localize("$MNU_DIFFVERSION");
+				int textlen = SmallFont.StringWidth(text) * CleanXfac;
+
+				screen.DrawText (SmallFont, Font.CR_GOLD, savepicLeft+(savepicWidth-textlen)/2,
+					savepicTop+(savepicHeight-rowHeight)/2, text, DTA_CleanNoMove, true);
+			}
+		}
+
+		// Draw comment area
+		Screen.DrawFrame (commentLeft, commentTop, commentWidth, commentHeight);
+		screen.Clear (commentLeft, commentTop, commentRight, commentBottom, 0, 0);
+
+		manager.DrawSaveComment(SmallFont, Font.CR_GOLD, commentLeft, commentTop, CleanYfac);
+
+		// Draw file area
+		Screen.DrawFrame (listboxLeft, listboxTop, listboxWidth, listboxHeight);
+		screen.Clear (listboxLeft, listboxTop, listboxRight, listboxBottom, 0, 0);
+
+		if (manager.SavegameCount() == 0)
+		{
+			String text = Stringtable.Localize("$MNU_NOFILES");
+			int textlen = SmallFont.StringWidth(text) * CleanXfac;
+
+			screen.DrawText (SmallFont, Font.CR_GOLD, listboxLeft+(listboxWidth-textlen)/2, listboxTop+(listboxHeight-rowHeight)/2, text, DTA_CleanNoMove, true);
+			return;
+		}
+
+		j = TopItem;
+		
+		for (i = 0; i < listboxRows && j < manager.SavegameCount(); i++)
+		{
+			int colr;
+			node = manager.GetSavegame(j);
+			if (node.bOldVersion)
+			{
+				colr = Font.CR_BLUE;
+			}
+			else if (node.bMissingWads)
+			{
+				colr = Font.CR_ORANGE;
+			}
+			else if (j == Selected)
+			{
+				colr = Font.CR_WHITE;
+		//		CurrentSaves++;
+			}
+			else
+			{
+				colr = Font.CR_TAN;
+			}
+			if (j == Selected)
+			{
+				screen.Clear (listboxLeft, listboxTop+rowHeight*i, listboxRight, listboxTop+rowHeight*(i+1), mEntering ? Color(255,255,0,0) : Color(255,0,0,255));
+				didSeeSelected = true;
+				if (!mEntering)
+				{
+					screen.DrawText (SmallFont, colr, listboxLeft+1, listboxTop+rowHeight*i+CleanYfac, node.SaveTitle, DTA_CleanNoMove, true);
+				}
+				else
+				{
+					String s = mInput.GetText() .. SmallFont.GetCursor();
+					screen.DrawText (SmallFont, Font.CR_WHITE, listboxLeft+1, listboxTop+rowHeight*i+CleanYfac, s, DTA_CleanNoMove, true);
+				}
+			}
+			else
+			{
+				screen.DrawText (SmallFont, colr, listboxLeft+1, listboxTop+rowHeight*i+CleanYfac, node.SaveTitle, DTA_CleanNoMove, true);
+			}
+			j++;
+		}
+
+	} 
+	
+}

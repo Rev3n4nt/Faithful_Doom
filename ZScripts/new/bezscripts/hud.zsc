@@ -1,0 +1,160 @@
+Class BEStatusBar : BaseStatusBar
+{
+	HUDFont mHUDFont;
+	HUDFont mIndexFont;
+	HUDFont mAmountFont;
+	InventoryBarState diparms;
+	
+	int StaminaMaxAmount;
+	DynamicValueInterpolator staminaInterpolator;
+	DynamicValueInterpolator healthInterpolator;
+	DynamicValueInterpolator armorInterpolator;
+
+	override void Init()
+	{
+		Super.Init();
+		SetSize(0, 320, 200);
+		
+		Font fnt = "MM2SFNTO";
+		mHUDFont = HUDFont.Create(fnt, fnt.GetCharWidth("0"), true);
+		diparms = InventoryBarState.Create();		
+		
+		CompleteBorder = true;
+		
+		staminaInterpolator = DynamicValueInterpolator.Create(0, 0.25, 1, 8);
+		healthInterpolator = DynamicValueInterpolator.Create(0, 0.25, 1, 20);
+		armorInterpolator = DynamicValueInterpolator.Create(0, 0.25, 1, 20);
+	}
+
+	override void NewGame ()
+	{
+		Super.NewGame();
+
+		staminaInterpolator.Reset(0);
+		healthInterpolator.Reset(0);
+		armorInterpolator.Reset(0);
+	}
+
+	override void Tick()
+	{
+		Super.Tick();
+		StaminaMaxAmount = GetMaxAmount("Stamina");
+		staminaInterpolator.Update(GetAmount("Stamina"));
+		healthInterpolator.Update(CPlayer.health);
+		armorInterpolator.Update(GetArmorAmount());
+	}
+
+	override void Draw (int state, double TicFrac)
+	{
+		Super.Draw (state, TicFrac);
+		
+		if (state == HUD_Fullscreen && Cvar.FindCvar("be_showHud").GetInt() == 1)
+		{
+			BeginHUD();
+			//BeginStatusBar(true);
+			//BeginHUD(1, False);
+			DrawFullScreenStuff ();
+		}
+		
+	}
+
+	void DrawBarAlpha(String ongfx, String offgfx, double curval, double maxval, Vector2 position, int border, int vertical, int flags = 0, double alpha = 1., double scale = 1.)
+	{
+		let ontex = TexMan.CheckForTexture(ongfx, TexMan.TYPE_MiscPatch);
+		if (!ontex.IsValid()) return;
+		let offtex = TexMan.CheckForTexture(offgfx, TexMan.TYPE_MiscPatch);
+
+		Vector2 texsize = TexMan.GetScaledSize(ontex);
+		texsize.x *= scale;
+		texsize.y *= scale;
+		[position, flags] = AdjustPosition(position, flags, texsize.X, texsize.Y);
+
+		double value = (maxval != 0) ? clamp(curval / maxval, 0, 1) : 0;
+		if(border != 0) value = 1. - value; //invert since the new drawing method requires drawing the bg on the fg.
+
+		// {cx, cb, cr, cy}
+		double Clip[4];
+		Clip[0] = Clip[1] = Clip[2] = Clip[3] = 0;
+
+		bool horizontal = !(vertical & SHADER_VERT);
+		bool reverse = !!(vertical & SHADER_REVERSE);
+		double sizeOfImage = (horizontal ? texsize.X - border*2 : texsize.Y - border*2);
+		Clip[(!horizontal) | ((!reverse)<<1)] = sizeOfImage - sizeOfImage * value;
+
+		// preserve the active clipping rectangle
+		int cx, cy, cw, ch;
+		[cx, cy, cw, ch] = screen.GetClipRect();
+
+		if(border != 0)
+		{
+			for(int i = 0; i < 4; i++) Clip[i] += border;
+
+			//Draw the whole foreground
+			DrawTexture(ontex, position, flags | DI_ITEM_LEFT_TOP, alpha, scale: (scale, scale));
+			SetClipRect(position.X + Clip[0], position.Y + Clip[1], texsize.X - Clip[0] - Clip[2], texsize.Y - Clip[1] - Clip[3], flags);
+		}
+
+		if (offtex.IsValid()) { DrawTexture(offtex, position, flags | DI_ITEM_LEFT_TOP, alpha, scale: (scale, scale)); }
+
+		if (border == 0)
+		{
+			SetClipRect(position.X + Clip[0], position.Y + Clip[1], texsize.X - Clip[0] - Clip[2], texsize.Y - Clip[1] - Clip[3], flags);
+			DrawTexture(ontex, position, flags | DI_ITEM_LEFT_TOP, alpha, scale: (scale, scale));
+		}
+		// restore the previous clipping rectangle
+		screen.SetClipRect(cx, cy, cw, ch);
+	}
+	
+	protected void DrawFullScreenStuff()
+	{	
+
+		if(Cplayer && !automapactive)
+		{
+			Inventory ammotype1, ammotype2;
+			[ammotype1, ammotype2] = GetCurrentAmmo();
+
+			if (ammotype2 != null)
+			{
+			//	DrawInventoryIcon(ammotype1, (-14, -4), DI_TEXT_ALIGN_CENTER | DI_SCREEN_CENTER_BOTTOM);
+				DrawString(mHUDFont, FormatNumber(ammotype2.Amount, 3), (-30, -44), DI_TEXT_ALIGN_CENTER | DI_SCREEN_CENTER_BOTTOM);
+			}
+			if (ammotype1 != null && ammotype2 != ammotype1)
+			{
+			//	DrawInventoryIcon(ammotype2, (-14, invY + 17), DI_TEXT_ALIGN_CENTER | DI_SCREEN_CENTER_BOTTOM);
+				if ( ammotype1.Amount > 1000) DrawString(mHUDFont, FormatNumber(ammotype1.Amount, 3), (30, -44), DI_TEXT_ALIGN_CENTER | DI_SCREEN_CENTER_BOTTOM);
+				else DrawString(mHUDFont, FormatNumber(ammotype1.Amount, 3), (30, -44), DI_TEXT_ALIGN_CENTER | DI_SCREEN_CENTER_BOTTOM);
+				
+			}
+
+			bool locks[6];
+			String image;
+			for (int i = 0; i < 6; i++) locks[i] = CPlayer.mo.CheckKeys(i + 1, false, true);
+			// key 1
+			if (locks[1] && locks[4]) image = "STKEYS6";
+			else if (locks[1]) image = "STKEYS0";
+			else if (locks[4]) image = "STKEYS3";
+			DrawImage(image, (-12, -200), DI_ITEM_CENTER | DI_SCREEN_CENTER, 1, (-1, -1), (2, 2));
+			// key 2
+			if (locks[2] && locks[5]) image = "STKEYS7";
+			else if (locks[2]) image = "STKEYS1";
+			else if (locks[5]) image = "STKEYS4";
+			else image = "";
+			DrawImage(image, (0, -200), DI_ITEM_CENTER | DI_SCREEN_CENTER, 1, (-1, -1), (2, 2));
+			// key 3
+			if (locks[0] && locks[3]) image = "STKEYS8";
+			else if (locks[0]) image = "STKEYS2";
+			else if (locks[3]) image = "STKEYS5";
+			else image = "";
+			DrawImage(image, (12, -200), DI_ITEM_CENTER | DI_SCREEN_CENTER, 1, (-1, -1), (2, 2));
+			
+			DrawString(mHUDFont, FormatNumber(CPlayer.health, 0, 9), (-30, -23), DI_TEXT_ALIGN_CENTER | DI_SCREEN_CENTER_BOTTOM);
+			DrawBarAlpha("HORZHAMF", "HORZHAME", healthInterpolator.GetValue(), 200, (-24, -27), 0, SHADER_REVERSE | SHADER_HORZ,DI_ITEM_CENTER | DI_SCREEN_CENTER_BOTTOM,0.75);
+			
+			DrawString(mHUDFont, FormatNumber(GetArmorAmount(), 0, 9), (30, -23), DI_TEXT_ALIGN_CENTER | DI_SCREEN_CENTER_BOTTOM);
+			DrawBarAlpha("HORZARMF", "HORZHAME", armorInterpolator.GetValue(), 400, (24, -27), 0,  SHADER_HORZ,DI_ITEM_CENTER | DI_SCREEN_CENTER_BOTTOM,0.75);
+			
+			DrawBarAlpha("HORZSTMF", "HORZSTME", staminaInterpolator.GetValue(), StaminaMaxAmount, (0, -34), 0, SHADER_HORZ,DI_ITEM_CENTER | DI_SCREEN_CENTER_BOTTOM,0.75);
+		}
+	}
+
+}

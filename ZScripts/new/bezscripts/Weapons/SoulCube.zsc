@@ -1,0 +1,127 @@
+// --------------------------------------------------------------------------
+//
+// Soul Cube
+//
+// --------------------------------------------------------------------------
+
+Class SoulCube : BEWeapon
+{
+	Default
+	{
+   Weapon.SelectionOrder 9998;
+	Obituary "%o was sliced into ribbons by %k's SoulCube.";
+//	Inventory.Pickupmessage "We are the Praeleanthor, you know us as the SoulCube.";
+	Inventory.PickupSound "weapons/soulcube/get";
+   +WEAPON.NO_AUTO_SWITCH;
+   damagetype "SoulCube";
+   Scale 0.25;
+	}
+   States
+   {
+   Spawn:
+   	  TNT1 A 0;
+	  TNT1 A 0
+	  {
+		bTHRUACTORS = 1;
+	  }
+	  SCBG A 2;
+      TNT1 A 0 A_SpawnItem("SoulCubePickup");
+      Stop;
+   Ready:
+	  SCUB C 0 A_JumpIfInventory("SoulCubeLvl2",1,"Ready2");
+	  SCUB C 0 A_JumpIfInventory("SoulCubeLvl3",1,"Ready3");
+	  SCUB C 0 A_JumpIfInventory("SoulCubeLvl4",1,"Ready4");
+	  SCUB C 0 A_JumpIfInventory("SoulCubeLvl5",1,"Ready5");
+      SCUB C 0 A_JumpIfInventory ("SoulAmmo", 25, "ActuallyReady");
+      SCUB CDCB 5 A_WeaponReady;//(WRF_ALLOWUSER1)
+      Loop;
+	Ready2:
+	  SCUB C 0 A_JumpIfInventory ("SoulAmmo", 24, "ActuallyReady");
+      SCUB CDCB 5 A_WeaponReady;//(WRF_ALLOWUSER1)
+      Goto Ready;
+	Ready3:
+	  SCUB C 0 A_JumpIfInventory ("SoulAmmo", 23, "ActuallyReady");
+      SCUB CDCB 5 A_WeaponReady;//(WRF_ALLOWUSER1)
+      Goto Ready;
+	Ready4:
+	  SCUB C 0 A_JumpIfInventory ("SoulAmmo", 22, "ActuallyReady");
+      SCUB CDCB 5 A_WeaponReady;//(WRF_ALLOWUSER1)
+      Goto Ready;
+	Ready5:
+	  SCUB C 0 A_JumpIfInventory ("SoulAmmo", 20, "ActuallyReady");
+      SCUB CDCB 5 A_WeaponReady;//(WRF_ALLOWUSER1)
+      Goto Ready;
+   ActuallyReady:
+      SCUB DEFGHIJKLMNOPABC 4 A_WeaponReady;
+      Loop;
+   Deselect:
+      SCUB C 1 A_Lower;
+      Loop;
+   Select:
+      SCUB C 1 A_Raise;
+      Loop;
+
+   Fire:
+	SCUB A 0 A_JumpIfInventory("SoulCubeLvl2",1,"FireLvl2");
+	SCUB A 0 A_JumpIfInventory("SoulCubeLvl3",1,"FireLvl3");
+	SCUB A 0 A_JumpIfInventory("SoulCubeLvl4",1,"FireLvl4");
+	SCUB A 0 A_JumpIfInventory("SoulCubeLvl5",1,"FireLvl5");
+      SCUB C 0 A_JumpIfInventory ("SoulAmmo", 20, "Fire2");
+      SCUB C 5 A_Print ("Not enough souls!");
+      Goto Ready;
+
+	FireLvl2:
+      SCUB C 0 A_JumpIfInventory ("SoulAmmo", 19, "Fire2");
+      SCUB C 5 A_Print ("Not enough souls!");
+      Goto Ready;
+
+	 FireLvl3:
+      SCUB C 0 A_JumpIfInventory ("SoulAmmo", 18, "Fire2");
+      SCUB C 5 A_Print ("Not enough souls!");
+      Goto Ready;
+
+	FireLvl4:
+      SCUB C 0 A_JumpIfInventory ("SoulAmmo", 17, "Fire2");
+      SCUB C 5 A_Print ("Not enough souls!");
+      Goto Ready;
+
+	  FireLvl5:
+      SCUB C 0 A_JumpIfInventory ("SoulAmmo", 15, "Fire2");
+      SCUB C 5 A_Print ("Not enough souls!");
+      Goto Ready;
+
+   Fire2:
+      SCUB A 0 A_PlaySound("weapons/soulcube/fire", CHAN_WEAPON);
+      SCUB Q 5 A_FireProjectile("SoulCubeProj",0,0,0,0,0);
+      SCUB R 2;
+      SCUB S 2;
+      SCUB T 2;
+      SCUB U 2;
+      SCUB V 2;
+      SCUB V 0 A_TakeInventory("SoulCube");
+      Goto Ready;
+	AltFire:
+		SCUB C 0 A_JumpIfInventory("SoulCubeLvl2",1,"RealAltFire");
+		SCUB C 0 A_JumpIfInventory("SoulCubeLvl3",1,"RealAltFire");
+		SCUB C 0 A_JumpIfInventory("SoulCubeLvl4",1,"RealAltFire");
+		SCUB C 0 A_JumpIfInventory("SoulCubeLvl5",1,"RealAltFire");
+		SCUB C 5 A_Print ("Not enough power!");
+		Goto Ready;
+	RealAltFire:
+		SCUB DEFGHI 3;
+		SCUB I 0 A_PlaySound("SoulReaper/soulbeamloop",CHAN_WEAPON,1,1);
+		SCUB I 0 A_Refire("AltHold");
+	AltHold:
+	  	"####" I 0 A_RadiusGive("SoulSeekOn",2048,RGF_MONSTERS|RGF_NOSIGHT);
+		"####" I 0 Offset(2,34) bright A_FireProjectile("SoulReaperBeam",0,0,0,0);
+		"####" I 1 Offset(2,34) bright A_WeaponReady(WRF_NOSECONDARY|WRF_DISABLESWITCH|WRF_NOBOB);
+		"####" I 0 Offset(1,33) bright A_FireProjectile("SoulReaperBeam",0,0,0,0);
+		"####" I 1 Offset(1,33) bright A_WeaponReady(WRF_NOSECONDARY|WRF_DISABLESWITCH|WRF_NOBOB);
+		"####" I 0 A_Refire("AltHold");
+
+		"####" I 0 A_RadiusGive("SoulSeekOff",16383,RGF_MONSTERS|RGF_NOSIGHT);
+		"####" I 0 A_PlaySound("SoulReaper/soulbeamend",CHAN_WEAPON,1,0);
+		"####" IHGFED 3;
+		Goto Ready;
+   }
+}

@@ -1,0 +1,3890 @@
+// ACS Script Constants
+const acsFatality = 312;
+enum DoomerOverlay
+{
+Overlay_QuadDamage,
+};
+
+Class ReloadSpeed : Inventory
+{
+	Default
+	{
+		Inventory.MaxAmount 3;
+	}
+}
+
+Class BEDoomer : PlayerPawn Replaces DoomPlayer
+{
+	FlashLight light;
+	bool DrawRightFootPrint;
+	bool fallingPitch;
+	double damageSize;
+	double fadeInTimer;
+	double startBloodAlpha;
+	double baseAngle;
+	int BloodInTics;
+	int PlayerRunOrWalk; //Sprint 1 Run 0 Walk -1 
+
+	// static const class<Weapon> WeaponList[] =
+	// {
+		// null,
+		// "Melee_Attacks",
+		// "Chain_saw",
+		// "BDPistol",
+		// "Rifle",
+		// "Shot_Gun",
+		// "SSG",
+		// "MiniGun",
+		// "Rocket_Launcher",
+		// "Plasma_Gun",
+		// "BIG_FUCKING_GUN",
+		// "FlameCannon",
+		// "HellishMissileLauncher",
+		// "HitlersBuzzsaw",
+		// "MP40",
+		// "HandGrenades",
+		// "SoulCube"
+	// };
+	
+	// class<Weapon> lastWeapon;
+	// vector3 lastVel;
+
+	Default
+	{
+	Speed 1.0;
+	Health 100;
+	Radius 16;
+	Height 56;
+//	Mass 100
+    player.viewheight	42.5;
+    player.attackzoffset 16;
+	//player.attackzoffset 16
+    GibHealth 20;
+	PainChance 256;
+	+SOLID;
+	+THRUSPECIES;
+	+MTHRUSPECIES;
+	+DONTHARMCLASS;
+	+THRUGHOST; 
+	Species "Marines";
+    BloodType "Player_Blood";//, "SawBlood"
+    damagefactor "Head", 0.0;
+	damagefactor "FriendBullet", 0.0;
+    damagefactor "Taunt", 0.0;
+    damagefactor "KillMe", 0.0;
+	damagefactor "Shotgun", 0.7;
+    damagefactor "SSG", 5.0;
+    damagefactor "Shrapnel", 0.0;
+    damagefactor "Blood", 0.0;
+    damagefactor "BlueBlood", 0.0;
+    damagefactor "GreenBlood", 0.0;
+    damagefactor "MinorHead", 0.0;
+    damagefactor "Decaptate", 0.0;
+	damagefactor "MonsterKnocked", 0.0;
+//	damagefactor "MonsterBullet", 0.46
+//	damagefactor "MonsterShotgunBullet", 0.66
+//	damagefactor "MonsterCutless", 0.86
+    damagefactor "Trample", 8.0;
+	damagefactor "Kick", 3.0;
+	damagefactor "Fatality", 5.0;
+	damagefactor "CancelTeleportFog", 0.0;
+	damagefactor "BHFTOnBarrel", 0.0;
+	damagefactor "GibRemoving", 0.0;
+	damagefactor "SuperPunch", 5.0;
+	damagefactor "HelperMarineFatallity", 0.0;
+	damagefactor "Leg", 0.0;
+	damagefactor "SpawnMarine", 0.0;
+	damagefactor "TeleportRemover", 0.0;
+	DamageFactor "CauseObjectsToSplash", 0.0;
+	Player.ColorRange 112, 127;
+	player.portrait "PLR_TAC";
+	Player.StartItem "Stamina", 790;
+//	Player.StartItem "Rifle"
+	Player.StartItem "BDPistol";
+	Player.StartItem "Melee_Attacks";
+	Player.StartItem "FallingHands";
+	Player.StartItem "NullWeapon";
+	Player.StartItem "MediumArmor";
+	Player.StartItem "PistolBullets", 96;
+	Player.StartItem "PistolAmmo", 16;
+	
+//	Player.StartItem "RifleClip", 60
+	Player.StartItem "RifleAmmo", 31;
+	Player.StartItem "ShotgunAmmo", 12;
+	Player.StartItem "PlasmaAmmo", 50;
+	Player.StartItem "SSGAmmo", 2;
+	Player.StartItem "RocketRounds", 6;
+	Player.StartItem "IsPlayer", 1;
+	Player.StartItem "HandGrenades";
+//	Player.StartItem "GrenadeAmmo", 1
+	Player.StartItem "JustStartedGame", 1;
+	Player.StartItem "NeverSelectedShotgun", 1;
+	Player.StartItem "NeverSelectedRifle", 1;
+	Player.StartItem "NeverSelectedSSG", 1;
+	Player.StartItem "NeverSelectedRL", 1;
+	Player.StartItem "NeverSelectedPlasma", 1;
+	//Player.StartItem "TargetIsAMarine", 1
+	Player.SideMove 1.0,0.75;
+	Player.ForwardMove 1.0,0.5;
+	Player.JumpZ 7.4;
+	Player.DisplayName "Tactical(Recommended)";
+	Player.CrouchSprite "PLYC";
+	}
+
+	bool bIsInPain()
+	{
+		State PainState = Self.FindState('Pain');
+		if (PainState != NULL && Self.InStateSequence(Self.CurState, PainState))
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	void ToggleFlashLight()
+	{
+		S_Sound("flashlight/click",CHAN_UI);
+		if(light.on == false) light.Activate(self);
+		else light.DeActivate(self);
+	}
+	
+	void ResetInventory(void)
+	{
+		ClearInventory();
+		SetInventory("Stamina",790);
+	//	SetInventory("BDPistol",1);
+//		SetInventory("FallingHands",1);
+		SetInventory("NullWeapon",1);
+		SetInventory("PistolBullets",96);
+		SetInventory("PistolAmmo",16);
+		SetInventory("Melee_Attacks",1);
+		SetInventory("RifleAmmo",31);
+		SetInventory("ShotgunAmmo",12);
+		SetInventory("PlasmaAmmo",50);
+		SetInventory("SSGAmmo",2);
+		SetInventory("RocketRounds",6);
+		SetInventory("IsPlayer",1);
+		A_SelectWeapon("Melee_Attacks");
+	}
+	
+	void InitFlashLight()
+	{
+		light = FlashLight(Actor.Spawn("FlashLight",self.pos));
+		light.toFollow = self;
+	}
+	
+	override void PostBeginPlay()
+	{
+		DrawRightFootPrint = false;
+		startBloodAlpha = 0.0;
+		BloodInTics = 0;
+		baseAngle = 0;
+		Super.PostBeginPlay();
+		//lastVel = vel;
+	}
+	
+	override void CheckUndoMorph()
+	{
+		Super.CheckUndoMorph();
+		A_SetRoll(0);
+	}
+	
+	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
+	{
+		fallingPitch = false;
+		int Armor = 0;
+		let arm = BasicArmor(FindInventory("BasicArmor"));
+		if (arm)	Armor = arm.Amount;
+		if (Armor > 250) arm.SavePercent = clamp(90.0, 0, 100) / 100;
+		else arm.SavePercent = clamp(66.6, 0, 100) / 100;
+		int finalDamage = Super.DamageMobj(inflictor, source, damage, mod, flags, angle);
+
+		if (finalDamage > 0)
+		{
+			if(Armor > 0) damageSize += log(finalDamage) / 34.0;
+			else if(mod == "MonsterCutless" || mod == "MonsterShotgunBullet" || mod == "MonsterBullet")
+			{
+				damageSize += log(finalDamage) / 28.0;
+				
+			}
+			else
+			{
+				damageSize += log(finalDamage) / 12.0;
+			}
+		}			
+		return finalDamage;
+	}
+	
+	override void DeathThink ()
+	{
+		let player = self.player;
+		int dir;
+		double delta;
+
+		player.Uncrouch();
+		TickPSprites();
+
+		player.onground = (pos.Z <= floorz);
+		if (self is "PlayerChunk")
+		{ // Flying bloody skull or flying ice chunk
+			player.viewheight = 6;
+			player.deltaviewheight = 0;
+			if (player.onground)
+			{
+				if (Pitch > -19.)
+				{
+					double lookDelta = (-19. - Pitch) / 8;
+					Pitch += lookDelta;
+				}
+			}
+		}
+		else if (!bIceCorpse)
+		{ // Fall to ground (if not frozen)
+			player.deltaviewheight = 0;
+			if (player.viewheight > 6)
+			{
+				player.viewheight -= 1;
+			}
+			if (player.viewheight < 6)
+			{
+				player.viewheight = 6;
+			}
+			if (Pitch < 0)
+			{
+				Pitch += 3;
+			}
+			else if (Pitch > 0)
+			{
+				Pitch -= 3;
+			}
+			if (abs(Pitch) < 3)
+			{
+				Pitch = 0.;
+			}
+		}
+		player.mo.CalcHeight ();
+			
+		if (player.damagecount)
+		{
+			player.damagecount--;
+		}
+		if (player.poisoncount)
+		{
+			player.poisoncount--;
+		}	
+
+		if ((player.cmd.buttons & BT_USE ||
+			((multiplayer || alwaysapplydmflags) && sv_forcerespawn)) && !sv_norespawn)
+		{
+			if (level.time >= player.respawn_time || ((player.cmd.buttons & BT_USE) && player.Bot == NULL))
+			{
+		//		Menu.SetMenu("AfterDeathMenu");	
+				player.cls = NULL;		// Force a new class if the player is using a random class
+				player.playerstate = (multiplayer || (level.AllowRespawn) || sv_singleplayerrespawn)? PST_REBORN : PST_ENTER;
+				if (special1 > 2)
+				{
+					special1 = 0;
+				}
+			}
+		}
+	}	
+	
+	void DoScreenBlood()
+	{
+		string Blood = "";
+		if(random(0,100) > 50) Blood = "ScreenBloodOne";
+		else Blood = "ScreenBloodTwo";
+		startBloodAlpha = 1.0;
+		Shader.SetUniform2f( player, Blood, "EffectOffset", ( frandom(-5.0,5.0), frandom(-5.0,5.0)) );
+		Shader.SetUniform1f(player, Blood, "EffectAlpha", startBloodAlpha);
+		Shader.SetEnabled(Player,Blood,true);
+		BloodInTics = 105;
+	//	for (double j = 0.0; j < 1.0; j += 0.01)
+	//	{
+	//		effectAlpha -= j;
+	//		Shader.SetUniform1f(player, Blood, "EffectAlpha", effectAlpha);
+	//	}
+	//	Shader.SetEnabled(Player,Blood,False);
+	}
+	
+	override void Tick()
+	{
+		if ( CountInv("BEPowerTorch") )
+		{
+			if(fadeInTimer > 50) fadeInTimer = 50;
+			else fadeInTimer+=0.1;
+			Shader.SetUniform1f(player,"NightVisionShader","fadeInTimer",fadeInTimer);
+			Shader.SetEnabled(player, "NightVisionShader", true);
+		}
+		else
+		{
+			fadeInTimer--;
+			Shader.SetUniform1f(player,"NightVisionShader","fadeInTimer",fadeInTimer);
+			if(fadeInTimer <= 0)
+			{
+				Shader.SetEnabled(player, "NightVisionShader", false);
+				fadeInTimer = 0;
+			}
+			
+		}
+	
+		int Armor = 0;
+		let arm = BasicArmor(FindInventory("BasicArmor"));
+		if (arm)	Armor = arm.Amount;
+		
+		if(BloodInTics > 0) BloodInTics --;
+		else
+		{
+			if( startBloodAlpha > 0.0)
+			{
+				startBloodAlpha -= 0.01;
+				Shader.SetUniform1f(player, "ScreenBloodOne", "EffectAlpha", startBloodAlpha);
+				Shader.SetUniform1f(player, "ScreenBloodTwo", "EffectAlpha", startBloodAlpha);
+			}
+			else
+			{
+				Shader.SetEnabled(Player,"ScreenBloodOne",False);
+				Shader.SetEnabled(Player,"ScreenBloodTwo",False);
+			}
+		}
+		
+		if(Armor >= 200) SetInventory("ReloadSpeed",2);
+		else if (Armor >= 110) SetInventory("ReloadSpeed",1);
+		else SetInventory("ReloadSpeed",0);
+		
+		if( Health < 26 && Health > 0)
+		{
+			//Console.Printf(String.Format("%i",Angle));
+			double zerk = 0.35 - (health * 0.01);
+			angle+=frandom(-zerk,zerk);pitch+=frandom(-zerk,zerk);
+			Shader.SetEnabled(Player,"SaturationShader",true);
+			Shader.SetEnabled(Player,"WobleShader",true);
+		}
+		else
+		{
+			Shader.SetEnabled(Player,"SaturationShader",false);
+			Shader.SetEnabled(Player,"WobleShader",false);
+		}
+
+		if (damageSize > 0) {
+			Shader.SetEnabled(player, "DamageShader", true);
+			Shader.SetUniform1f(player, "DamageShader", "damageAmount", damageSize);
+		}
+		else Shader.SetEnabled(player, "DamageShader", false);
+		
+		if ( CountInv("HeatHazeTimer") != 0)
+		{
+			Shader.SetEnabled(player, "HeatHaze", true);
+			A_TakeInventory("HeatHazeTimer",1);
+		}
+		else Shader.SetEnabled(player, "HeatHaze", false);		
+		
+		double returnSpeed = 0;
+		if (damageSize != 0) returnSpeed = 0.01 ** 1/(damageSize * 5);
+		if (returnSpeed < 0.01) returnSpeed = 0.01;
+		
+		damageSize -= returnSpeed;
+		damageSize = clamp(damageSize, 0, 0.5);
+
+		if( CountInv("GoFatality") == 1 )
+		{
+			A_Stop();
+			A_Warp(AAPTR_DEFAULT,0,0,0,0,WARPF_NOCHECKPOSITION|WARPF_TOFLOOR);
+		}
+		if(player)
+		{
+		double fm = player.cmd.forwardmove;
+		double sm = player.cmd.sidemove;
+
+		if(player.cmd.buttons & BT_SPEED) PlayerRunOrWalk=1;
+		else if( 6400<max( abs(fm),abs(sm) ) ) PlayerRunOrWalk=0;
+		else PlayerRunOrWalk=-1;	
+		}
+		Super.Tick();
+	
+		// int fall = ( lastVel - vel).length();
+		
+		// if ( fallingPitch) A_SetPitch(pitch + frandom(4,6), SPF_INTERPOLATE);
+
+		// if ( fall > 15 && ( Cvar.FindCvar("beberserkergameplaymode").GetInt() == 0 ||
+							// CountInv("PowerStrength") == 0 ) && (player.WeaponState & WF_WEAPONREADY))
+		// {
+			// fallingPitch = true;
+			// int size = weaponList.size();
+			// for (int i = 0; i < size; i++)
+			// {
+				// if( self.player.ReadyWeapon is "FallingHands") break;
+				// if( self.player.ReadyWeapon is weaponList[i])
+				// {
+					// lastWeapon = weaponList[i];
+					// break;
+				// }
+			// }
+			// A_PlaySound("Player/HeavyFallingSound");
+			// A_SelectWeapon("FallingHands");
+		// }
+	
+		int timer = level.time % 60;
+		
+		if ( !(timer % 60) )
+		{
+			if ( CountInv("Cacodemonia") )
+			{
+				A_TakeInventory("Cacodemonia",1);
+			}
+		}
+		
+		
+		
+		// lastVel = vel;
+		
+	}
+/*	override void Tick()
+	{
+		int Range = 2048;
+		int index;
+	
+		ScannableThings.Clear();
+
+		ThinkerIterator Finder = ThinkerIterator.Create("FlareBaseClass");
+		FlareBaseClass mo;
+		
+		while ( mo = FlareBaseClass(Finder.Next()) )
+		{
+			target = mo;
+			
+			if (
+				!mo.bDrawFlare ||
+				mo.health <= 0 || 
+				mo.bDormant || 
+				mo.bInvisible ||
+				(mo.bNoBlockMap && !mo.bMissile) ||
+				Distance3d(mo) > Range ||
+				!IsVisible(mo, false)
+			) { continue; }
+
+			if (ScannableThings.Find(mo) == ScannableThings.Size())
+			{
+				ScannableThings.Push(mo);
+			}
+		}
+
+		Super.Tick();
+	}*/
+
+	override bool CanCrouch() const
+	{
+		return CountInv("GoFatality") == 0 && ( player.morphTics == 0 || bCrouchableMorph );
+	}	
+
+	double GetArmorAmount()
+	{
+		let armor = Self.FindInventory("BasicArmor");
+		if(!armor) return 0;
+		return armor.Amount;
+	}
+
+	
+	override void MovePlayer ()
+	{
+		let player = self.player;
+		UserCmd cmd = player.cmd;
+
+		// [RH] 180-degree turn overrides all other yaws
+		if (player.turnticks)
+		{
+			player.turnticks--;
+			Angle += (180. / TURN180_TICKS);
+		}
+		else
+		{
+			Angle += cmd.yaw * (360./65536.);
+		}
+
+		player.onground = (pos.z <= floorz) || bOnMobj || bMBFBouncer || (player.cheats & CF_NOCLIP2);
+
+		// killough 10/98:
+		//
+		// We must apply thrust to the player and bobbing separately, to avoid
+		// anomalies. The thrust applied to bobbing is always the same strength on
+		// ice, because the player still "works just as hard" to move, while the
+		// thrust applied to the movement varies with 'movefactor'.
+
+		if (cmd.forwardmove | cmd.sidemove)
+		{
+			double forwardmove, sidemove;
+			double bobfactor;
+			double friction, movefactor;
+			double fm, sm;
+
+			[friction, movefactor] = GetFriction();
+			bobfactor = friction < ORIG_FRICTION ? movefactor : ORIG_FRICTION_FACTOR;
+			
+			if(PlayerRunOrWalk < 0)
+			{
+				if(player.crouchfactor == 1) bobfactor *= 0.75;
+				else bobfactor*=0.9;
+			}
+			
+			if (!player.onground && !bNoGravity && !waterlevel)
+			{
+				// [RH] allow very limited movement if not on ground.
+				movefactor *= level.aircontrol;
+				bobfactor*= level.aircontrol;
+			}
+
+			fm = cmd.forwardmove;
+			sm = cmd.sidemove;
+			[fm, sm] = TweakSpeeds (fm, sm);
+			fm *= Speed / 256;
+			sm *= Speed / 256;
+
+			// When crouching, speed and bobbing have to be reduced
+			if (CanCrouch() && player.crouchfactor != 1)
+			{
+				fm *= player.crouchfactor;
+				sm *= player.crouchfactor;
+				bobfactor *= player.crouchfactor;
+			}
+
+			forwardmove = fm * movefactor * (35 / TICRATE);
+			sidemove = sm * movefactor * (35 / TICRATE);
+
+			if (forwardmove)
+			{
+				Bob(Angle, cmd.forwardmove * bobfactor / 256., true);
+			//	TryMove(pos.xy+(cos(angle),sin(angle))*(forwardmove*7),true);
+				if(CountInv("Cacodemonia") > 0)
+					ForwardThrust(-forwardmove, Angle);
+				else
+					ForwardThrust(forwardmove, Angle);
+			}
+			if (sidemove)
+			{
+				let a = Angle - 90;
+			//	TryMove(pos.xy+(cos(a),sin(a))*(sidemove*7),true);
+				Bob(a, cmd.sidemove * bobfactor / 256., false);
+				if(CountInv("Cacodemonia") > 0)
+					Thrust(-sidemove, a);
+				else
+					Thrust(sidemove, a);				
+			}
+
+			if (!(player.cheats & CF_PREDICTING) && (forwardmove != 0 || sidemove != 0))
+			{
+				PlayRunning ();
+			}
+
+			if (player.cheats & CF_REVERTPLEASE)
+			{
+				player.cheats &= ~CF_REVERTPLEASE;
+				player.camera = player.mo;
+			}
+			
+		}
+		if(player.onground && !cmd.forwardmove && !cmd.sidemove && !bIsInPain()) self.Vel.xy *= 0.8 + (GetArmorAmount() / 2000);
+	}		
+	
+	States
+	{
+	Missile:
+		PLAY F 12
+		{
+			if (CountInv("PowerD4QuadDamage"))
+			{
+				A_Overlay(Overlay_QuadDamage,"Overlay.QuadDamage",true);
+			}
+		}
+		Goto StandStill;
+	
+	Overlay.QuadDamage:
+		M666 A 35
+		{
+			A_SpawnItemEx("QuadNoise",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+		}
+		Stop;
+	
+    Spawn:
+		MARN D 2
+		{
+			A_TakeInventory("PlayerIsDead", 1);
+			A_TakeInventory("IsInvisible", 1);
+			SetPlayerProperty(0,1,0);
+			bNOPAIN = 1;
+			A_TakeInventory("ChainguyguyContinue", 1);
+			A_TakeInventory("HasInfrared", 1);
+			A_TakeInventory("PlayerIsDead", 1);
+			ACS_ExecuteAlways(289, 0, 0, 0, 0);
+			ACS_ExecuteAlways(171, 0, 0, 0, 0);
+			ACS_ExecuteAlways(719, 0, 0, 0, 0);
+		}
+		MARN D 0 A_JumpIfInventory("CheckMarines", 1, "SpawnFriends");
+		MARN D 0
+		{
+			SetPlayerProperty(0,0,0);
+			bNOPAIN = 0;
+		}
+	DM:
+		MARN D 1
+		{
+			bTHRUSPECIES = 0;
+			bMTHRUSPECIES = 0;
+			bDONTHARMCLASS = 0;
+			SetPlayerProperty(0,0,0);
+			bNOPAIN = 0;
+		}
+		Goto StandStill;
+	
+	StandStill:
+	//	MARN D 0;
+		
+	//    MARN D 0;
+		MARN D 1 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+	//	MARN A 0 A_JumpIfInventory("GoSpecial", 1, "SpecialChecker");
+	//	MARN A 0 A_JumpIfInventory("CheckMarines", 1, "SpawnFriends");
+	//	MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Disable Camera.
+	//	MARN D 0 SetPlayerProperty(0,0,0);
+        MARN D 1
+		{
+			ACS_ExecuteAlways(171, 0, 0, 0, 0);
+			SetPlayerProperty(0,0,0);
+		}	//A_JumpIf (Vel.z !=0, "IsJumpin");
+	//	MARN A 0 A_JumpIfInventory("CheckMarines", 1, "SpawnFriends");
+		MARN D 1; //A_JumpIf (Vel.z !=0, "IsJumpin");
+		MARN D 1 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+    //    MARN A 0 A_JumpIfInventory("GoSpecial", 1, "SpecialChecker");
+		
+		
+	//	MARN A 0 A_JumpIfHealthLower(25, "HeavyWounds");
+
+		Loop;
+		
+	
+	See:
+		MARN A 1 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+	//	MARN A 0 SetPlayerProperty(0,0,0);
+	//	MARN A 0 A_TakeInventory("ChainguyguyContinue", 1);
+		
+		MARN A 1
+		{
+			SetPlayerProperty(0,0,0);
+			A_TakeInventory("ChainguyguyContinue", 1);
+		}	
+		//A_JumpIf (Vel.z != 0, "IsJumpin");
+		MARN A 1 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+	//	MARN A 0 A_JumpIfInventory("GoSpecial", 1, "SpecialCheckerMoving");
+		
+		MARN B 1
+		{
+			ACS_ExecuteAlways(171, 0, 0, 0, 0);
+			SetPlayerProperty(0,0,0);		
+		}
+	//A_JumpIf (Vel.z != 0, "IsJumpin");
+		MARN B 1 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+	//	MARN B 0 A_JumpIfInventory("GoSpecial", 1, "SpecialCheckerMoving");
+		MARN B 1 A_SpawnItemEx("FootStep6", 0, 0, 8, 0, 0);
+		MARN CCC 1
+		{
+			ACS_ExecuteAlways(171, 0, 0, 0, 0);
+			SetPlayerProperty(0,0,0);		
+		}//A_JumpIf (Vel.z != 0, "IsJumpin");
+	//	MARN C 0 A_JumpIfInventory("GoSpecial", 1, "SpecialCheckerMoving");
+		
+		MARN B 1
+		{
+			ACS_ExecuteAlways(171, 0, 0, 0, 0);
+			SetPlayerProperty(0,0,0);		
+		}
+	//A_JumpIf (Vel.z != 0, "IsJumpin");
+		MARN B 1 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+	//	MARN B 0 A_JumpIfInventory("GoSpecial", 1, "SpecialCheckerMoving");
+		
+		MARN B 1 A_JumpIfInventory("BootsSmearedWithRedBlood", 1, "SeeSmearedWithRedBlood");
+		MARN A 0 A_JumpIfInventory("BootsSmearedWithBlueBlood", 1, "SeeSmearedWithBlueBlood");
+	//	MARN A 0 A_JumpIfHealthLower(25, "HeavyWounds");
+	
+		Goto StandStill;
+		
+	SeeSmearedWithRedBlood:
+		MARN A 0
+		{
+			if(DrawRightFootPrint)
+			{
+				A_SpawnItemEx("RedBloodFootPrintRight", 0, 14);
+				A_TakeInventory("BootsSmearedWithRedBlood", 1);
+				DrawRightFootPrint = false;
+			}
+			else
+			{
+				A_SpawnItemEx("RedBloodFootPrintLeft", 0, -14);
+				A_TakeInventory("BootsSmearedWithRedBlood", 1);
+				DrawRightFootPrint = true;
+			}
+		}
+	
+		Goto StandStill;	
+	
+	SeeSmearedWithBlueBlood:
+		MARN A 0
+		{
+			if(DrawRightFootPrint)
+			{
+				A_SpawnItemEx("BlueBloodFootPrintRight", 0, 7);
+				A_TakeInventory("BootsSmearedWithBlueBlood", 1);
+				DrawRightFootPrint = false;
+			}
+			else
+			{
+				A_SpawnItemEx("BlueBloodFootPrintLeft", 0, -7);
+				A_TakeInventory("BootsSmearedWithBlueBlood", 1);
+				DrawRightFootPrint = true;
+			}
+		}	
+
+		Goto StandStill;
+	
+	SeeSmearedWithBlueBloodRight:
+		MARN A 0
+		{
+			A_SpawnItemEx("BlueBloodFootPrintRight", 0, 7);
+			DrawRightFootPrint = false;
+			A_TakeInventory("BootsSmearedWithBlueBlood", 1);
+			ResolveState(null);
+		}	
+
+		Goto StandStill;			
+	
+	SeeSmearedWithGreenBlood:
+		TNT1 A 0;
+/*		MARN A 0;
+		TNT1 A 0 A_TakeInventory("BootsSmearedWithGreenBlood", 1);
+		MARN A 0 A_TakeInventory("ChainguyguyContinue", 1);
+	//	MARN A 0 A_JumpIfInventory("ADSMode", 1, "ADSStand")
+		MARN A 0 ;//A_JumpIfInventory("FistsSelected", 1, "FistsMove")
+		
+		MARN A 0 A_JumpIfInventory("GoSpecial", 1, "SpecialCheckerMoving");
+		
+		MARN A 4 A_SpawnItemEx("FootStep6", 0, 0, 40, 0, 0);
+		MARN A 0 A_SpawnItemEx("GreenBloodFootPrintLeft", 0, -7);
+		MARN A 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+        MARN A 0 A_JumpIfInventory("GoSpecial", 1, "SpecialCheckerMoving");
+		MARN A 0 A_JumpIf (vel.z  > 0, "IsJumpin");
+		MARN A 0 A_JumpIf (vel.z  < 0, "IsJumpin");
+		MARN B 4;
+		MARN B 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+        MARN B 0 A_JumpIfInventory("GoSpecial", 1, "SpecialCheckerMoving");
+		MARN B 0 A_JumpIf (vel.z  > 0, "IsJumpin");
+		MARN B 0 A_JumpIf (vel.z  < 0, "IsJumpin");
+		MARN C 4 A_SpawnItemEx("FootStep6", 0, 0, 40, 0, 0);
+		MARN A 0 A_SpawnItemEx("GreenBloodFootPrintRight", 0, 7);
+		MARN C 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+        MARN C 0 A_JumpIfInventory("GoSpecial", 1, "SpecialCheckerMoving");
+		MARN C 0 A_JumpIf (vel.z  > 0, "IsJumpin");
+		MARN C 0 A_JumpIf (vel.z  < 0, "IsJumpin");
+		MARN B 4;
+		MARN B 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+        MARN B 0 A_JumpIfInventory("GoSpecial", 1, "SpecialCheckerMoving");
+		MARN B 0 A_JumpIf (vel.z  > 0, "IsJumpin");
+		MARN B 0 A_JumpIf (vel.z  < 0, "IsJumpin");
+		MARN A 0 A_JumpIfHealthLower(25, "HeavyWounds");*/
+		Goto StandStill;
+		
+		
+   IsJumpin:
+        MARN A 1 A_JumpIf (Vel.z != 0, "InAir");
+		MARN B 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+        MARN B 0 A_JumpIfInventory("GoSpecial", 1, "SpecialCheckerMoving");
+		MARN A 1 A_JumpIf (Vel.z != 0, "InAir");
+		Goto StandStill;
+		
+	InAir:	
+		MARJ A 1;
+		
+	//	TNT1 A 0 SetPlayerProperty(0,0,0);
+		MARN B 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+	//	TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+        MARN B 0 A_JumpIfInventory("GoSpecial", 1, "SpecialCheckerMoving");
+		TNT1 A 0 A_JumpIf (vel.z  == 0, "Land");
+		Loop;
+	
+	Land:
+        TNT1 A 0 A_SetPitch(+3.0 + pitch,SPF_INTERPOLATE);
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+		MARN A 0 A_SpawnItemEx("FootStepStrong");
+		MARN A 0 A_SetPitch(-0.5 + pitch,SPF_INTERPOLATE);
+		MARN A 1 A_JumpIf (Vel.z != 0, "InAir");
+		Goto StandStill;
+
+    HeavyWounds:
+	  	NULL A 0 A_JumpIfHealthLower(2, 2);
+		NULL A 0 A_Jump(256, 5);
+		NULL AA 0;
+		NULL A 0 A_Giveinventory("HealthBonus",1);
+		NULL AAA 0;
+		
+        NULL A 0 A_SpawnItemEx("DripingBloodLeavesSmallPool", 0, 0, 20, 0, 0);
+		Goto See;
+		
+	 HeavyWoundsSpawn:
+	  	NULL A 0 A_JumpIfHealthLower(2, 2);
+		NULL A 0 A_Jump(256, 5);
+		NULL AA 0;
+		NULL A 0 A_Giveinventory("HealthBonus",1);
+		NULL AAA 0;
+
+        NULL A 0 A_SpawnItemEx("DripingBloodLeavesSmallPool", 0, 0, 20, 0, 0);
+		Goto StandStill;
+		
+	 BarrelMove:
+	    NULL A 0 A_TakeInventory("Punching", 1);
+		NULL A 0 A_JumpIf (vel.y == 0, "BarrelStand");
+		NULL A 0 A_JumpIf (vel.x == 0, "BarrelStand");
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+		PBAR A 8;
+		
+        NULL A 0 A_JumpIfInventory("Kicking", 1, "Kick");
+        NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+		PBAR B 8;
+        NULL A 0 A_JumpIfInventory("Kicking", 1, "Kick");
+        NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+        NULL A 0 A_SpawnItemEx("FootStep6", 0, 0, 40, 0, 0);
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+		PBAR C 8;
+        NULL A 0 A_JumpIfInventory("Kicking", 1, "Kick");
+        NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+		PBAR B 8;
+        NULL A 0 A_JumpIfInventory("Kicking", 1, "Kick");
+        NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+		NULL A 0 A_JumpIfInventory("HasBarrel", 1, "BarrelMove");
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+		Goto See;
+		
+	 BarrelStand:
+	 	TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+	    NULL A 0 A_TakeInventory("Punching", 1);
+		PBAR A 1;
+		NULL A 0 A_JumpIfInventory("Kicking", 1, "Kick");
+		NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+		PLA3 A 0 A_JumpIf ((vel.x >= 1 || vel.x <= -1), "BarrelMove");
+		PLA3 A 0 A_JumpIf ((vel.y >= 1 || vel.x <= -1), "BarrelMove");
+		Goto StandStill;
+
+	Pain:
+		NULL A 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+        NULL A 0 A_Giveinventory("Bad",1);
+		NULL A 0 A_JumpIf(CountInv("BasicArmor") > 20,"ArmorPain");
+        NULL A 0 A_Pain;
+        NULL A 0 ACS_Execute(577, 0, 0, 0, 0);
+        NULL A 0 DoScreenBlood();//ACS_Execute(530, 0, 0, 0, 0);
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+	//    NULL A 0 A_JumpIfInventory("FistsSelected", 1, "PainWfist")
+        
+		PLAY G 5;
+		
+		Goto See;
+	
+	Pain.CacodemoniaPlasma:
+		NULL A 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+        NULL A 0 A_Giveinventory("Bad",1);
+        NULL A 0 A_Pain;
+		NULL A 0 A_GiveInventory("Cacodemonia",random(1,3));
+	//	NULL A 0 ACS_NamedTerminate("CacodemoniaStart",0);
+	//	NULL A 0 ACS_NamedTerminate("CacodemoniaStart",0)
+        NULL A 0 ACS_Execute(577, 0, 0, 0, 0);
+        NULL A 0 DoScreenBlood();//ACS_Execute(530, 0, 0, 0, 0);
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+	//    NULL A 0 A_JumpIfInventory("FistsSelected", 1, "PainWfist")
+	//	TNT1 A 0 A_GiveInventory("ImpactMovesSling", 1)
+        
+		PLAY G 5;
+		//PLAY G 0 ACS_NamedExecute("CacodemoniaStart",0);
+		Goto See;	
+	
+	Pain.StunDamage:
+		NULL A 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+		NULL A 0 A_Giveinventory("Bad",1);
+		NULL A 0 A_JumpIf(CountInv("BasicArmor") > 20,"ArmorPain");
+        NULL A 0 A_Pain;
+		NULL A 0
+		{
+			A_SetPitch(70,SPF_INTERPOLATE);
+		}//ACS_NamedExecuteWithResult("BackFlinch",0 ,0, 0, 0)
+        NULL A 0 ACS_Execute(577, 0, 0, 0, 0);
+        NULL A 0 DoScreenBlood();//ACS_Execute(530, 0, 0, 0, 0);
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+	//    NULL A 0 A_JumpIfInventory("FistsSelected", 1, "PainWfist")
+
+		PLAY G 5;
+		Goto See;
+		
+	
+	ArmorPain:
+        NULL A 0 A_Pain;
+		NULL A 0 { bNOBLOOD = 1; } // A_ChangeFlag("NOBLOOD",1);
+		NULL A 0
+		{
+			if(Health > 25)
+			{
+				A_QuakeEx(10,10,10,10,0,15,"NULL",QF_SCALEDOWN);
+			}
+			else
+			{
+				A_QuakeEx(20,20,20,20,0,20,"NULL",QF_SCALEDOWN);
+			}
+		}		//ACS_ExecuteAlways(24801, 0)
+        NULL A 0 ACS_Execute(577, 0, 0, 0, 0);
+     //   NULL A 0 DoScreenBlood();//ACS_Execute(530, 0, 0, 0, 0);
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+	//    NULL A 0 A_JumpIfInventory("FistsSelected", 1, "PainWfist")
+        
+		PLAY G 5;
+		NULL A 0 { bNOBLOOD = 1; } //A_ChangeFlag("NOBLOOD",0);
+		Goto See;
+		
+	PainWfist:
+	    NULL A 0 A_JumpIfInventory("HasImpShield", 1, "SeeImpShield");
+		NULL A 0 A_JumpIfInventory("HasZmanShield", 1, "SeeZmanShield");
+		NULL A 0 A_JumpIfInventory("HasSguyShield", 1, "SeeSguyShield");
+		NULL A 0 A_JumpIfInventory("BasicArmor",1,"PainWfistArmor");
+		PLA1 G 5;
+	//	NULL A 0 A_PlaySound("PAIN1", 2)
+		 
+		Goto StandStill;
+	
+	PainWfistArmor:
+	    NULL A 0 A_JumpIfInventory("HasImpShield", 1, "SeeImpShield");
+		NULL A 0 A_JumpIfInventory("HasZmanShield", 1, "SeeZmanShield");
+		NULL A 0 A_JumpIfInventory("HasSguyShield", 1, "SeeSguyShield");
+		NULL A 0 { bNOBLOOD = 1; } //A_ChangeFlag("NOBLOOD",1);
+		NULL A 0 ACS_Execute(24801, 0, 0, 0, 0);
+		PLA1 G 5;
+	//	NULL A 0 A_PlaySound("PAIN1", 2)
+		NULL A 0 { bNOBLOOD = 0; } //A_ChangeFlag("NOBLOOD",0);
+		Goto StandStill;
+
+
+    Pain.Blast:
+	Pain.ExplosiveImpact:
+	Pain.Explosive:
+		NULL A 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+        NULL A 0 ACS_Execute(531, 0, 0, 0, 0);
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+		TNT1 A 0 ThrustThingZ(0, 20, 1, 0);
+		TNT1 A 0 DoScreenBlood();
+		Goto Pain;
+		
+		
+	Pain.Bullet:
+	Pain.MonsterBullet:
+	Pain.MonsterMinigunBullet:
+	Pain.MonsterShotgunBullet:
+	Pain.SSG:
+	Pain.CutLess:
+	Pain.MonsterCutLess:
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+		TNT1 A 0 A_JumpIfInventory("GoSpecial", 1, "SpecialChecker");
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+		NULL A 0 A_Jump(256,"PBUL1","PBUL2","PBUL3","PBUL4","PBUL5","PBUL6");
+        Goto Pain;
+        //Scripts 611 to 616 are responsible for making the bullet damage effect on screen
+        PBUL1:
+        NULL A 0 ACS_Execute(611, 0, 0, 0, 0);
+        Goto Pain;
+        PBUL2:
+        NULL A 0 ACS_Execute(612, 0, 0, 0, 0);
+        Goto Pain;
+        PBUL3:
+        NULL A 0 ACS_Execute(613, 0, 0, 0, 0);
+        Goto Pain;
+        PBUL4:
+        NULL A 0 ACS_Execute(614, 0, 0, 0, 0);
+        Goto Pain;
+        PBUL5:
+        NULL A 0 ACS_Execute(615, 0, 0, 0, 0);
+        Goto Pain;
+        PBUL6:
+        NULL A 0 ACS_Execute(616, 0, 0, 0, 0);
+        Goto Pain;
+
+
+
+	Pain.ImpFatalityMarine:
+	Pain.Rip:
+		NULL A 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+        NULL A 0 ACS_Execute(577, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(530, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(617, 0, 0, 0, 0);
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "FatalityChecker");
+		TNT1 A 0 A_JumpIfInventory("GoSpecial", 1, "SpecialChecker");
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);
+        Goto Pain;
+		
+
+	Death:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0 A_Takeinventory("Kicking",1);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+		NULL A 0 A_Jump (160, 3);
+        Goto Death.Arm;
+        NULL AAA 0;
+     //   NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+		NULL A 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+		PLAY H 10;
+		PLAY I 10 A_PlayerScream;
+		PLAY J 10 A_NoBlocking;
+		PLAY KLM 10;
+		NULL A 0 A_SpawnItem ("GrowingBloodPool");
+		PLAY N -1;
+		Stop;
+
+    Death.Eat:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0 A_Takeinventory("Kicking",1);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+   //     NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+        NULL A 0 A_GiveToTarget("EatMe",1);
+		NULL A 0 A_SpawnProjectile ("XDeath1", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("XDeath4", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL1 A 10 A_XScream;
+        XPL1 B 20 A_NoBlocking;
+        XPL1 CDE 10; 
+		NULL A 0 A_SpawnItem ("GrowingBloodPool");
+		PPOD A 0 A_SpawnItemEx("MarineEattenByDemon", 0, 0, 0, 0, 0, 0, 0, SXF_TRANSFERTRANSLATION);
+		NULL A -1;
+        //XPL1 E -1
+        Stop;
+
+	Death.StunDamage:
+    Death.Cut:
+	Death.Saw:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0 A_Takeinventory("Kicking",1);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+    //    NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+		
+		NULL A 0 A_SpawnProjectile ("XDeath1", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("XDeath2", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("XDeath3", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("XDeath4", 1, 0, random (0, 360), 2, random (0, 160));
+        NULL A 0 A_SpawnProjectile ("RipGuts", 50, 0, random (0, 360), 2, random (0, 160));
+        NULL A 0 A_SpawnProjectile ("XDeathHalfMarine", 50, 0, random (0, 360), 2, random (0, 160));
+        NULL AA 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL2 A 10 A_XScream;
+        NULL AA 0 A_SpawnProjectile ("Big_Blood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL2 B 20 A_NoBlocking;
+        NULL AA 0 A_SpawnProjectile ("Big_Blood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL2 C 10 A_SpawnProjectile ("Big_Blood", 40, 0, random (0, 360), 2, random (0, 160));
+        NULL AA 0 A_SpawnProjectile ("Big_Blood", 30, 0, random (0, 360), 2, random (0, 160));
+        XPL2 DE 10 A_SpawnProjectile ("Big_Blood", 20, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnItem ("GrowingBloodPool");
+        XPL2 E -1;
+        Stop;
+
+    Death.Slime:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0 A_PlaySound("BIGSCREA");
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+        NULL A 0 A_Takeinventory("Kicking",1);
+    //    NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+        PMET AABBCCDDEEFFGGHHIIIII 10 A_SpawnProjectile ("PlasmaSmoke", 25, 0, random (0, 180), 2, random (0, 180));
+        PMET IIIIIIIIIIJJJJJJJJJJJJJJJJJJJJJJKKKKKKKKKKKKKKKKKKKKKKKKKKLLLLLLLLLLLLLLL 3 A_SpawnProjectile ("PlasmaSmoke", 25, 0, random (0, 180), 2, random (0, 180));
+        NULL A 0 A_NoBlocking;
+        NULL A -1;
+        Stop;
+
+    Death.CutLess:
+	Death.MonsterCutless:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+         NULL A 0 A_Takeinventory("Kicking",1);
+		 MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+     //    NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+		 NULL A 0 A_Scream;
+		 NULL A 0 A_Stop;
+		 NULL A 0 A_GiveInventory("ChainguyguyContinue", 1);
+		 NULL A 0 A_PlaySound("DSFDTHE");
+		 PLAY H 5;
+		 NULL A 0 A_GiveInventory("ChainguyguyContinue", 1);
+		 PPOD A 0 A_SpawnItemEx("PlayerChaingunguyVictim", 0, 0, 0, 0, 0, 0, 0, SXF_TRANSFERTRANSLATION);
+		 NULL A 200;
+		 NULL A 0 A_NoBlocking;
+		 NULL A 0 A_TakeInventory("ChainguyguyContinue", 1);
+		 NULL A -1;
+		 Stop;
+
+    Death.Rip:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0 A_Takeinventory("Kicking",1);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+     //   NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+        NULL AAAAAAAAAAA 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL3 A 10 A_XScream;
+        NULL AAAAA 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL3 B 20 A_NoBlocking;
+        XPL3 C 10 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL3 D 10 A_SpawnProjectile ("MuchBlood", 40, 0, random (0, 360), 2, random (0, 160));
+        XPL3 E 10 A_SpawnProjectile ("MuchBlood", 30, 0, random (0, 360), 2, random (0, 160));
+        XPL3 F 10 A_SpawnProjectile ("MuchBlood", 20, 0, random (0, 360), 2, random (0, 160));
+        NULL A 0 A_SpawnProjectile ("MuchBlood", 10, 0, random (0, 360), 2, random (0, 160));
+        XPL3 F 10 A_SpawnProjectile ("MuchBlood", 0, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnItem ("GrowingBloodPool");
+        XPL3 F -1;
+        Stop;
+
+    Death.Explosives:
+	XDeath:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0 A_Takeinventory("Kicking",1);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+		NULL A 0 ThrustThingZ(0,60,0,1);
+		PPOD A 0 A_SpawnItemEx("BasicMarineGib1", 0, 0, 0, 0, 0, 0, 0, SXF_TRANSFERTRANSLATION);
+		PPOD A 0 A_SpawnItemEx("BasicMarineGib2", 0, 0, 0, 0, 0, 0, 0, SXF_TRANSFERTRANSLATION);
+		PPOD A 0 A_SpawnItemEx("BasicMarineGib3", 0, 0, 0, 0, 0, 0, 0, SXF_TRANSFERTRANSLATION);
+		PPOD A 0 A_SpawnItemEx("BasicMarineGib4", 0, 0, 0, 0, 0, 0, 0, SXF_TRANSFERTRANSLATION);
+		NULL A 0 A_SpawnProjectile ("MuchMeatDeath", 0, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0); //ACS 580 to 585 is the blood driping on screen
+		NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(584, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(585, 0, 0, 0, 0);
+        MHEA A 0 A_XScream;
+        MHEA B 0 A_NoBlocking;
+        MHEA CD 0;
+        //MHEA E -1
+		NULL A 0 A_SpawnProjectile ("XDeathArm1", 32, 0, random (0, 360), 2, random (0, 90));
+		NULL A 0 A_SpawnItem ("BigBloodSpot");
+		NULL AAAAA 0 A_SpawnProjectile ("Instestin", 32, 0, random (0, 360), 2, random (0, 160));
+		XDMG E 1;
+		NULL AAAAAAAAAAAAAAA 0 A_SpawnProjectile ("SuperWallRedBlood", 40, 0, random (0, 360), 2, random (-5, 5));
+	    NULL AAAAAA 0 bright A_SpawnProjectile ("SuperGoreSpawner", 5, 0, random (0, 360), 2, random (30, 180));
+		XDMG E -1;
+		Stop;
+
+	Death.SuperPunch:
+    Death.Blast:
+	Death.SSG:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0 A_Takeinventory("Kicking",1);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+   //     NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+	    POSS Q 2 A_FaceTarget;
+        //NULL A 0 A_SpawnProjectile ("MeatDeath", 0, 0, random (0, 360), 2, random (0, 160))
+		NULL AAAA 0 A_SpawnProjectile ("XDeath1", 32, 0, random (170, 190), 2, random (0, 40));
+		NULL AAAA 0 A_SpawnProjectile ("XDeath2", 32, 0, random (170, 190), 2, random (0, 40));
+		NULL AAAA 0 A_SpawnProjectile ("XDeath3", 32, 0, random (170, 190), 2, random (0, 40));
+		NULL AAAA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 32, 0, random (170, 190), 2, random (0, 40));
+		NULL AAAA 0 A_SpawnProjectile ("Brutal_FlyingBloodFaster", 32, 0, random (170, 190), 2, random (0, 40));
+		NULL AAAA 0 A_SpawnProjectile ("Brutal_FlyingBloodMuchFaster", 32, 0, random (170, 190), 2, random (0, 40));
+		NULL AAAA 0 A_SpawnProjectile ("SuperWallRedBlood", 32, 0, random (170, 190), 2, random (0, 40));
+		NULL AAAA 0 A_SpawnProjectile ("SuperWallRedBlood", 46, 0, random (170, 190), 2, random (0, 40));
+		NULL A 0 A_SpawnProjectile ("XDeathArm1", 32, 0, random (170, 190), 2, random (0, 40));
+		NULL AAAA 0 A_SpawnProjectile ("SuperGoreSpawner", 22, 0, random (170, 190), 2, random (0, 15));
+        XPL2 A 10 A_XScream;
+        NULL AA 0 A_SpawnProjectile ("Big_Blood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL2 B 20 A_NoBlocking;
+        NULL AA 0 A_SpawnProjectile ("Big_Blood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL2 C 10 A_SpawnProjectile ("Big_Blood", 40, 0, random (0, 360), 2, random (0, 160));
+        NULL AA 0 A_SpawnProjectile ("Big_Blood", 30, 0, random (0, 360), 2, random (0, 160));
+        XPL2 DE 10 A_SpawnProjectile ("Big_Blood", 20, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnItem ("GrowingBloodPool");
+        XPL2 E -1;
+        Stop;
+
+    Death.Rape:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0 A_Takeinventory("Kicking",1);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+		NULL A 0 A_Jump (160, 3);
+        Goto Death.Arm;
+        NULL AAA 0;
+     //   NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+		NULL AAAAAAAAAAAAAA 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL4 A 20 A_XScream;
+		NULL A 0 A_SpawnProjectile ("XDeath1", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("XDeath2", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("XDeath3", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("XDeath4", 1, 0, random (0, 360), 2, random (0, 160));
+        NULL AAAA 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL4 B 20 A_NoBlocking;
+        NULL AAA 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL4 C 20;
+        NULL AAA 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL4 D 20;
+        NULL AAAA 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL4 E 20;
+        NULL AAA 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        XPL4 F 20;
+        NULL AAAA 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnItem ("GrowingBloodPool");
+        XPL4 F -1;
+        Stop;
+		
+		
+	Death.Arm:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0 A_Takeinventory("Kicking",1);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+    //    NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+		NULL AA 0 A_SpawnProjectile ("XDeath1", 50, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("XDeathArm1", 50, 0, random (0, 360), 2, random (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("MuchBlood", 50, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_Scream;
+        XPL5 A 10;
+		NULL A 0 A_NoBlocking;
+		NULL A 0 A_PlaySound("DSFDTHE");
+        XPL5 BCBCBCBC 10 A_SpawnProjectile ("MuchBlood", 25, 0, random (0, 360), 2, random (0, 160));
+        XPL5 DE 7 A_SpawnProjectile ("MuchBlood", 15, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnItem ("GrowingBloodPool");
+        XPL5 E -1;
+        Stop;
+		
+		
+	Death.ExtremePunches:
+	Death.ExplosiveImpact:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0 A_Takeinventory("Kicking",1);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+     //   NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+		NULL A 0 ThrustThingZ(0,30,0,1);
+		NULL AAAA 0 A_SpawnProjectile ("Brains1", 50, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains2", 50, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains3", 50, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains4", 50, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains5", 50, 0, random (0, 360), 2, random (0, 160));
+		NULL AAAA 0 A_SpawnProjectile ("SmallBrainPiece", random (45, 55), random (5, -5), random (170, 190), 2, random (0, 40));
+		NULL AAAA 0 A_SpawnProjectile ("SmallBrainPiece", 50, 0, random (0, 360), 2, random (0, 160));
+		NULL AA 0 A_SpawnProjectile ("SuperWallRedBlood", 46, 0, random (170, 190), 2, random (0, 40));
+        NULL AAAAAAAAAAA 0 A_SpawnProjectile ("BrainBlood", 50, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathArm1", 35, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeath3", 40, 0, random (0, 360), 2, random (0, 160));
+	    PPOD A 0 A_SpawnItemEx("BasicMarineGib1", 0, 0, 0, 0, 0, 0, 0, SXF_TRANSFERTRANSLATION);
+        NULL AAAA 0 A_SpawnProjectile ("XDeath1", 40, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_XScream;
+        XPL6 A 5;
+		NULL A 0 A_NoBlocking;
+        XPL6 BCDE 5;
+        XPL6 F -1;
+        Stop;
+		
+	Death.GreenFire:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0;
+        NULL A 0 A_XScream;
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+        NULL A 0 A_NoBlocking;
+   //     NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+        NULL AAAA 0 A_SpawnProjectile ("Brutal_Blood", 30, 0, random (0, 360), 2, random (0, 160));
+		
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedArm", 32, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedLeg", 32, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedSkull", 32, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedMeat", 32, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedMeat2", 32, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedMeat3", 32, 0, random (0, 360), 2, random (0, 160));
+		
+		EXPL AAAAAAAAAAAAAAAAAAAAAAAA 0 A_SpawnProjectile ("GreenFlameTrails", 50, 0, random (0, 360), 2, random (0, 360));
+		NULL AAAA 2 BRIGHT A_SpawnItem("GreenFlare",0,43);
+        NULL A 1;
+        NULL A -1;
+        Stop;
+		
+Death.Plasma: Death.Plasma2:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+		NULL A 0;
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+	//	NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+		PBR1 A 6 A_Scream;
+		NULL AAAAAAAAAAAAAAAAAA 0 A_SpawnProjectile ("Ashes1", 32, 0, random (0, 360), 2, random (0, 180));
+		NULL AAAAAAAAAAAAAAAAAA 0 A_SpawnProjectile ("Ashes2", 32, 0, random (0, 360), 2, random (0, 180));
+		NULL AAAA 0 A_SpawnProjectile ("BluePlasmaFireNonStatic", 32, 0, random (0, 360), 2, random (0, 180));
+		PBR1 B 6 A_NoBlocking;
+		PBR1 CDEFGH 6 A_SpawnProjectile ("Blood", 10, 0, random (0, 360), 2, random (0, 160));
+		PBR1 HHHHHHHHHHHHHHHHHHHHHH 8 A_SpawnProjectile ("PlasmaSmoke", 10, 0, random (0, 360), 2, random (0, 160));
+		PBR1 H -1;
+		Stop;
+	
+    Death.superplasma:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0;
+        NULL A 0 A_XScream;
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+        NULL A 0 A_NoBlocking;
+    //    NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+        NULL AAA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedArm", 32, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedLeg", 32, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedSkull", 32, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedMeat", 32, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedMeat2", 32, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_SpawnProjectile ("XDeathBurnedMeat3", 32, 0, random (0, 360), 2, random (0, 160));
+		EXPL AAAAAA 0 A_SpawnProjectile ("ExplosionSmoke", 32, 0, random (0, 360), 2, random (0, 360));
+        NULL A 1;
+        NULL A -1;
+        Stop;
+
+	Death.PlayerBurn:
+    Death.burn:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+        NULL A 0 A_Takeinventory("Kicking",1);
+     //   NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+		PBUR A 1;
+		PBUR A 1 A_PlayerScream;
+		PBUR A 1 A_NoBlocking;
+		PBUR AAAABBBBCCCC 2 A_SpawnProjectile ("SmallFlameTrails", 32, 0, random (0, 180), 2, random (0, 180));
+	    PBUR DDDDEEEE 2 A_SpawnProjectile ("SmallFlameTrails", 16, 0, random (0, 180), 2, random (0, 180));
+        PBUR EEEEE 4 A_SpawnProjectile ("SmallFlameTrails", 8, 0, random (0, 180), 2, random (0, 180));
+		PBUR EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE 6 A_SpawnProjectile ("PlasmaSmoke", 8, 0, random (0, 180), 2, random (0, 180));
+        PBUR E -1;
+        Stop;
+
+	Death.Fire:
+    Death.flames:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+        NULL A 0;
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+        NULL A 0 A_Takeinventory("Kicking",1);
+   //     NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+        NULL A 0 A_Scream;
+        NULL A 0 A_NoBlocking;
+        NULL A 0 A_SpawnItem("GenericBurningGuy");
+        NULL A 1;
+        NULL A -1;
+		Stop;
+		
+   Death.Desintegrate:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+	    NULL A 0 A_Takeinventory("Kicking",1);
+    //    NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+        NULL A 0 A_Scream;
+        NULL A 0 A_NoBlocking;
+        NULL A 0 A_SpawnItem("DesintegratedHuman");
+		NULL A 1;
+        NULL A -1;
+        Stop;
+	  
+    Death.Stomp:
+		NULL A 0 SetPlayerProperty (1, 1, PROP_TOTALLYFROZEN);
+		MARN A 0 A_GiveInventory("PlayerIsDead", 1);
+		NULL AAAAAA 0 bright A_SpawnProjectile ("SuperGoreSpawner", 5, 0, random (0, 360), 2, random (30, 180));
+		NULL AAAAAA 0 bright A_SpawnProjectile ("XDeath1", 5, 0, random (0, 360), 2, random (30, 180));
+		NULL AA 0 bright A_SpawnProjectile ("XDeath2", 55, 0, random (0, 360), 2, random (30, 180));
+		NULL AA 0 bright A_SpawnProjectile ("XDeath3", 55, 0, random (0, 360), 2, random (30, 180));
+		NULL A 0 A_SpawnItem ("CrushedRemains");
+		NULL A 1;
+	//	NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+		NULL A 1 A_XScream;
+		NULL A 1 A_NoBlocking;
+		NULL A -1;
+		Stop;
+	
+    Crush:
+        NULL A 0 A_PlaySound("misc/xdeath4");
+        CRS1 A 5;
+        CRS1 A -1;
+        Stop;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// FATALITIES
+
+
+
+
+    FatalityZMan:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FTYZ AB 2;
+		
+        NULL A 0  A_PlaySound("grunt/pain");
+        FTYZ BC 3;
+        FTYZ DEF 2;
+		
+		
+        NULL A 0 A_PlaySound("BURNZOM", 3);
+		
+		//The actor ShakeShakeShake makes the screen shake near the player, improving the overal felling of the fatalities
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		FTYZ FG 2;
+		NULL A 0 A_PlaySound ("misc/xdeath", 1);
+		FTYZ FG 2;
+		NULL A 0 A_PlaySound ("misc/xdeath", 1);
+		FTYZ F 2;
+		
+		
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+        FTYZ H 2;
+        NULL AA 0 A_SpawnProjectile ("FatalityBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        FTYZ I 2;
+        NULL AAAA 0 A_SpawnProjectile ("FatalityBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        NULL AA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+		 
+         
+		 NULL A 0 A_PlaySound ("misc/xdeath", 3);
+		 
+		 NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		 NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		 NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		 NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		 NULL AAAAAAAAAAAA 0 A_SpawnProjectile ("CeilBloodLauncherLong", 50, 0, random (0, 360), 2, random (50, 130));
+		 NULL A 0 A_SpawnProjectile ("XDeathHalfZombieMan", 60, 0, 270, 2, random (0, 160));
+		 NULL A 0 A_SpawnProjectile ("XDeathHalfZombieManDown", 60, 0, 90, 2, random (0, 160));
+         NULL AAAA 0 A_SpawnProjectile ("XDeath1", 60, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAA 0 A_SpawnProjectile ("XDeath2", 60, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAA 0 A_SpawnProjectile ("XDeath3", 60, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAA 0 A_SpawnProjectile ("Instestin", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 60, 0, random (0, 360), 2, random (0, 160));
+		 FTYZ K 2;
+         FTYZ L 7;
+        //////////////////////////////////////////////////////
+        //NULL A 0 A_TakeInventory("ZombieManFatality",1)
+		 NULL A 0 A_TakeInventory("ZombieManFatality",1);
+		 NULL A 0 A_TakeInventory("GoFatality", 1);
+	//	 NULL A 0 A_GiveInventory("HealthBonus",10)
+		 MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+         NULL A 0 SetPlayerProperty(0,0,0);
+         Goto StandStill;
+
+
+    FatalityZMan2:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FPZ2 AB 2;
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 50, 0, random (0, 360), 2, random (50, 130));
+        NULL AAAA 0 A_SpawnProjectile ("XDeath1", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AA 0 A_SpawnProjectile ("XDeath2", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AA 0 A_SpawnProjectile ("XDeath3", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 60, 0, random (0, 360), 2, random (0, 160));
+        FPZ2 C 5;
+		NULL A 0 A_PlaySound("imp/melee");
+        FPZ2 D 5;
+		NULL AAAAA 0 A_SpawnProjectile ("Instestin2", 32, 0, random (0, 360), 2, random (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("XDeath1", 60, 0, random (0, 360), 2, random (0, 160));
+		NULL AAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 60, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		FPZ2 EF 3;
+		NULL A 0 A_PlaySound("grunt/death");
+		FPZ2 G 3;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("ZombieManFatality2",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+//		NULL A 0 A_GiveInventory("HealthBonus",10)
+        //NULL A 0 A_SpawnItem ("DeadZombieManFacingFront")
+		NULL A 0 A_SpawnItem ("ZombieManDyingAfterFatality");
+		NULL A 0 A_SpawnProjectile ("Instestin", 30, 0, 0, 2, 0);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+		
+		
+	FatalityZMan3:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FPZ3 A 2;
+		NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		FPZ3 BCDE 2;
+        XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+        NULL A 0 A_PlaySound("grunt/pain", 1);
+		FPZ3 FGGGG 1;
+        
+		FPZ3 HHHIIIIIIIIHJJJ 1;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("grunt/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL AA 0 A_SpawnProjectile ("XDeath1", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AA 0 A_SpawnProjectile ("BloodMistSmall", 5, 0, random (0, 360), 2, random (40, 90));
+		TNT1 A 0 A_SpawnItemEx("SplatteredSmall");
+		
+		FPZ3 KKKLLLLLLKJJJ 1;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("grunt/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL AA 0 A_SpawnProjectile ("XDeath1", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AA 0 A_SpawnProjectile ("BloodMistSmall", 5, 0, random (0, 360), 2, random (40, 90));
+		
+        
+		FPZ3 MMMNNNNNNNMOOO 1;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("grunt/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL AA 0 A_SpawnProjectile ("XDeath1", 60, 0, random (0, 360), 2, random (0, 160));
+   //     NULL AA 0 A_SpawnProjectile ("BloodMistSmall", 5, 0, random (0, 360), 2, random (40, 90))
+	/*	FPZ3 MMMNNNNNNNMOOO 1
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0)
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0)
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160))
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4)
+		NULL AA 0 A_SpawnProjectile ("XDeath1", 30, 0, random (0, 360), 2, random (0, 160))*/
+       NULL AA 0 A_SpawnProjectile ("BloodMist", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL AAAA 0 A_SpawnProjectile ("Brains1", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains2", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains3", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains4", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains5", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains5", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL AAAAAAAA 0 A_SpawnProjectile ("SmallBrainPiece", 5, 0, random (0, 360), 2, random (0, 160));
+		
+		
+        FPZ3 PPPQQQQQQQPRRR 1;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+	    NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_SpawnProjectile ("XDeath1", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL A 0 A_SpawnProjectile ("BloodMistSmall", 5, 0, random (0, 360), 2, random (40, 90));
+		
+/*		FPZ3 PPPQQQQQQPRRR 1
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0)
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0)
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160))
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4)
+		NULL A 0 A_SpawnProjectile ("XDeath1", 60, 0, random (0, 360), 2, random (0, 160))
+        NULL A 0 A_SpawnProjectile ("BloodMistSmall", 5, 0, random (0, 360), 2, random (40, 90))*/
+		FPZ3 RP 3;
+		
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("ZombieManFatality3",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+        NULL A 0 A_SpawnItem ("DeadZombieManFatality3");
+		//NULL A 0 A_SpawnItem ("ZombieManDyingAfterFatality")
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill	;
+
+
+FatalityZMan4:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FPZ4 AB 2;
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+        NULL A 0 A_PlaySound("grunt/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		FPZ4 CDEEE 2;
+		FPZ4 FGH 2;
+        
+		FPZ4 HHI 1;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("grunt/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_SpawnProjectile ("XDeath1", 15, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("BloodmistSmall", 5, 0, random (0, 360), 2, random (0, 90));
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, random (0, 360), 2, random (0, 160));
+		TNT1 A 0 A_SpawnItemEx("SplatteredSmall", 0, 20);
+		FPZ4 JJJIH 2;
+		
+		FPZ4 HHI 1;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("grunt/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_SpawnProjectile ("XDeath1", 15, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("BloodmistSmall", 5, 0, random (0, 360), 2, random (0, 90));
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, random (0, 360), 2, random (0, 160));
+		FPZ4 JJJIH 2;
+		
+		FPZ4 HHI 1;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("grunt/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_SpawnProjectile ("XDeath1", 15, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("BloodmistSmall", 5, 0, random (0, 360), 2, random (0, 90));
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, random (0, 360), 2, random (0, 160));
+		FPZ4 OOOMN 2;
+		
+		
+		FPZ4 NNM 1;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("grunt/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_SpawnProjectile ("XDeath1", 15, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("BloodmistSmall", 5, 0, random (0, 360), 2, random (0, 90));
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, random (0, 360), 2, random (0, 160));
+		FPZ4 OOOMN 2;
+		
+	/*	FPZ4 NNM 1
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0)
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0)
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160))
+		NULL A 0 A_PlaySound("grunt/pain", 1)
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4)
+		NULL A 0 A_SpawnProjectile ("XDeath1", 15, 0, random (0, 360), 2, random (0, 160))
+        NULL AAA 0 A_SpawnProjectile ("BloodmistSmall", 5, 0, random (0, 360), 2, random (0, 90))
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, random (0, 360), 2, random (0, 160))
+		FPZ4 OOOMN 2*/
+		
+		
+		
+		FPZ4 NNM 1;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("grunt/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_SpawnProjectile ("XDeath1", 15, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("Bloodmist", 5, 0, random (0, 360), 2, random (0, 90));
+		
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_SpawnProjectile ("XDeath1", 15, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 15, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, random (0, 360), 2, random (0, 160));
+		NULL AAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 15, 0, random (0, 360), 2, random (0, 160));
+		NULL AAAA 0 A_SpawnProjectile ("Brains1", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains2", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains3", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains4", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains5", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains5", 5, 0, random (0, 360), 2, random (0, 160));
+		TNT1 A 0 A_SpawnItem("SplatteredLarge");
+		NULL AAAAAAAA 0 A_SpawnProjectile ("SmallBrainPiece", 5, 0, random (0, 360), 2, random (0, 160));
+		FPZ4 P 3;
+		FPZ4 L 3;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("ZombieManFatality4",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+        NULL A 0 A_SpawnItem ("DeadZombieManFatality3");
+		//NULL A 0 A_SpawnItem ("ZombieManDyingAfterFatality")
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+	FatalityZMan5:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+		NULL A 0 A_PlaySound("player/cyborg/KICK");
+        FPZ5 ABCD 3;
+	    EXPL A 0 Radius_Quake (2, 24, 0, 15, 0);
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("Brains1", 11, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains2", 11, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL A 0 A_SpawnProjectile ("Brains3", 11, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AA 0 A_SpawnProjectile ("XDeath1", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("BloodmistSmall", 5, 0, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 90));
+		NULL AA 0 A_SpawnProjectile ("XDeath2", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AA 0 A_SpawnProjectile ("XDeath3", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AA 0 A_SpawnProjectile ("XDeath4", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+        NULL A 0 SetPlayerProperty(0,1,0);
+        FPZ5 EFGHIJJ 2;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+		NULL A 0 A_TakeInventory("ZombieManFatality5",1);
+        NULL A 0 A_SpawnItemEx("DeadZombieManFatality5",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+		FPZ5 J 5;
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill	;
+
+    FatalityImp:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FTYI ABB 2;
+        FTYI CDEFG 2;
+        NULL A 0  A_PlaySound("imp/pain");
+        NULL A 0 A_SpawnItemEx("FootStep5", 0, 0, 40, 0, 0);
+        NULL A 0 A_PlaySound("CLAP");
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+        FTYI GGGGHHHHHHHHIIJJJJJJJJJJJ 1;
+        FTYI K 3;
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+        NULL A 0 A_SpawnItemEx("FootStep5", 0, 25, 30, 0, 0);
+		TNT1 A 0 A_SpawnItem("ImpHeadExplode", 0, 10);
+		TNT1 A 0 A_SpawnItemEx("SplatteredSmall", 0, 15);
+		FTYI LLLL 1;
+        FTYI LMNNN 2;
+		FTYI N 4;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("ImpFatality",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+		TNT1 A 0 A_GiveInventory("BootsSmearedWithRedBlood", 6);
+		NULL A 0 A_SpawnProjectile ("StompedImp", 1, 0, random (0, 360), 2, random (0, 160));
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+    FatalityImp2:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 50, 0, random (0, 360), 2, random (50, 130));
+        NULL AAAA 0 A_SpawnProjectile ("XDeath1", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("XDeath2", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("XDeath3", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 60, 0, random (0, 360), 2, random (0, 160));
+		FTBI BC 2;
+		NULL A 0  A_PlaySound("imp/die");
+		FTBI D 12;
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 50, 0, random (0, 360), 2, random (50, 130));
+        NULL AAAA 0 A_SpawnProjectile ("XDeath1", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("XDeath2", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("XDeath3", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 60, 0, random (0, 360), 2, random (0, 160));
+        FTBI EF 3;
+		FTBI G 12;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("ImpFatality2",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+        NULL A 0 A_SpawnItem ("ImpMessyCorpse");
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+      FatalityImp3:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FTCI AB 2;
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+        NULL A 0 A_PlaySound("imp/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		FTCI CDE 2;
+		FTCI E 6;
+        
+		FTCI FGG 4;
+		FTCI H 2;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("imp/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_SpawnProjectile ("XDeath1", 15, 0, random (0, 360), 2, random (0, 160));
+        TNT1 AA 0 A_SpawnProjectile ("BloodMistSmall", 2, 0, random (0, 360), 2, random (20, 90));
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, random (0, 360), 2, random (0, 160));
+		FTCI I 5;
+		FTCI H 2;
+		FTCI G 3;
+		
+		FTCI H 2;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("imp/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_SpawnProjectile ("XDeath1", 15, 0, random (0, 360), 2, random (0, 160));
+        TNT1 AA 0 A_SpawnProjectile ("BloodMistSmall", 2, 0, random (0, 360), 2, random (20, 90));
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, random (0, 360), 2, random (0, 160));
+		FTCI I 5;
+		FTCI H 2;
+		FTCI G 3;
+		
+		FTCI H 2;
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("imp/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		TNT1 A 0 A_SpawnItemEx("SplatteredSmall", 0, 15);
+		NULL A 0 A_SpawnProjectile ("XDeath1", 15, 0, random (0, 360), 2, random (0, 160));
+        TNT1 AA 0 A_SpawnProjectile ("BloodMistSmall", 2, 0, random (0, 360), 2, random (20, 90));
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, random (0, 360), 2, random (0, 160));
+		FTCI I 5;
+		FTCI H 2;
+		FTCI G 3;
+		
+	/*	FTCI H 2
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0)
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0)
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160))
+		NULL A 0 A_PlaySound("imp/pain", 1)
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4)
+		NULL A 0 A_SpawnProjectile ("XDeath1", 15, 0, random (0, 360), 2, random (0, 160))
+        TNT1 AA 0 A_SpawnProjectile ("BloodMistSmall", 2, 0, random (0, 360), 2, random (20, 90))
+		NULL A 0 A_SpawnProjectile ("Teeth", 15, 0, random (0, 360), 2, random (0, 160))
+		FTCI I 5
+		FTCI H 2
+		FTCI G 3*/
+		
+		FTCI H 2;
+		
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("imp/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		TNT1 A 0 A_SpawnItem("ImpHeadExplode", 0, 10);
+		FTCI L 4;
+		FTCI J 4;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("ImpFatality3",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10);
+        NULL A 0 A_SpawnItem ("impfacesorapedomgthisiscruel");
+		//NULL A 0 A_SpawnItem ("ZombieManDyingAfterFatality")
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill	;
+
+	FatalityImp4:
+		 NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+		FTDI AA 3;
+	   NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+       NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL A 0 A_PlaySound("imp/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_SpawnProjectile ("Blood", 34, -7, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 34, -6, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL A 0 A_SpawnProjectile ("Teeth", 34, -7, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+	   FTDI B 6;
+        NULL A 0 SetPlayerProperty(0,1,0);
+	   FTDI C 5;
+	   NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+       NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL A 0 A_PlaySound("imp/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_SpawnProjectile ("Blood", 34, -7, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 34, -4, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AA 0 A_SpawnProjectile ("Teeth", 32, -6, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+	   FTDI B 6;
+	   FTDI C 5;
+	   NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+       NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL A 0 A_PlaySound("imp/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_PlaySound("misc/xdeath4c", 3);
+		NULL AA 0 A_SpawnProjectile ("Blood", 34, -7, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 32, -5, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("Teeth", 33, -6, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+	    FTDI D 6;
+	    FTDI E 5;
+	    NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL A 0 A_PlaySound("imp/pain", 1);
+		NULL A 0 A_PlaySound("player/cyborg/fist", 4);
+		NULL A 0 A_PlaySound("misc/xdeath", 3);
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AAAA 0 A_SpawnProjectile ("Blood", 32, -6, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 33, -6, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("SmallBrainPieceFast", 35, -7, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (170, 190), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (-10, 10));
+		NULL AAA 0 A_SpawnProjectile ("SmallBrainPiece", 33, -7, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 160));
+		NULL AAAAA 0 A_SpawnProjectile ("Teeth", 31, -7, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 160));
+	    FTDI F 6;
+		NULL A 0 A_PlaySound("GTOSS",0,0.75);
+	    FTDI GH 5 A_SpawnProjectile ("PlayerFlyingBlood", 33, -6, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 160));
+	    FTDI IJ 4;
+		FTDI KLM 5;
+		//////////////////////////////////////////////////////
+	    NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("ImpFatality4",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10);
+		NULL A 0 A_SpawnItem ("DeadImp_NoHead_Fatalized");
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+    FatalitySergeant:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FTYS A 6 A_PlaySound("grunt/pain");
+        FTYS BC 3;
+		NULL A 0 A_PlaySound("BURNZOM", 3);
+
+        NULL A 0 A_PlaySound("misc/xdeath");
+        FTYS DE 4;
+		NULL A 0 A_PlaySound("misc/xdeath");
+		FTYS DE 3;
+		NULL A 0 A_PlaySound("misc/xdeath");
+		FTYS DEE 2;
+		
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("misc/xdeath", 3);
+		NULL AAAA 0 A_SpawnProjectile ("XDeath1", 20, 0, random (0, 360), 2, random (0, 160));
+		TNT1 AAAAAA 0 A_SpawnProjectile ("BloodMist", 30, 0, random (0, 360), 2, random (20, 90));
+        FTYS FGH 2 A_SpawnProjectile ("Blood", 1, 0, random (0, 360), 2, random (0, 160)); //IIPPP
+
+    //    FTYS QR 5 
+        NULL A 0 A_SpawnItemEx("FootStep5", 0, 0, 40, 0, 0);
+    //    FTYS R 5
+	//	TNT1 A 0 A_GiveInventory("ShotgunguyHead", 1)
+		TNT1 A 0 A_SpawnProjectile("SergeantHeadThrown", 0, 0, 0, 0);
+        ///////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("SergeantFatality",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+		NULL A 0 A_SpawnProjectile ("BeheadedSergeantZombie", 1, 0, random (0, 360), 2, random (0, 160));
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+		Goto StandStill;
+
+    FatalitySergeant2:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FTYS J 2;
+        FTYS J 1 A_PlaySound("BURNZOM");
+		FTYS JJJJ 2;
+		FTYS J 1 A_PlaySound("grunt/death");
+		FTYS K 2;
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		NULL AAAA 0 A_SpawnProjectile ("XDeath1", 20, 0, random (0, 360), 2, random (0, 160));
+		NULL AA 0 A_SpawnProjectile ("XDeath2", 20, 0, random (0, 360), 2, random (0, 160));
+		NULL AA 0 A_SpawnProjectile ("XDeath3", 20, 0, random (0, 360), 2, random (0, 160));
+		TNT1 AAAAAAAAAAA 0 A_SpawnProjectile ("BloodMist", 50, 0, random (0, 360), 2, random (20, 90));
+		NULL A 0 A_SpawnProjectile ("RipSergeant", 0, 0, random (0, 360), 2, random (0, 160));
+        FTYS LMNO 2;
+        FTYS O 5;
+        ///////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("SergeantFatality2",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+		NULL A 0 A_SpawnItem ("GrowingBloodPool");
+        NULL A 0 A_SpawnItem ("DeadShotgunguy_Half", 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+		
+		
+	FatalitySergeant3:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FSP3 A 2;
+		
+		FSP3 B 4 A_PlaySound("grunt/pain");
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		FSP3 CDE 2;
+		FSP3 E 2;
+		
+		FSP3 FG 2;
+		NULL A 0 A_PlaySound("grunt/death");
+		XXXX A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		NULL AAAA 0 A_SpawnProjectile ("XDeath1", 20, 0, random (0, 360), 2, random (0, 160));
+		//NULL AA 0 A_SpawnProjectile ("XDeath2", 20, 0, random (0, 360), 2, random (0, 160))
+		//NULL AA 0 A_SpawnProjectile ("XDeath3", 20, 0, random (0, 360), 2, random (0, 160))
+		 TNT1 AAA 0 A_SpawnProjectile ("BloodMistSmall", 30, 0, random (0, 360), 2, random (20, 90));
+		
+        FSP3 HIIIIII 1;
+	   
+	   NULL A 0 A_PlaySound("weapons/sg");
+	   XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		NULL AAAAA 0 A_SpawnProjectile ("XDeath1", 70, 0, random (0, 360), 2, random (0, 160));
+		NULL AA 0 A_SpawnProjectile ("XDeath2", 70, 0, random (0, 360), 2, random (0, 160));
+		NULL AA 0 A_SpawnProjectile ("XDeath3", 70, 0, random (0, 360), 2, random (0, 160));
+		
+		TNT1 AAAAAAAAAAA 0 A_SpawnProjectile ("BloodMist", 80, 0, random (0, 360), 2, random (20, 90));
+        NULL A 0 A_SpawnProjectile ("FlyingImpaledSergeant", 50, 0, random (0, 360), 2, random (70, 110));
+		
+		
+		FSP3 L 2 BRIGHT;
+		FSP3 K 2;
+		FSP3 J 5;
+		///////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("SergeantFatality3",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill	;
+
+	FatalitySergeant4:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+		//////////////////////////////////////////////////////
+		SGF8 A 4;
+		SGF8 B 4;
+		NULL A 0  A_PlaySound("grunt/pain");
+		NULL A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 160));
+		SGF8 AB 4;
+        NULL A 0 SetPlayerProperty(0,1,0);
+		NULL A 0  A_PlaySound("grunt/pain");
+		NULL A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 160));
+		SGF8 A 4;
+		SGF8 B 4;
+			NULL A 0  A_PlaySound("grunt/pain");
+			NULL A 0 A_PlaySound("misc/xdeath4a", 4);
+			NULL A 0 A_SpawnProjectile ("ShakeYourAssMinor", 1, 0, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 160));
+			//SPLATTERS!
+			SGF8 CD 3;
+			NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+			NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+			NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+			NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+			NULL A 0 A_PlaySound("BURNZOM", 3);
+			NULL AAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 29, -5, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			NULL AAAAA 0 A_SpawnProjectile ("Blood", 29, -5, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			SGF8 EF 5 A_SpawnProjectile ("Blood", 24, -11, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			NULL A 0 A_PlaySound("misc/xdeath2c", 5);
+			SGF8 G 4;
+			NULL A 0 A_PlaySound("misc/xdeath2c", 5);
+			NULL AA 0 A_SpawnProjectile ("Blood", 29, -5, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			SGF8 H 7;
+			NULL A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			SGF8 H 6;
+			NULL A 0 A_PlaySound("misc/xdeath4a", 6);
+			NULL AAAAA 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			SGF8 H 4;
+			NULL A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			SGF8 I 3;
+			NULL AA 0 A_SpawnProjectile ("XDeath1", 7, -33, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			NULL A 0 A_SpawnProjectile ("XDeath4", 8, -30, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			SGF8 JJ 4 A_SpawnProjectile ("Blood", 29, -27, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			NULL AA 0 A_SpawnProjectile ("Blood", 29, -27, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			SGF8 KL 3 A_SpawnProjectile ("Blood", 29, -27, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			NULL A 0 A_Stopsound(3);
+			
+			NULL AAA 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			SGF8 LL 4;
+			NULL AAAA 0 A_SpawnProjectile ("CeilBloodLauncherLong", 50, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (50, 130));
+			NULL AA 0 A_SpawnProjectile ("XDeath1", 60, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			NULL AAA 0 A_SpawnProjectile ("XDeath2", 60, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			NULL AA 0 A_SpawnProjectile ("XDeath3", 60, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			NULL AAA 0 A_SpawnProjectile ("Instestin", 50, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			NULL AAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 60, 0, frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom (0, 160));
+			SGF8 MMM 3;
+			TNT1 A 0 A_TakeInventory("SergeantFatality4",1);
+			TNT1 A 0 A_TakeInventory("GoFatality", 1);
+			NULL A 0 A_SpawnItemEx("FatalizedSGGuy4",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION);
+		//	NULL A 0 A_GiveInventory("HealthBonus",10)
+			MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+			NULL A 0 SetPlayerProperty(0,0,0);
+	        Goto StandStill;
+
+    FatalityComando:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        CFTA AAABCDE 1;
+          NULL A 0 A_PlaySound("commando/pain");
+NULL A 0 A_SpawnItemEx("FootStep5", 0, 0, 40, 0, 0);
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+          NULL A 0 A_PlaySound("CLAP");
+        CFTA EFF 5;
+        CFTA GHIJK 2;
+          NULL A 0 A_PlaySound("commando/pain");
+NULL A 0 A_SpawnItemEx("FootStep5", 0, 0, 40, 0, 0);
+NULL A 0 A_SpawnProjectile ("ShakeShakeShake", 50, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 A_SpawnProjectile ("GoreSound", 22, 0, random (0, 360), 2, random (0, 160));
+         CFTA L 5;
+	    
+        CFTA M 7;
+        CFTA OPQR 2;
+         NULL A 0 A_PlaySound("commando/pain");
+          NULL A 0 A_PlaySound("commando/death");
+       CFTA R 8;
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+          NULL A 0 A_PlaySound("BURNZC");
+NULL A 0 A_SpawnProjectile ("ShakeShakeShake", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 40, 0, random (0, 360), 2, random (50, 130));
+         NULL AAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAA 0 A_SpawnProjectile ("XDeath3", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        CFTA S 12;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("ComandoFatality",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+        NULL A 0 A_SpawnItemEx("DyingComando", 0, 0, 40, 0, 0);
+		NULL A 0 A_SpawnProjectile ("XDeathChainArm", 40, -15, 0, 2, 0);
+		NULL A 0 A_SpawnProjectile ("XDeathChainArm", 40, 15, 0, 2, 0);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+	    FatalityComando2:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        CFTC A 1;
+        CFTC A 1 A_PlaySound("BURNZC");
+		CFTC AAAA 3;
+		CFTC B 1 A_PlaySound("commando/death");
+		CFTC B 4;
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+NULL AAAA 0 A_SpawnProjectile ("XDeath1", 20, 0, random (0, 360), 2, random (0, 160));
+NULL AA 0 A_SpawnProjectile ("XDeath2", 20, 0, random (0, 360), 2, random (0, 160));
+NULL AA 0 A_SpawnProjectile ("XDeath3", 20, 0, random (0, 360), 2, random (0, 160));
+NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 60, 0, random (0, 360), 2, random (0, 160));
+        NULL AA 0 A_SpawnProjectile ("MuchBlood", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("XdeathChainArm", 42, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("XdeathChainLeg", 42, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_SpawnProjectile ("XdeathGuts", 42, 0, random (0, 360), 2, random (0, 160));
+        CFTC CDEF 2;
+        CFTC F 7;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("ComandoFatality2",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+        NULL A 0 A_SpawnItemEx("DeadChaingunGuy_Half", 0, 0, 40, 0, 0);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+    FatalityDemon:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FDEM A 4;
+		NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        FDEM B 4 A_PlaySound("demon/melee");
+        FDEM C 4;
+        FDEM C 1 A_PlaySound("demon/pain");
+        FDEM CDCDCD 2;
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		 NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 40, 0, random (0, 360), 2, random (50, 130));
+         NULL AAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAA 0 A_SpawnProjectile ("XDeath3", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        FDEM EFGHI 2 A_SpawnProjectile ("XDeath1", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL A 0 A_SpawnProjectile ("XDeathDemonHead", 32, 0, 90, 2, random (0, 90));
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("DemonFatality",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+        NULL A 0 A_SpawnItemEx("DyingDemon", 0, 1, 1, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+		
+		FatalityDemon2:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+		FDEM J 2;
+		NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        FDEM J 5 A_PlaySound("demon/pain");
+        FDEM J 5;
+        FDEM K 4;
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		 NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 40, 0, random (0, 360), 2, random (50, 130));
+         NULL AAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAA 0 A_SpawnProjectile ("XDeath3", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL A 0 A_SpawnProjectile ("XDeathStomach", 32, 0, random (0, 360), 2, random (0, 160));
+        FDEM LMN 4;
+		FDEM OO 2;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("DemonFatality2",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10);
+        NULL A 0 A_SpawnItemEx("DeadDemonHalf", 0, 1, 1, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+		
+	FatalityDemon3:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+		FD2M A 2;
+		NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        FDEM J 0 A_PlaySound("demon/pain");
+        FD2M A 5;
+		
+        FD2M B 2;
+		FD7M B 1;
+		FD2M C 2;
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 A_PlaySound("demon/pain");
+NULL A 0 A_PlaySound("player/cyborg/fist", 1);
+NULL A 0 A_SpawnItem("Blood", 0, 20);
+		FD7M B 1;
+		FD2M B 2;
+		FD2M A 4;
+		 
+		 FD2M B 2;
+		FD7M B 1;
+		FD2M C 2;
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 A_PlaySound("demon/pain");
+NULL A 0 A_PlaySound("player/cyborg/fist", 1);
+NULL A 0 A_SpawnItem("Blood", 0, 20);
+		FD7M B 1;
+		FD2M B 2;
+		FD2M A 4;
+		
+		 FD2M AD 2;
+		 XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 A_PlaySound("demon/pain");
+NULL A 0 A_PlaySound("player/cyborg/fist", 1);
+NULL A 0 A_SpawnItem("Blood", 0, 5);
+		 
+		 FD2M E 3;
+		 FD2M F 7;
+		 FD2M GHHH 3;
+		 XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+
+NULL AAA 0 A_SpawnItem("Blood", 0, 5);
+NULL A 0 A_SpawnItem("MeatDeath", 0, 1);
+		 FD2M IJJJJ 3;
+		 
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("DemonFatality3",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10);
+        NULL A 0 A_SpawnItemEx("DeadDemonStomped", 0, 1, 1, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+    FatalityCacoDemon:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        CACF ABC 3;
+        CACF D 3 A_PlaySound("misc/xdeath4");
+        CACF E 3 A_PlaySound("caco/pain");
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+        NULL AAAAAAAAAAAAAAAAA 0 A_SpawnProjectile ("Blue_FlyingBloodTrail", 45, 0, random (0, 180), 2, random (0, 180));
+       NULL AAAAAAAAAAAA 0 A_SpawnProjectile ("Blue_FlyingBloodTrail", 45, 0, random (0, 360), 2, random (0, 360));
+        NULL AAA 0 A_SpawnProjectile ("Blue_Blood", 45, 0, random (0, 360), 2, random (0, 160));
+        CACF EFGHII 2 A_SpawnProjectile ("Blue_Blood", 45, 0, random (0, 360), 2, random (0, 160));
+        CACF J 3 A_PlaySound("misc/xdeath2");
+        CACF KLMMM 2 A_SpawnProjectile ("Blue_Blood", 15, 0, random (0, 360), 2, random (0, 160));
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("CacoDemonFatality",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+        NULL A 0 A_SpawnItemEx("DeadCacoDemon", 0, 1, 1, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+		
+		
+		FatalityCacoDemon2:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        CA2F AB 2;
+		NULL A 0 A_PlaySound("caco/pain");
+        CA2F BCDEE 3;
+        CA2F F 2;
+		NULL A 0 A_PlaySound("caco/pain");
+        XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		CA2F F 2;
+		NULL A 0 A_PlaySound("misc/xdeath2");
+		CA2F FFFF 2 A_SpawnProjectile ("Blue_Blood", 25, 0, random (0, 180), 2, random (0, 180));
+		NULL AAAAA 0 A_SpawnProjectile ("CacoXDeath7", 25, 0, random (0, 360), 2, random (0, 160));
+        CA2F GH 2;
+		NULL A 0 A_SpawnProjectile ("RipCaco", 35, 0, random (0, 360), 2, random (0, 160));
+		CA2F I 10;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("CacoDemonFatality2",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+        NULL A 0 A_SpawnItem ("DeadHalfCacoDemon", 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+    FatalityRevenant:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FREV ABABAB 3;
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 40, 0, random (0, 360), 2, random (50, 130));
+         NULL AAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAAAAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+        FREV C 2 A_PlaySound("skeleton/pain");
+        FREV D 2;
+        FREV EFGHIJJJKL 2;
+        FREV M 3 A_PlaySound("skeleton/sight");
+        FREV M 5;
+        FREV N 2;
+        FREV O 2;
+
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		 NULL AA 0 A_SpawnProjectile ("XDeath1", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAA 0 A_SpawnProjectile ("XDeath2", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAA 0 A_SpawnProjectile ("XDeath3", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL A 0 A_SpawnProjectile ("XDeathRevenantHeadKicked2", 40, 0, 0, 2, 0);
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+
+        FREV PQR 2;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("RevenantFatality",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",15)
+        NULL A 0 A_SpawnItemEx("DyingRevenant", 0, 35, 35, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+    FatalityRevenant2:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FRE2 A 3;
+		FRE2 A 3 A_PlaySound("skeleton/pain");
+		FRE2 A 3;
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 40, 0, random (0, 360), 2, random (50, 130));
+         NULL AAAA 0 A_SpawnProjectile ("XDeath1", 40, 0, random (0, 360), 2, random (0, 160));
+		 NULL AA 0 A_SpawnProjectile ("XDeath2", 40, 0, random (0, 360), 2, random (0, 160));
+		 NULL AA 0 A_SpawnProjectile ("XDeath3", 40, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAAAAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+        FRE2 BCDEFGGGGG 3;
+		
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("RevenantFatality2",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",15)
+        NULL A 0 A_SpawnItem("VeryFuckedUpRevenant");
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+
+
+
+
+
+    FatalityFatso:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        FATF A 3;
+NULL A 0 ACS_Execute(585, 0, 0, 0, 0);
+        NULL A 0 A_SpawnProjectile ("Blood", 45, 0, random (0, 360), 2, random (0, 160));
+        NULL AAAAAAA 0 A_SpawnProjectile ("Brutal_FlyingBloodTrail", 45, 0, random (0, 180), 2, random (0, 180));
+        FATF A 3 A_PlaySound("misc/xdeath4");
+		NULL A 0 A_SpawnProjectile ("Blood", 45, 0, random (0, 360), 2, random (0, 160));
+        FATF A 3 A_PlaySound("fatso/pain");
+        FATF AA 3 A_SpawnProjectile ("Blood", 45, 0, random (0, 360), 2, random (0, 160));
+
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 40, 0, random (0, 360), 2, random (50, 130));
+         NULL AAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAA 0 A_SpawnProjectile ("XDeath3", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		 NULL A 0 A_SpawnProjectile ("XDeath1", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL A 0 A_SpawnProjectile ("XDeath2", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL A 0 A_SpawnProjectile ("XDeath3", 50, 0, random (0, 360), 2, random (0, 160));
+        FATF BCD 4;
+		NULL A 0 A_PlaySound("fatso/pain");
+		FATF D 20;
+
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("FatsoFatality",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",15)
+        NULL A 0 A_SpawnItemEx("FatalizedFatso", 0, 1, 1, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+    FatalityBaron:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        BHF1 AAABCDEF 2;
+        BHF1 G 2 A_PlaySound("weapons/gswing");
+        BHF1 HIJKLLLMN 2;
+        BHF1 O 2 A_PlaySound("baron/pain");
+        NULL AAAAAAA 0 A_SpawnProjectile ("Blood", 35, 0, random (0, 180), 2, random (0, 180));
+        NULL A 0 A_PlaySound("misc/xdeath4");
+        BHF1 PQR 2 A_SpawnProjectile ("Blood", 35, 0, random (0, 360), 2, random (0, 160));
+
+        NULL A 0 A_PlaySound("misc/xdeath4");
+        NULL A 0 A_PlaySound("misc/xdeath3");
+        NULL A 0 A_PlaySound("misc/xdeath2");
+        NULL A 0 A_PlaySound("misc/xdeath1");
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAAA 0 A_SpawnProjectile ("Blood", 35, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+
+        BHF1 STUV 2 A_SpawnProjectile ("Blood", 35, 0, random (0, 360), 2, random (0, 160));
+
+
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		 NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 40, 0, random (0, 360), 2, random (50, 130));
+         NULL AAAAAAAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+         NULL A 0 A_SpawnItem ("MeatDeath", 30);
+
+        BHF1 WXYZZZZZZZZZZZZZZ 2;
+
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("BaronFatality",1);
+	//	NULL AAAA 0 A_GiveInventory("Medikit",1)
+        NULL A 0 A_SpawnItemEx("DeadBaronNoHead", 0, 1, 1, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+	FatalityBaron2:
+		NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+			BHF2 A 4;
+			TNT1 A 0 A_PlaySound("DSMELEE",1);
+			BHF2 B 3;
+			BHF2 C 3;
+        TNT1 A 0 SetPlayerProperty(0,1,0);
+			TNT1 A 0 A_PlaySound("player/cyborg/KICK",2);
+			TNT1 AAA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+			BHF2 D 3;
+			TNT1 A 0 A_PlaySound("baron/pain", 3);
+			BHF2 E 3;
+			BHF2 FG 3;
+			BHF2 HH 4;
+			TNT1 A 0 A_PlaySound("CLAP",5);
+			XXXX AAAAA 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+			BHF2 IJ 4;
+			TNT1 A 0 A_PlaySound("DSMELEE",1);
+			BHF2 KL 3;
+			TNT1 A 0 A_PlaySound("CLAP",5);
+			BHF2 MN 4;
+			TNT1 AAA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 20, 35, random (0, 360), 2, random (0, 160));
+			TNT1 A 0 A_PlaySound("baron/pain", 3);
+			BHF2 OOO 5;
+			BHF2 PP 4;
+			BHF2 Q 5;
+			TNT1 A 0 A_PlaySound("player/cyborg/fist", 2);
+			TNT1 AAAA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 10, 84, random (0, 360), 2, random (0, 160));
+			TNT1 AA 0 A_SpawnProjectile ("Blood", 10, 84, random (0, 360), 2, random (0, 160));
+			BHF2 P 5;
+			TNT1 A 0 A_PlaySound("baron/pain", 4);
+			BHF2 Q 4;
+			TNT1 A 0 A_PlaySound("player/cyborg/fist", 2);
+			TNT1 AAAAAA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 10, 84, random (0, 360), 2, random (0, 160));
+			TNT1 AAAA 0 A_SpawnProjectile ("Blood", 10, 84, random (0, 360), 2, random (0, 160));
+			BHF2 R 5;
+			TNT1 A 0 A_PlaySound("baron/pain", 4);
+			BHF2 S 4;
+			TNT1 A 0 A_PlaySound("player/cyborg/fist", 2);
+			TNT1 A 0 A_PlaySound("misc/xdeath4a", 8, 3);
+			XXXX AA 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+			TNT1 AAAAAA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 10, 84, random (0, 360), 2, random (0, 160));
+			TNT1 AAAAA 0 A_SpawnProjectile ("Blood", 10, 84, random (0, 360), 2, random (0, 160));
+			TNT1 AA 0 A_SpawnProjectile ("SmallBrainPieceFast", 10, 44, random (170, 190), 2, random (-10, 10));
+			TNT1 A 0 A_SpawnProjectile ("SmallBrainPiece", 12, 84, random (0, 360), 2, random (0, 160));
+			BHF2 R 5;
+			TNT1 A 0 A_PlaySound("baron/pain", 4);
+			BHF2 S 4;
+			TNT1 A 0 A_PlaySound("player/cyborg/fist", 4);
+			XXXX AA 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+			TNT1 AAAAAA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 10, 84, random (0, 360), 2, random (0, 160));
+			TNT1 AAAAA 0 A_SpawnProjectile ("Blood", 10, 84, random (0, 360), 2, random (0, 160));
+			TNT1 AAA 0 A_SpawnProjectile ("SmallBrainPieceFast", 10, 44, random (170, 190), 2, random (-10, 10));
+			TNT1 AAA 0 A_SpawnProjectile ("SmallBrainPiece", 12, 84, random (0, 360), 2, random (0, 160));
+			BHF2 R 5;
+			TNT1 A 0 A_PlaySound("baron/pain", 4);
+			BHF2 S 4;
+			TNT1 A 0 A_PlaySound("player/cyborg/fist", 4);
+			XXXX AA 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+			TNT1 AAAAAA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 10, 84, random (0, 360), 2, random (0, 160));
+			TNT1 AAAAA 0 A_SpawnProjectile ("Blood", 10, 84, random (0, 360), 2, random (0, 160));
+			TNT1 AAA 0 A_SpawnProjectile ("SmallBrainPieceFast", 10, 44, random (170, 190), 2, random (-10, 10));
+			TNT1 AAA 0 A_SpawnProjectile ("SmallBrainPiece", 12, 84, random (0, 360), 2, random (0, 160));
+			BHF2 T 4;
+			TNT1 A 0 A_PlaySound("xdeath2c", 4);
+			BHF2 U 4;
+			TNT1 A 0 A_PlaySound("player/cyborg/fist", 2);
+			TNT1 A 0 A_PlaySound("xdeath", 9, 4);
+			TNT1 AAAAA 0 A_SpawnProjectile ("Blood", 12, 45, random (0, 360), 2, random (0, 160));
+			XXXX AAAAAA 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+			TNT1 AAAAAA 0 A_SpawnProjectile ("Brutal_FlyingBlood", 10, 84, random (0, 360), 2, random (0, 160));
+			TNT1 AAAAAAA 0 A_SpawnProjectile ("Blood", 10, 84, random (0, 360), 2, random (0, 160));
+			TNT1 AAAAA 0 A_SpawnProjectile ("SmallBrainPieceFast", 10, 44, random (170, 190), 2, random (-10, 10));
+			TNT1 AAAAAA 0 A_SpawnProjectile ("SmallBrainPiece", 12, 84, random (0, 360), 2, random (0, 160));
+			BHF2 VV 5 A_SpawnProjectile ("Blood", 10, 84, random (0, 360), 2, random (0, 160));
+			TNT1 A 0 A_SpawnItem("MediumBloodSpot", 4);
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("BaronFatality2",1);
+	//	NULL AAAA 0 A_GiveInventory("Medikit",1)
+        NULL A 0 A_SpawnItemEx("FatalizedBaron2", 0, 1, 1, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+    FatalityHK:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        HKF1 A 1;
+		NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		HKF1 AB 3;
+		NULL A 0 A_SpawnProjectile ("GoreSound", 22, 0, random (0, 360), 2, random (0, 160));
+        HKF1 C 6 A_PlaySound("knight/pain");
+		NULL AAA 0 A_SpawnProjectile ("Blood", 45, 0, random (0, 360), 2, random (0, 160));
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		HKF1 C 4;
+		NULL A 0 A_PlaySound("imp/melee");
+		HKF1 C 4;
+        NULL AAAAAAA 0 A_SpawnProjectile ("Blood", 55, 0, random (0, 180), 2, random (0, 180));
+        
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		NULL AAAAA 0 A_SpawnProjectile ("Instestin2", 32, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 40, 0, random (0, 360), 2, random (50, 130));
+         NULL AAAAAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAA 0 A_SpawnProjectile ("XDeath3", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+
+
+        HKF1 CDE 4 A_SpawnItem ("Brutal_Blood", 30);
+		HKF1 FG 3 A_SpawnItem ("Brutal_Blood", 15);
+		HKF1 HHH 4;
+
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_TakeInventory("HKFatality",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+        NULL A 0 A_SpawnItemEx("RapedHK", 0, 1, 1, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+		
+		
+		
+	FatalityHK3:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        NULL A 0 A_PlaySound("weapons/gswing", 1);
+		NULL A 0 A_PlaySound("knight/pain");
+		HKF3 A 1;
+		NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		HKF3 ABC 4;
+		NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		NULL A 0 SetPlayerProperty(0,1,0);
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 A_PlaySound("knight/pain", 2);
+		HKF3 D 7;
+         NULL A 0 A_PlaySound("knight/death");
+
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		 NULL AAAAAAA 0 A_SpawnProjectile ("XDeath1", 50, 0, random (0, 360), 2, random (0, 160));
+         NULL AA 0 A_SpawnProjectile ("Blood", 50, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL A 0 A_SpawnProjectile ("XDeathHellKnightArm", 40, 0, 90, 2, random (0, 20));
+        HKF3 EFGG 5 A_SpawnProjectile ("Blood", 40, 0, random (0, 360), 2, random (0, 160));
+		
+		NULL A 0 A_PlaySound("knight/pain");
+		HKF3 H 7;
+         
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+
+		 NULL AAAAAAA 0 A_SpawnProjectile ("XDeath1", 60, 0, random (0, 360), 2, random (0, 160));
+         NULL AA 0 A_SpawnProjectile ("Blood", 60, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 60, 0, random (0, 360), 2, random (0, 160));
+		 NULL A 0 A_SpawnProjectile ("XDeathHellKnightHead", 40, 0, 270, 2, random (0, 20));
+		 HKF3 I 10;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("HKFatality3",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+        NULL A 0 A_SpawnItemEx("NoArmNoHeadFatalizedHK", 0, 1, 1, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+FatalityHK2:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		HKF2 AAB 4;
+		NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		NULL A 0 SetPlayerProperty(0,1,0);
+		NULL A 0 A_PlaySound("knight/pain");
+		
+		HKF2 DEFFGH 5;
+		
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+         NULL A 0 A_PlaySound("knight/pain");
+		 HKF2 IJIJIJ 3;
+		 
+
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+
+		 NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 40, 0, random (0, 360), 2, random (50, 130));
+         NULL AAAAAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AA 0 A_SpawnProjectile ("Blood", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+         
+
+        HKF2 KL 4;
+		NULL A 0 A_SpawnProjectile ("XDeathHellKnightHead", 64, 0, random (0, 360), 2, random (60, 120));
+		HKF2 MNNNNN 4;
+
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("HKFatality2",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",10)
+        NULL A 0 A_SpawnItemEx("OmgSoDeadHK", 0, 1, 1, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+
+    FatalityArachnotron:
+        NULL A 0 SetPlayerProperty(0,1,0);
+		NULL A 0 SetPlayerProperty(0,1,5);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+        ARF1 ABABABABABABAB 2;
+		NULL A 0 A_SpawnItem("Spark_UpOnce",0,60);
+		ARF1 CD 2;
+		NULL A 0 A_PlaySound("baby/death");
+		ARF1 EFFFF 2;
+		ARF1 GGHHI 2;
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		NULL AAAAA 0 A_SpawnProjectile ("Instestin2", 14, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 40, 0, random (0, 360), 2, random (50, 130));
+         NULL AAAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAA 0 A_SpawnProjectile ("XDeath3", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+		ARF1 JKLMNNNNNNNNNNNNNNNN 2;
+
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("ArachnotronFatality",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",20)
+        NULL A 0 A_SpawnItemEx("RapedArachnotron", 0, 1, 1, 1, 1);
+		//NULL A 0 A_SpawnProjectile ("SpiderLeg", 30, 0, 0, 2, 0)
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+		NULL A 0 SetPlayerProperty(0,0,5);
+        Goto StandStill;
+		
+		
+		FatalityArachnotron2:
+        NULL A 0 SetPlayerProperty(0,1,0);
+		NULL A 0 SetPlayerProperty(0,1,5);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+		ARF2 A 3;
+		NULL A 0 A_PlaySound("baby/pain");
+		ARF2 B 2;
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+        ARF2 BIBIBI 2;
+		NULL A 0 A_PlaySound("baby/death");
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		NULL AAAAA 0 A_SpawnProjectile ("Instestin2", 14, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAAAAA 0 A_SpawnProjectile ("CeilBloodLauncher", 40, 0, random (0, 360), 2, random (50, 130));
+         NULL AAAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160));
+         NULL AAAAAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+		
+		ARF2 CDE 2;
+        NULL A 0 A_SpawnProjectile ("XDeathArachnotronHead", 50, 0, random (0, 360), 2, random (40, 130));
+		//////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("ArachnotronFatality2",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",20)
+        NULL A 0 A_SpawnItemEx("NoLegsSpider", 0, 1, 1, 1, 1);
+		//NULL A 0 A_SpawnProjectile ("SpiderLeg", 30, 0, 0, 2, 0)
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+		NULL A 0 SetPlayerProperty(0,0,5);
+        Goto StandStill;
+		
+		
+		
+		FatalityArchVile:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        AVF1 A 1;
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+        AVF1 A 1 A_PlaySound("vile/pain");
+        AVF1 A 10;
+
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		 NULL AA 0 A_SpawnProjectile ("XDeath1", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAA 0 A_SpawnProjectile ("XDeath2", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAA 0 A_SpawnProjectile ("XDeath3", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 60, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+
+        AVF1 A 1 A_PlaySound("vile/Death");
+        AVF1 BCDEEEFGHHH 2 A_SpawnProjectile ("PlayerFlyingBlood", 60, 0, random (0, 360), 2, random (0, 160));
+		AVF1 IJKLM 2;
+		NULL AAAA 0 A_SpawnProjectile ("XDeath1", 5, 0, random (0, 360), 2, random (0, 160));
+		NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 20, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+NULL A 0 A_PlaySound("CLAP");
+NULL A 0 A_SpawnItemEx("FootStep5", 0, 0, 40, 0, 0);
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		AVF1 N 8;
+		AVF1 OPQQR 3;
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		 NULL AA 0 A_SpawnProjectile ("XDeath1", 20, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAA 0 A_SpawnProjectile ("XDeath2", 20, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAA 0 A_SpawnProjectile ("XDeath3", 20, 0, random (0, 360), 2, random (0, 160));
+		 NULL AAAAAAAAAA 0 A_SpawnProjectile ("PlayerFlyingBlood", 50, 0, random (0, 360), 2, random (0, 160));
+		 NULL A 0 A_SpawnItemEx("FootStep5", 0, 0, 40, 0, 0);
+		AVF1 ST 2; //UUUUVVVV
+		NULL A 0;// A_PlaySound("TAUNT")
+	//	AVF1 V 6
+	//	AVF1 WXWX 4
+	//	AVF1 V 5
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("ArchVileFatality",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",20)
+        NULL A 0 A_SpawnItem("FatalizedArchvile1");
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+FatalityPE:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        PA1F A 3;
+		FATF E 0 A_PlaySound("pain/pain");
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		PA1F A 5;
+		
+        NULL A 0 ACS_Execute(585, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		
+        NULL AAAAAA 0 A_SpawnProjectile ("Blood", 55, 0, random (0, 180), 2, random (0, 180));
+        NULL AA 0 A_SpawnProjectile ("XDeath1", 55, 0, random (0, 360), 2, random (0, 160));
+        NULL A 0 A_PlaySound("pain/pain");
+		
+		PA1F BCDEEEEEFGHI 3;
+		
+		NULL A 0 A_PlaySound("pain/pain");
+        
+		PA1F JKKKK 3;
+		
+		PA1F L 3;
+		NULL AAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("MuchBlood", 90, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(585, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		
+		  PA1F MNNNNNNN 2;
+		  
+		  
+		  PA1F OPQR 2;
+		  
+		NULL AAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("MuchBlood", 90, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(585, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		  
+		  PA1F RQPQR 3;
+		  
+		  
+		  NULL AAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("MuchBlood", 90, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(585, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		
+		PA1F RQPQR 3;
+		  
+		  
+		  NULL AAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160));
+        NULL AAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160));
+		NULL AAA 0 A_SpawnProjectile ("MuchBlood", 90, 0, random (0, 360), 2, random (0, 160));
+		NULL A 0 ACS_Execute(585, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+        NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		
+	/*	PA1F RQPQR 3
+		  
+		  
+		  NULL AAAA 0 A_SpawnProjectile ("XDeath1", 10, 0, random (0, 360), 2, random (0, 160))
+        NULL AAA 0 A_SpawnProjectile ("XDeath2", 10, 0, random (0, 360), 2, random (0, 160))
+		NULL AAA 0 A_SpawnProjectile ("MuchBlood", 90, 0, random (0, 360), 2, random (0, 160))
+		NULL A 0 ACS_Execute(585, 0, 0, 0, 0)
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0)
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0)
+        NULL A 0 ACS_Execute(582, 0, 0, 0, 0)
+        NULL A 0 ACS_Execute(583, 0, 0, 0, 0)
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160))*/
+		
+		
+		PA1F S 12;
+		PA1F STSTST 3 A_SpawnProjectile ("MuchBlood", 30, 0, random (0, 360), 2, random (0, 160));
+		PA1F S 5;
+		
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("PEFatality",1);
+	//	NULL A 0 A_GiveInventory("HealthBonus",15)
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_SpawnItemEx("FatalizedPE", 0, 1, 1, 1, 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+
+
+
+
+
+    CurbstompZombieman:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        01CB A 3;
+		NULL A 0 SetPlayerProperty(0,1,0);
+		NULL A 0 A_PlaySound("grunt/death");
+		01CB BCCCC 2 SetPlayerProperty(0,1,0);
+		NULL A 0 A_PlaySound("misc/xdeath1");
+		01CB D 2;
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+        TNT1 A 0 A_SpawnItemEx("ZombiemanHeadExplode", 0, 20);
+		TNT1 A 0 A_SpawnItemEx("GrowingBloodPool", 0, 20);
+          01CB E 10;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("IsCurbstompingZombieman",1);
+		NULL A 0 A_GiveInventory("HealthBonus",10);
+		TNT1 A 0 A_GiveInventory("BootsSmearedWithRedBlood", 6);
+		 NULL A 0 A_SpawnProjectile ("StompedZombieman", 1, 0, random (0, 360), 2, random (0, 160));
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+		NULL A 0 SetPlayerProperty(0,0,0);	
+        Goto StandStill;
+		
+		
+		
+		CurbstompSergeant:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        02CB A 3;
+		NULL A 0 SetPlayerProperty(0,1,0);
+		NULL A 0 A_PlaySound("grunt/death");
+		02CB BCCCC 2 SetPlayerProperty(0,1,0);
+		NULL A 0 A_PlaySound("misc/xdeath1");
+		02CB D 2;
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+        TNT1 A 0 A_SpawnItemEx("ShotgunguyHeadExplode", 0, 20);
+		TNT1 A 0 A_SpawnItemEx("GrowingBloodPool", 0, 20);
+          02CB E 10;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("IsCurbstompingSergeant",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_GiveInventory("HealthBonus",5);
+		TNT1 A 0 A_GiveInventory("BootsSmearedWithRedBlood", 6);
+		 NULL A 0 A_SpawnProjectile ("StompedSergeant", 1, 0, random (0, 360), 2, random (0, 160));
+		 MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+
+
+	   CurbstompImp:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        
+		NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+     //   FTYI ABB 4
+     //   FTYI CDEFG 2
+		FTYI G 2;
+		NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0  A_PlaySound("imp/pain");
+        NULL A 0 A_SpawnItemEx("FootStep5", 0, 0, 40, 0, 0);
+        NULL A 0 A_PlaySound("CLAP");
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 160));
+        FTYI GHHHHHHHHIIJJJJJJJJJJJ 1 SetPlayerProperty(0,1,0);
+        FTYI K 2;
+		XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 160));
+		NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+		NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+        NULL A 0 A_SpawnItemEx("FootStep5", 0, 25, 30, 0, 0);
+		NULL A 0 A_SpawnItem("ImpHeadExplode", 0, 10);
+		NULL A 0 A_SpawnItemEx("SplatteredSmall", 0, 15);
+		FTYI LLLL 1;
+        FTYI LMNNN 2;
+		FTYI N 4;
+        //////////////////////////////////////////////////////
+		NULL A 0 A_TakeInventory("IsCurbstompingImp",1);
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_GiveInventory("HealthBonus",5);
+		NULL A 0 A_GiveInventory("BootsSmearedWithRedBlood", 6);
+		NULL A 0 A_SpawnProjectile ("StompedImp", 1, 0, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 360), 2, frandom(0,1)*frandom(0,1)*frandom(0,1)*frandom (0, 160));
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    Death.Fatality:
+        NULL A 0 A_NoBlocking;
+		NULL A 0 A_Scream;
+		NULL A 0 A_GiveToTarget("GoFatality", 1);
+        NULL A 0 A_GiveToTarget("PVPFatality", 1);
+		NULL A 1;
+		NULL A -1;
+        Stop;
+    FatalityPVP:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+        PVPF ABB 10;
+        PVPF C 4;
+		PVPF D 4;
+XXXX A 0 A_SpawnProjectile ("ShakeShakeShake", 1, 0, random (0, 360), 2, random (0, 160));
+		PVPF E 4;
+         NULL A 0 A_SpawnProjectile ("MeatDeath", 50, 0, random (0, 360), 2, random (0, 160));     
+		 PPOD A 0 A_SpawnItemEx("BasicMarineGib1", 0, 0, 50);
+		PPOD A 0 A_SpawnItemEx("BasicMarineGib2", 0, 0, 50);
+		PPOD A 0 A_SpawnItemEx("BasicMarineGib3", 0, 0, 50);
+		PPOD A 0 A_SpawnItemEx("BasicMarineGib4", 0, 0, 50);
+		NULL AA 0 A_SpawnProjectile ("XDeathArm1", 42, 0, random (0, 360), 2, random (0, 90));
+		 PVPF EFGGGG 4;
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("PVPFatality",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+		NULL A 0 A_GiveInventory("Megasphere",1);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+
+
+
+
+// STEALTH KILLS
+
+
+    StealthKillZombieman:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+SFZM A 8;
+SFZM B 8;
+SFZM C 16;
+NULL A 0 A_SpawnProjectile ("GoreSound", 22, 0, random (0, 360), 2, random (0, 160));
+SFZM D 8;
+
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("SKZombieMan",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+        NULL A 0 A_SpawnItemEx("DeadZombieMan", 35, 0, 40, 0, 0);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+    StealthKillShotgunGuy:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+SFSZ A 8;
+SFSZ B 8;
+SFSZ C 16;
+NULL A 0 A_SpawnProjectile ("GoreSound", 22, 0, random (0, 360), 2, random (0, 160));
+SFSZ D 8;
+
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("SKShotgunGuy",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+        NULL A 0 A_SpawnItemEx("DeadShotgunGuy", 35, 0, 40, 0, 0);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+		
+    StealthKillChaingunGuy:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+SFCG A 8;
+SFCG B 8;
+NULL A 0 A_SpawnProjectile ("GoreSound", 22, 0, random (0, 360), 2, random (0, 160));
+SFCG C 8;
+
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("SKChaingunGuy",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+        NULL A 0 A_SpawnItemEx("DeadChaingunGuy_KilledByMinorHead", 35, 0, 40, 0, 0);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+		
+		
+    StealthKillImp:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+SFIM A 8;
+SFIM B 8;
+NULL A 0 A_SpawnProjectile ("GoreSound", 22, 0, random (0, 360), 2, random (0, 160));
+SFIM C 16;
+SFIM D 8;
+
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("SKImp",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+        NULL A 0 A_SpawnItemEx("DeadImp", 35, 0, 40, 0, 0);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+		
+		
+    StealthKillNazi:
+        NULL A 0 SetPlayerProperty(0,1,0);
+        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+        NULL A 0 ACS_Execute(acsFatality, 0);
+        //////////////////////////////////////////////////////
+SFNZ A 8;
+SFNZ B 8;
+NULL A 0 A_SpawnProjectile ("GoreSound", 22, 0, random (0, 360), 2, random (0, 160));
+SFNZ C 8;
+
+        //////////////////////////////////////////////////////
+        NULL A 0 A_TakeInventory("SKNAzi",1);
+		NULL A 0 A_TakeInventory("GoFatality", 1);
+        NULL A 0 A_SpawnItemEx("DeadNazi", 35, 0, 40, 0, 0);
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+        NULL A 0 SetPlayerProperty(0,0,0);
+        Goto StandStill;
+
+
+
+
+
+
+
+//  Failed attemp to able a player to be saved 
+//  by other player before getting executed in an enemy's 
+//  fatality (the following lines were an idea of making the
+//  Hell Knight be shootable before he could headstomp the player).
+//  This idea was canceled due the current limits on Zdoom engine
+// (Or maybe I'm just doing it wrong).
+//  Maybe I will work on this in a future version.
+
+//	Death.UnusedHKF: 
+      // NULL A 0 A_SpawnProjectile ("HellKnightSpawner", 1, 0, random (0, 360), 2, random (0, 160))
+//       XXXX A -1
+//       Stop
+
+
+
+
+
+
+//	Pain.HKF:
+//        NULL A 0 A_GiveToTarget("Vanish", 1)
+//        NULL A 0 A_GiveInventory("BeginCurbstomped", 1)
+//        NULL A 0 SetPlayerProperty(0,1,0)
+//        NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0)//Start Camera
+//       KTFP AAAAAAAAAA 5 A_SpawnItem ("FreePlayerFromHellKnight", 0, 0,0)
+ //      KTFP BCDE 5 A_SpawnItem ("FreePlayerFromHellKnight", 0, 0,0)
+ //   Goto Curbstomped
+//
+ //   Curbstomped:
+  //     KTFP EEEEE 5 A_SpawnItem ("FreePlayerFromHellKnight", 0, 10,0)
+   //    KTFP FFFFF 5 A_SpawnItem ("FreePlayerFromHellKnight", 0, 0,0)
+  //     KTFP GGG 5 A_SpawnItem ("FreePlayerFromHellKnight", 0, 0,0)
+   //    KTFP GGGG 1 A_SpawnItem ("CurbStomp", 0, 0)
+  //     Goto Death.HKFAT
+//
+//	Pain.FreeHellKnight:
+  //     KTFP E 50 SetPlayerProperty(0,0,0)
+  //      NULL A 1 SetPlayerProperty(0,0,0)
+//NULL A 1 A_SpawnItem ("HellKnight", 0, 0)
+//Goto See
+//
+ //   Death.HKFAT:
+  //     KTFP HIJKLLLLLLLLL 5
+  //     NULL A 0 A_SpawnItem ("HellKnight", 0, 0)
+  //     XXXX A -1
+  //     Stop
+
+
+
+// Monsters that can perform fatality on player:
+
+
+// Baron and Hell Knight:
+    Death.HKFT:
+	Death.BHFT:
+	Death.RVFT:
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+		NULL A 1 A_PlayerScream;
+		NULL A 1 A_NoBlocking;
+   //     NULL A 0 A_GiveToTarget("Curbstomp_Marine",1);
+		NULL A -1;
+        Stop;
+
+//Imp:
+    Death.ImpFatalityMarine:
+		MARN A 0 ACS_ExecuteAlways(171, 0, 0, 0, 0);//Stop Camera
+		NULL A 1 A_PlayerScream;
+		NULL A 1 A_NoBlocking;
+   //     NULL A 0 A_GiveToTarget("Fatality_Marine",1);
+		NULL A 500;
+		NULL A -1;
+        Stop;
+
+
+
+// This section is responsable for calling scripts to make blood
+// drip on the screen when the player is affected by one of the actors
+// in the BLOODSPLASH lump.
+
+WaterSplash:
+		NULL A 0 A_TakeInventory("WaterSplasherz", 1);
+        NULL A 0 A_Giveinventory("WaterOnVisor",1);
+       // NULL A 0 A_Giveinventory("GiveHealth",1)
+		//NULL A 0 A_GiveInventory("MeatAmmo", 1)
+	  NULL A 1 A_Jump(255,"Wled1","Wled2","Wled3","Wled4","Wled5","Wled6");
+	  Goto Wled1;
+
+        Wled1:
+        NULL A 0 ACS_Execute(550, 0, 0, 0, 0);
+         Goto StandStill;
+        Wled2:
+        NULL A 0 ACS_Execute(551, 0, 0, 0, 0);
+         Goto StandStill;
+        Wled3:
+        NULL A 0 ACS_Execute(552, 0, 0, 0, 0);
+         Goto StandStill;
+        Wled4:
+        NULL A 0 ACS_Execute(552, 0, 0, 0, 0);
+         Goto StandStill;
+        Wled5:
+        NULL A 0 ACS_Execute(554, 0, 0, 0, 0);
+         Goto StandStill;
+        Wled6:
+        NULL A 0 ACS_Execute(555, 0, 0, 0, 0);
+         Goto StandStill;
+		 
+	SlimeSplash:
+		NULL A 0 A_TakeInventory("SlimeSplasherz", 1);
+        NULL A 0 A_Giveinventory("SlimeOnVisor",1);
+       // NULL A 0 A_Giveinventory("GiveHealth",1)
+		//NULL A 0 A_GiveInventory("MeatAmmo", 1)
+	  NULL A 1 A_Jump(255,"Sled1","Sled2","Sled3","Sled4","Sled5","Sled6");
+	  Goto Sled1;
+
+        Sled1:
+        NULL A 0 ACS_Execute(540, 0, 0, 0, 0);
+         Goto StandStill;
+        Sled2:
+        NULL A 0 ACS_Execute(541, 0, 0, 0, 0);
+         Goto StandStill;
+        Sled3:
+        NULL A 0 ACS_Execute(542, 0, 0, 0, 0);
+         Goto StandStill;
+        Sled4:
+        NULL A 0 ACS_Execute(543, 0, 0, 0, 0);
+         Goto StandStill;
+        Sled5:
+        NULL A 0 ACS_Execute(544, 0, 0, 0, 0);
+         Goto StandStill;
+        Sled6:
+        NULL A 0 ACS_Execute(545, 0, 0, 0, 0);
+         Goto StandStill;
+		 
+	 SludgeSplash:
+		NULL A 0 A_TakeInventory("SludgeSplasherz", 1);
+        NULL A 0 A_Giveinventory("SludgeOnVisor",1);
+       // NULL A 0 A_Giveinventory("GiveHealth",1)
+		//NULL A 0 A_GiveInventory("MeatAmmo", 1)
+	  NULL A 1 A_Jump(255,"lled1","lled2","lled3","lled4","lled5","lled6");
+	  Goto lled1;
+
+        lled1:
+        NULL A 0 ACS_Execute(5530, 0, 0, 0, 0);
+         Goto StandStill;
+        lled2:
+        NULL A 0 ACS_Execute(5531, 0, 0, 0, 0);
+         Goto StandStill;
+        lled3:
+        NULL A 0 ACS_Execute(5532, 0, 0, 0, 0);
+         Goto StandStill;
+        lled4:
+        NULL A 0 ACS_Execute(5533, 0, 0, 0, 0);
+         Goto StandStill;
+        lled5:
+        NULL A 0 ACS_Execute(5534, 0, 0, 0, 0);
+         Goto StandStill;
+        lled6:
+        NULL A 0 ACS_Execute(5535, 0, 0, 0, 0);
+         Goto StandStill;
+
+	Pain.OpenWounds:
+	Pain.Blood:
+	    NULL A 0 A_TakeInventory("BloodSplasherz", 1);
+        NULL A 0 A_Giveinventory("BloodOnVisor",1);
+        //NULL A 0 A_Giveinventory("GiveHealth",1)
+	//	NULL A 0 A_GiveInventory("MeatAmmo", 1)
+  NULL A 0 A_Jump(256,"Bled1","Bled2","Bled3","Bled4","Bled5","Bled6");
+  Goto Bled1;
+
+        Bled1:
+        NULL A 0 ACS_Execute(580, 0, 0, 0, 0);
+         Goto StandStill;
+        Bled2:
+        NULL A 0 ACS_Execute(581, 0, 0, 0, 0);
+         Goto StandStill;
+        Bled3:
+        NULL A 0 ACS_Execute(582, 0, 0, 0, 0);
+         Goto StandStill;
+        Bled4:
+        NULL A 0 ACS_Execute(583, 0, 0, 0, 0);
+         Goto StandStill;
+        Bled5:
+        NULL A 0 ACS_Execute(584, 0, 0, 0, 0);
+         Goto StandStill;
+        Bled6:
+        NULL A 0 ACS_Execute(585, 0, 0, 0, 0);
+         Goto StandStill;
+
+	Pain.BlueBlood:
+		NULL A 0 A_TakeInventory("BloodSplasherBlueBlood", 1);
+        NULL A 0 A_Giveinventory("BlueBloodOnVisor",1);
+  //      NULL A 0 A_Giveinventory("GiveHealth",1)
+  NULL A 0 A_Jump(256,"BBled1","BBled2","BBled3","BBled4","BBled5","BBled6");
+  Goto BBled1;
+        BBled1:
+        NULL A 0 ACS_Execute(570, 0, 0, 0, 0);
+         Goto StandStill;
+        BBled2:
+        NULL A 0 ACS_Execute(571, 0, 0, 0, 0);
+         Goto StandStill;
+        BBled3:
+        NULL A 0 ACS_Execute(572, 0, 0, 0, 0);
+         Goto StandStill;
+        BBled4:
+        NULL A 0 ACS_Execute(573, 0, 0, 0, 0);
+         Goto StandStill;
+        BBled5:
+        NULL A 0 ACS_Execute(574, 0, 0, 0, 0);
+         Goto StandStill;
+        BBled6:
+        NULL A 0 ACS_Execute(575, 0, 0, 0, 0);
+         Goto StandStill;
+
+	Pain.GreenBlood:
+        NULL A 0 A_Giveinventory("GreenBloodOnVisor",1);
+  //      NULL A 0 A_Giveinventory("GiveHealth",1)
+  NULL A 0 A_Jump(256,"GBled1","GBled2","GBled3","GBled4","GBled5","GBled6");
+  Goto Bled1;
+
+        GBled1:
+        NULL A 0 ACS_Execute(560, 0, 0, 0, 0);
+         Goto StandStill;
+        GBled2:
+        NULL A 0 ACS_Execute(561, 0, 0, 0, 0);
+         Goto StandStill;
+        GBled3:
+        NULL A 0 ACS_Execute(562, 0, 0, 0, 0);
+         Goto StandStill;
+        GBled4:
+        NULL A 0 ACS_Execute(563, 0, 0, 0, 0);
+         Goto StandStill;
+        GBled5:
+        NULL A 0 ACS_Execute(564, 0, 0, 0, 0);
+         Goto StandStill;
+        GBled6:
+        NULL A 0 ACS_Execute(565, 0, 0, 0, 0);
+         Goto StandStill;
+
+
+
+
+		 
+		 
+		 
+		 
+		 
+/*		//When you get MeatShields
+		
+		
+		GotImpShield:
+		NULL A 0 A_TakeInventory("MeatAmmo", 100);
+		NULL A 0 A_GiveInventory("ImpShield");
+		NULL A 0 A_SelectWeapon("ImpShield");
+		NULL A 0 A_TakeInventory("Punching", 1);
+		Goto SeeImpShield;
+		
+		
+		SeeImpShield:
+	    NULL A 0 A_TakeInventory("Punching", 1);
+		MAIS A 8;
+		NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+		MAIS B 8;
+		NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+		//Goto See
+		Loop;
+		 
+		 
+		 
+		 		GotZmanShield:
+		NULL A 0 A_TakeInventory("MeatAmmo", 100);
+		NULL A 0 A_GiveInventory("ZmanShield");
+		NULL A 0 A_SelectWeapon("ZmanShield");
+		NULL A 0 A_TakeInventory("Punching", 1);
+		Goto SeeZmanShield;
+		
+		
+		SeeZmanShield:
+	    NULL A 0 A_TakeInventory("Punching", 1);
+		MAZS A 8;
+		NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+		MAZS B 8;
+		NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+		//Goto See
+		Loop;
+		
+		
+		GotSguyShield:
+		NULL A 0 A_TakeInventory("MeatAmmo", 100);
+		NULL A 0 A_GiveInventory("SguyShield");
+		NULL A 0 A_SelectWeapon("SguyShield");
+		NULL A 0 A_TakeInventory("Punching", 1);
+		Goto SeeSGuyShield;
+		
+		SeeSGuyShield:
+	    NULL A 0 A_TakeInventory("Punching", 1);
+		MASS A 8;
+		NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+		MASS B 8;
+		NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+		//Goto See
+		Loop ;
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+		 
+    Salutes1:
+	    NULL A 0;
+		NULL A 0 A_PlaySound ("DSSALUTE");
+        MWAV BCDEFEFDCB 7;
+		NULL A 0 A_TakeInventory("Salute1",1);
+        Goto StandStill;
+
+    Salutes2:
+		NULL A 0;
+		NULL A 0 A_PlaySound ("DSSALUTE");
+        MWAV IJK 4;
+		MWAV LMNNML 3;
+		MWAV LMNNML 3;
+		MWAV LMNNML 3;
+		MWAV KJI 4;
+		NULL A 0 A_TakeInventory("Salute2",1);
+        Goto StandStill;
+*/		
+		
+		
+	//Special Checkers
+		
+		
+		SpecialChecker:
+        NULL A 1;
+        NULL A 0 A_TakeInventory("GoSpecial", 1);
+ //       NULL A 0 A_JumpIfInventory("RollLeft", 1, "RollLeft");
+//		NULL A 0 A_JumpIfInventory("RollRight", 1, "RollRight");
+//		NULL A 0 A_JumpIfInventory("Salute1", 1, "Salutes1");
+//		NULL A 0 A_JumpIfInventory("Salute2", 1, "Salutes2");
+//		NULL A 0 A_JumpIfInventory("advtaunting", 1, "AdvancedTaunt");
+//		NULL A 0 A_JumpIfInventory("oneliner", 1, "SayOneLiner");
+		NULL A 0 A_JumpIfInventory("HasBarrel", 1, "BarrelStand");
+        NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+        NULL A 0 A_JumpIfInventory("Kicking", 1, "RifleKick");
+		NULL A 0 A_JumpIfInventory("Pumping", 1, "NoMovePump");
+    //    NULL A 0 A_JumpIfInventory("ADSMode", 1, "ADSStand")
+        NULL A 0 A_TakeInventory("GoSpecial", 1);
+        Goto StandStill ;
+		
+
+        SpecialCheckerMoving:
+        NULL A 1;
+        NULL A 0 A_TakeInventory("GoSpecial", 1);
+//		NULL A 0 A_JumpIfInventory("GotMeatShield", 1, "MeatShieldChecker");
+//        NULL A 0 A_JumpIfInventory("RollLeft", 1, "RollLeft");
+//		NULL A 0 A_JumpIfInventory("RollRight", 1, "RollRight");
+//		NULL A 0 A_JumpIfInventory("Salute1", 1, "Salutes1");
+//		NULL A 0 A_JumpIfInventory("Salute2", 1, "Salutes2");
+//		NULL A 0 A_JumpIfInventory("advtaunting", 1, "AdvancedTaunt");
+//		NULL A 0 A_JumpIfInventory("oneliner", 1, "SayOneLiner");
+		NULL A 0 A_JumpIfInventory("HasBarrel", 1, "BarrelMove");
+        NULL A 0 A_JumpIfInventory("Punching", 1, "Punch");
+        NULL A 0 A_JumpIfInventory("Kicking", 1, "RifleKick");
+		NULL A 0 A_JumpIfInventory("Pumping", 1, "Pump");
+    //    NULL A 0 A_JumpIfInventory("ADSMode", 1, "ADSMove")
+        NULL A 0 A_JumpIfInventory("HasImpShield", 1, "SeeImpShield");
+		NULL A 0 A_JumpIfInventory("HasZmanShield", 1, "SeeZmanShield");
+		NULL A 0 A_JumpIfInventory("HasSguyShield", 1, "SeeSguyShield") ;
+                NULL A 0 A_TakeInventory("GoSpecial", 1);
+                Goto See;    
+  
+     FatalityChecker:
+		NULL A 0 SetPlayerProperty(0,1,0);
+		NULL A 0 ACS_ExecuteAlways(477, 0, 0, 0, 0);//Start Camera
+		NULL A 0 ACS_ExecuteAlways(24836, 0, 0, 0, 0);//HP 
+		NULL A 0 A_JumpIfInventory("PVPFatality", 1, "FatalityPVP");
+        NULL A 0 A_JumpIfInventory("IsCurbstompingZombieman", 1, "CurbstompZombieman");
+	    NULL A 0 A_JumpIfInventory("IsCurbstompingSergeant", 1, "CurbstompSergeant");    
+        NULL A 0 A_JumpIfInventory("IsCurbstompingImp", 1, "CurbstompImp");
+        NULL A 0 A_JumpIfInventory("SKZombieman", 1, "StealthKilLZombieMan");
+	    NULL A 0 A_JumpIfInventory("SKShotgunGuy", 1, "StealthKilLShotgunGuy");
+	    NULL A 0 A_JumpIfInventory("SKImp", 1, "StealthKilLImp");
+	    NULL A 0 A_JumpIfInventory("SKNazi", 1, "StealthKilLNazi");
+	    NULL A 0 A_JumpIfInventory("SKChaingunguy", 1, "StealthKilLChaingunguy");
+        NULL A 0 A_JumpIfInventory("ImpFatality", 1, "FatalityImp");
+        NULL A 0 A_JumpIfInventory("ImpFatality2", 1, "FatalityImp2");
+		NULL A 0 A_JumpIfInventory("ImpFatality3", 1, "FatalityImp3");
+		NULL A 0 A_JumpIfInventory("ImpFatality4", 1, "FatalityImp4");
+        NULL A 0 A_JumpIfInventory("ZombieManFatality", 1, "FatalityZMan");
+	    NULL A 0 A_JumpIfInventory("ZombieManFatality2", 1, "FatalityZMan2");
+	    NULL A 0 A_JumpIfInventory("ZombieManFatality3", 1, "FatalityZMan3");
+		NULL A 0 A_JumpIfInventory("ZombieManFatality4", 1, "FatalityZMan4");
+		NULL A 0 A_JumpIfInventory("ZombieManFatality5", 1, "FatalityZMan5");
+        NULL A 0 A_JumpIfInventory("SergeantFatality", 1, "FatalitySergeant");
+        NULL A 0 A_JumpIfInventory("SergeantFatality2", 1, "FatalitySergeant2");
+		NULL A 0 A_JumpIfInventory("SergeantFatality3", 1, "FatalitySergeant3");
+		NULL A 0 A_JumpIfInventory("SergeantFatality4",1,"FatalitySergeant4");
+        NULL A 0 A_JumpIfInventory("ComandoFatality", 1, "FatalityComando");
+	    NULL A 0 A_JumpIfInventory("ComandoFatality2", 1, "FatalityComando2");
+        NULL A 0 A_JumpIfInventory("DemonFatality", 1, "FatalityDemon");
+	    NULL A 0 A_JumpIfInventory("DemonFatality2", 1, "FatalityDemon2");
+	    NULL A 0 A_JumpIfInventory("DemonFatality3", 1, "FatalityDemon3");
+        NULL A 0 A_JumpIfInventory("CacoDemonFatality", 1, "FatalityCacoDemon");
+	    NULL A 0 A_JumpIfInventory("CacoDemonFatality2", 1, "FatalityCacoDemon2");
+        NULL A 0 A_JumpIfInventory("RevenantFatality", 1, "FatalityRevenant");
+        NULL A 0 A_JumpIfInventory("RevenantFatality2", 1, "FatalityRevenant2");
+		NULL A 0 A_JumpIfInventory("FatsoFatality", 1, "FatalityFatso");
+        NULL A 0 A_JumpIfInventory("BaronFatality", 1, "FatalityBaron");
+		NULL A 0 A_JumpIfInventory("BaronFatality2", 1, "FatalityBaron2");
+	    NULL A 0 A_JumpIfInventory("HKFatality", 1, "FatalityHK");
+	    NULL A 0 A_JumpIfInventory("HKFatality2", 1, "FatalityHK2");
+	    NULL A 0 A_JumpIfInventory("HKFatality3", 1, "FatalityHK3");
+	    NULL A 0 A_JumpIfInventory("ArachnotronFatality", 1, "FatalityArachnotron");
+		NULL A 0 A_JumpIfInventory("ArachnotronFatality2", 1, "FatalityArachnotron2");
+	    NULL A 0 A_JumpIfInventory("ArchVileFatality", 1, "FatalityArchVile");
+	    NULL A 0 A_JumpIfInventory("PEFatality", 1, "FatalityPE");
+		NULL A 0 SetPlayerProperty(0,0,0);
+        NULL A 0 A_TakeInventory("GoFatality", 1);
+		Goto See;
+		
+		
+		
+		MeatShieldChecker:
+        NULL A 1;
+        //NULL A 0 A_TakeInventory("GotMeatShield", 1)
+		NULL A 0 A_TakeInventory("GoSpecial", 1);
+        NULL A 0 A_JumpIfInventory("HasImpShield", 1, "GotImpShield");
+		NULL A 0 A_JumpIfInventory("HasZmanShield", 1, "GotZmanShield");
+		NULL A 0 A_JumpIfInventory("HasSguyShield", 1, "GotSguyShield");
+        NULL A 0 A_TakeInventory("GoSpecial", 1);
+        Goto See ;
+		
+		MeatShieldCheckerMoving:
+        NULL A 1;
+        //NULL A 0 A_TakeInventory("GotMeatShield", 1)
+		NULL A 0 A_TakeInventory("GoSpecial", 1);
+        NULL A 0 A_JumpIfInventory("HasImpShield", 1, "GotImpShield");
+		NULL A 0 A_JumpIfInventory("HasZmanShield", 1, "GotZmanShield");
+		NULL A 0 A_JumpIfInventory("HasSguyShield", 1, "GotSguyShield");
+        NULL A 0 A_TakeInventory("GoSpecial", 1);
+        Goto StandStill ;
+		
+		SpawnFriends: //This spawn any friendly marines that survived on the previous level
+		NULL A 0 A_TakeInventory("CheckMarines", 1);
+		PLAY A 2;
+		NULL A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 { bNOPAIN = 0; } //A_Changeflag("NOPAIN", 0);
+		//NULL A 0 Thing_ChangeTID (0, 567)
+		NULL A 0 A_JumpIfInventory("NumberOfAllies", 1, "SummonMarines");
+		SpawnFriends2:
+		NULL A 0 A_JumpIfInventory("NumberOfAlliesMinigun", 1, "SummonMinigunners");
+		Goto StandStill;
+		SpawnFriends3:
+		NULL A 0 A_JumpIfInventory("NumberOfAlliesShotgun", 1, "SummonShotgunners");
+		Goto StandStill;
+		SpawnFriends4:
+		NULL A 0 A_JumpIfInventory("NumberOfAlliesPlasmagun", 1, "SummonPlasmagunners");
+		Goto StandStill;
+		SpawnFriends5:
+		NULL A 0 A_JumpIfInventory("NumberOfAlliesRocket", 1, "SummonRocketgunners");
+		Goto StandStill;
+		SpawnFriends6:
+		NULL A 0 A_JumpIfInventory("NumberOfAlliesBFG", 1, "SummonBFGgunners");
+		Goto StandStill;
+		
+		SummonMarines:
+		PLAY A 2 A_SpawnItem("Marine1PathfinderNew", 50);
+		NULL A 0 A_TakeInventory("NumberOfAllies", 1);
+		NULL A 0 A_GiveInventory("MarinesDispenser", 1);
+		NULL A 0 A_JumpIfInventory("NumberOfAllies", 1, "SummonMarines");
+		Goto RecalculateMarines;
+		
+		RecalculateMarines:
+		PLAY A 2 A_TakeInventory("MarinesDispenser", 1);
+		NULL A 0 A_GiveInventory("NumberOfAllies", 1);
+		NULL A 0 A_JumpIfInventory("MarinesDispenser", 1, "RecalculateMarines");
+		Goto SpawnFriends2;
+		
+		
+		SummonMinigunners:
+		PLAY A 2 A_SpawnItem("Marine_Minigun1PathfinderNew", 50);
+		NULL A 0 A_TakeInventory("NumberOfAlliesMinigun", 1);
+		NULL A 0 A_GiveInventory("MarinesMinigunDispenser", 1);
+		NULL A 0 A_JumpIfInventory("NumberOfAlliesMinigun", 1, "SummonMinigunners");
+		Goto RecalculateMinigunners;
+		
+		RecalculateMinigunners:
+		PLAY A 2 A_TakeInventory("MarinesMinigunDispenser", 1);
+		NULL A 0 A_GiveInventory("NumberOfAlliesMinigun", 1);
+		NULL A 0 A_JumpIfInventory("MarinesMinigunDispenser", 1, "RecalculateMinigunners");
+		Goto SpawnFriends3;
+		
+		SummonShotgunners:
+		PLAY A 2 A_SpawnItem("Marine_Shotgun1PathfinderNew", 50);
+		NULL A 0 A_TakeInventory("NumberOfAlliesShotgun", 1);
+		NULL A 0 A_GiveInventory("MarinesShotgunDispenser", 1);
+		NULL A 0 A_JumpIfInventory("NumberOfAlliesShotgun", 1, "SummonShotgunners");
+		Goto RecalculateShotgunners;
+		
+		RecalculateShotgunners:
+		PLAY A 2 A_TakeInventory("MarinesShotgunDispenser", 1);
+		NULL A 0 A_GiveInventory("NumberOfAlliesShotgun", 1);
+		NULL A 0 A_JumpIfInventory("MarinesShotgunDispenser", 1, "RecalculateShotgunners");
+		Goto SpawnFriends4;
+		
+		SummonPlasmaGunners:
+		PLAY A 2 A_SpawnItem("Marine_PlasmaGun1PathfinderNew", 50);
+		NULL A 0 A_TakeInventory("NumberOfAlliesPlasmaGun", 1);
+		NULL A 0 A_GiveInventory("MarinesPlasmaGunDispenser", 1);
+		NULL A 0 A_JumpIfInventory("NumberOfAlliesPlasmaGun", 1, "SummonPlasmaGunners");
+		Goto RecalculatePlasmaGunners;
+		
+		RecalculatePlasmaGunners:
+		PLAY A 2 A_TakeInventory("MarinesPlasmaGunDispenser", 1);
+		NULL A 0 A_GiveInventory("NumberOfAlliesPlasmaGun", 1);
+		NULL A 0 A_JumpIfInventory("MarinesPlasmaGunDispenser", 1, "RecalculatePlasmaGunners");
+		Goto SpawnFriends5;
+		
+		SummonRocketGunners:
+		PLAY A 2 A_SpawnItem("Marine_Rocket1PathfinderNew", 50);
+		NULL A 0 A_TakeInventory("NumberOfAlliesRocket", 1);
+		NULL A 0 A_GiveInventory("MarinesRocketDispenser", 1);
+		NULL A 0 A_JumpIfInventory("NumberOfAlliesRocket", 1, "SummonRocketGunners");
+		Goto RecalculateRocketGunners;
+		
+		RecalculateRocketGunners:
+		PLAY A 2 A_TakeInventory("MarinesRocketDispenser", 1);
+		NULL A 0 A_GiveInventory("NumberOfAlliesRocket", 1);
+		NULL A 0 A_JumpIfInventory("MarinesRocketDispenser", 1, "RecalculateBFGGunners");
+		Goto SpawnFriends6;
+		
+		SummonBFGGunners:
+		PLAY A 2 A_SpawnItem("Marine_BFG1PathfinderNew", 50);
+		NULL A 0 A_TakeInventory("NumberOfAlliesBFG", 1);
+		NULL A 0 A_GiveInventory("MarinesBFGDispenser", 1);
+		NULL A 0 A_JumpIfInventory("NumberOfAlliesBFG", 1, "SummonBFGGunners");
+		Goto RecalculateBFGGunners;
+		
+		RecalculateBFGGunners:
+		PLAY A 2 A_TakeInventory("MarinesBFGDispenser", 1);
+		NULL A 0 A_GiveInventory("NumberOfAlliesBFG", 1);
+		NULL A 0 A_JumpIfInventory("MarinesBFGDispenser", 1, "RecalculateBFGGunners");
+		Goto StandStill;
+		 
+	}
+}

@@ -1,0 +1,760 @@
+// --------------------------------------------------------------------------
+//
+// Chainsaw
+//
+// --------------------------------------------------------------------------
+
+
+Class Chain_saw : BEweapon replaces Chainsaw
+{
+	Default
+	{
+	weapon.selectionorder 12;
+	inventory.pickupsound "SAWPCK";
+	Inventory.Pickupmessage "You found the Chainsaw!";
+//inventory.pickupsound "none";
+	Weapon.UpSound "none";
+	weapon.readysound "weapons/chainsaw/idle";
+    +WEAPON.NOAUTOAIM;
+	+WEAPON.AXEBLOOD;
+	+FORCEXYBILLBOARD;
+	+WEAPON.MELEEWEAPON;
+	Obituary "$OB_MPCHAINSAW";
+	Tag "$TAG_CHAINSAW";
+//	+WEAPON.NO_AUTO_SWITCH;
+	Weapon.AmmoType "ChainSawGas";
+	Weapon.AmmoType2 "ChainSawGas";
+	Weapon.AmmoUse1 1;
+//	Weapon.AmmoUse2 7;
+	Weapon.MinSelectionAmmo1 1;
+//	Weapon.MinSelectionAmmo2 7;
+	Weapon.AmmoGive 300;
+	}
+states
+	{
+
+  Spawn:
+    CSAW A -1;
+    Stop;
+
+	Select:
+		TNT1 A 0 A_Takeinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 A_Takeinventory("FistsSelected",1);
+		TNT1 A 0;
+		TNT1 A 0 A_Takeinventory("ShotgunSelected",1);
+		TNT1 A 0 A_Takeinventory("SSGSelected",1);
+		TNT1 A 0 A_Takeinventory("MinigunSelected",1);
+		TNT1 A 0 A_Takeinventory("PlasmaGunSelected",1);
+		TNT1 A 0 A_Takeinventory("RocketLauncherSelected",1);
+		TNT1 A 0 A_Takeinventory("GrenadeLauncherSelected",1);
+		TNT1 A 0 A_Takeinventory("BFGSelected",1);
+		TNT1 A 0 A_Takeinventory("BFG10kSelected",1);
+		TNT1 A 0 A_Takeinventory("RailGunSelected",1);
+		TNT1 A 0 A_Takeinventory("SubMachineGunSelected",1);
+		TNT1 A 0 A_Takeinventory("RevenantLauncherSelected",1);
+		TNT1 A 0 A_Takeinventory("LostSoulSelected",1);
+		TNT1 A 0 A_Takeinventory("FlameCannonSelected",1);
+		TNT1 A 0 A_Takeinventory("HasBarrel",1);
+		KICK A 0 A_Takeinventory("PowerBloodOnVisor",1);
+		KICK A 0 A_Takeinventory("PowerBlueBloodOnVisor",1);
+		KICK A 0 A_Takeinventory("PowerGreenBloodOnVisor",1);
+		TNT1 A 0 A_Giveinventory("HasCutingWeapon",1);
+		TNT1 A 0 A_GiveInventory("IsWeaponBFG",1);
+		TNT1 A 0 A_Takeinventory("Zoomed",1);
+		TNT1 A 0 A_Takeinventory("ADSmode",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+		TNT1 AAAAAAAAAAA 0 A_Raise;
+		wait;
+
+	Deselect:
+	    TNT1 A 0;
+		TNT1 A 0 A_TakeInventory("IsWeaponBFG",1);
+		TNT1 A 0 A_Takeinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 A_Takeinventory("HasCutingWeapon",1);
+		TNT1 A 0 A_Stopsound(CHAN_WEAPON);
+		TNT1 A 0 A_Lower;
+		SAWN A 1 A_Lower;
+		goto deselect+1;
+
+	Steady:
+		TNT1 A 0 ACS_Execute(477,0,0,0,0);
+		TNT1 A 0 SetPlayerProperty(0,1,0);
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "DoingFatality");
+		Goto Ready;
+	DoingFatality:
+		TNT1 A 1 SetPlayerProperty(0,1,0);
+		TNT1 A 0 A_TakeInventory("TossGrenade",1);
+		TNT1 A 0 A_TakeInventory("QuickPunching",1);
+		TNT1 A 0 A_TakeInventory("Kicking",1);
+		Goto Steady;
+
+	Ready:
+		SAWY ABCDE 1;
+	    SAWS A 6;
+		SAWS AB 1 A_JumpIfInventory("GoFatality", 1, "Steady");
+        TNT1 A 0 A_PlaySound("DSSAWZIP", 1);
+		SAWS BCDEFEDCB 1;
+        SAWS AGAGAGAG 2;
+		SAWS A 1 A_playsound("weapons/chainsaw/draw", 1);
+
+        TNT1 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA 0;
+	ReallyReady:
+        TNT1 A 0 A_JumpIfInventory("PowerBloodOnVisor",1,"Ready.Blood");
+        TNT1 A 0 A_JumpIfInventory("PowerBlueBloodOnVisor",1,"Ready.BlueBlood");
+        TNT1 A 0 A_JumpIfInventory("PowerGreenBloodOnVisor",1,"Ready.GreenBlood");
+        TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+     //   TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("Salute1", 1, "Salute");
+		TNT1 A 0 A_JumpIfInventory("Salute2", 1, "Salute");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+        TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_PlaySound("DSSAWUP", 4);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+		//TNT1 A 0 A_FireProjectile("ShakeYourAssMinor", 0, 0, 0, 0);
+		SAWG A 2 A_weaponready;
+        SAWG B 2 A_weaponready;
+		SAWG A 2 A_weaponready;
+        SAWG B 2 A_weaponready;
+		Loop;
+	Fire:
+        TNT1 A 0 A_JumpIfInventory("PowerBloodOnVisor",1,"Fire.Blood");
+        TNT1 A 0 A_JumpIfInventory("PowerBlueBloodOnVisor",1,"Fire.BlueBlood");
+        TNT1 A 0 A_JumpIfInventory("PowerGreenBloodOnVisor",1,"Fire.GreenBlood");
+		TNT1 A 0 A_playsound("weapons/chainsaw/start");
+		SAWG ABCD 1;
+	Hold:
+		TNT1 A 0 A_FireProjectile("ShakeYourAssMinor", 0, 0, 0, 0);
+		TNT1 A 0 A_JumpIfInventory("PowerBloodOnVisor",1,"Hold.Blood");
+        TNT1 A 0 A_JumpIfInventory("PowerBlueBloodOnVisor",1,"Hold.BlueBlood");
+		TNT1 A 0 A_JumpIfInventory("PowerGreenBloodOnVisor",1,"Hold.GreenBlood");
+        //TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/loop",CHAN_WEAPON);
+		//CSWF A 1 A_CustomPunch(5,1,1,"SSawPuff");
+		SAWF A 1 A_Saw("weapons/chainsaw/loop", "CSAWCUT", 3, "SSawPuff",0,120,7,0);
+		SAWF B 1;
+		//CSWF C 1 A_custompunch(5,1,1,"SSawPuff");
+		SAWF C 1 ;//A_Saw("", "", 4, "SSawPuff",0,120,32,0)
+		SAWF D 1;
+		TNT1 A 0 A_Refire;
+		TNT1 A 0 A_Stopsound(CHAN_WEAPON);
+		TNT1 A 0 A_Playsound("weapons/chainsaw/stop");
+		SAWG DC 1;
+		goto ReallyReady;
+
+
+	Ready.Blood:
+        TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+   //     TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		//TNT1 A 0 A_FireProjectile("ShakeYourAssMinor", 0, 0, 0, 0);
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		 TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+		SAW2 ABAB 2 A_weaponready;
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+    //    TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+        SSW2 CDCD 2 A_weaponready;
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+ //       TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+		SSW2 EFEF 2 A_weaponready;
+
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+   //     TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+		SSW2 GHIJ 2 A_weaponready;
+		Goto ReallyReady;
+	Fire.Blood:
+		TNT1 A 0 A_playsound("weapons/chainsaw/start");
+		SAW2 ABCD 1;
+	Hold.Blood:
+        //TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		KICK A 0 A_Takeinventory("PowerBlueBloodOnVisor",1);
+		KICK A 0 A_Takeinventory("PowerGreenBloodOnVisor",1);
+		//TNT1 A 0 A_PlaySoundEx("weapons/chainsaw/loop","Weapon",0);
+		SAW2 G 1 A_Saw("weapons/chainsaw/loop", "CSAWCUT", 3, "SSawPuff",0,120,7,0);
+		SAW2 F 1;
+		SAW2 G 1 ;//A_Saw("", "", 6, "SSawPuff",0,120,32,0)
+		SAW2 H 1;
+        TNT1 A 0 A_JumpIfInventory("PowerBlueBloodOnVisor",1,"Hold.BlueBlood");
+        TNT1 A 0 A_JumpIfInventory("PowerGreenBloodOnVisor",1,"Hold.GreenBlood");
+		TNT1 A 0 A_Refire;
+		TNT1 A 0 A_Stopsound(CHAN_WEAPON);
+		TNT1 A 0 A_Playsound("weapons/chainsaw/stop");
+		SAW2 DC 1;
+		goto ready.blood;
+
+
+	Ready.BlueBlood:
+        TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+ //       TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+		SAW4 ABAB 2 A_weaponready;
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+  //      TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+        SSW4 CDCD 2 A_weaponready;
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+  //      TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		SSW4 EFEF 2 A_weaponready;
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+   //     TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+		SSW4 GHIJ 2 A_weaponready;
+		Goto ReallyReady;
+	Fire.BlueBlood:
+		TNT1 A 0 A_playsound("weapons/chainsaw/start");
+		SAW4 CD 1;
+	Hold.BlueBlood:
+        //TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		KICK A 0 A_Takeinventory("PowerBloodOnVisor",1);
+		KICK A 0 A_Takeinventory("PowerGreenBloodOnVisor",1);
+		TNT1 A 0 A_playsound("weapons/chainsaw/loop",CHAN_WEAPON);
+		SAW4 E 1 A_Saw("weapons/chainsaw/loop", "CSAWCUT", 3, "SSawPuff",0,120,7,0);
+		SAW4 F 1;
+		SAW4 G 1 ;//A_Saw("weapons/chainsaw/loop", "CSAWCUT", 3, "SSawPuff",0,120,32,0)
+		SAW4 H 1;
+        TNT1 A 0 A_JumpIfInventory("PowerBloodOnVisor",1,"Hold.Blood");
+        TNT1 A 0 A_JumpIfInventory("PowerGreenBloodOnVisor",1,"Hold.GreenBlood");
+		TNT1 A 0 A_Refire;
+		TNT1 A 0 A_Stopsound(CHAN_WEAPON);
+		TNT1 A 0 A_Playsound("weapons/chainsaw/stop");
+		SAW4 DC 1;
+		goto ready.BlueBlood;
+
+
+	Ready.GreenBlood:
+        TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+  //      TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+		SAW3 ABAB 2 A_weaponready;
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+   //     TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+        SSW3 CDCD 2 A_weaponready;
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+        TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+		SSW3 EFEF 2 A_weaponready;
+		TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+  //      TNT1 A 0 A_JumpIfInventory("Taunting",1,"Taunt");
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		TNT1 A 0 A_playsound("weapons/chainsaw/idle");
+		SSW3 GHIJ 2 A_weaponready;
+		Goto ReallyReady;
+	Fire.GreenBlood:
+		TNT1 A 0 A_playsound("weapons/chainsaw/start");
+		SAW3 CD 1;
+	Hold.GreenBlood:
+        //TNT1 A 0 A_FireProjectile("SmokeSpawner",0,0,0,5);
+		KICK A 0 A_Takeinventory("PowerBloodOnVisor",1);
+		KICK A 0 A_Takeinventory("PowerBlueBloodOnVisor",1);
+		TNT1 A 0 A_playsound("weapons/chainsaw/loop",CHAN_WEAPON,1.0,true);
+		SAW3 E 1 A_Saw("weapons/chainsaw/loop", "CSAWCUT", 3, "SSawPuff",0,120,7,0);
+		SAW3 F 1;
+		SAW3 G 1 ;//A_Saw("weapons/chainsaw/loop", "CSAWCUT", 3, "SSawPuff",0,120,32,0)
+		SAW3 H 1;
+        TNT1 A 0 A_JumpIfInventory("PowerBloodOnVisor",1,"Hold.Blood");
+        TNT1 A 0 A_JumpIfInventory("PowerBlueBloodOnVisor",1,"Hold.BlueBlood");
+		TNT1 A 0 A_Refire;
+		TNT1 A 0 A_Stopsound(CHAN_WEAPON);
+		TNT1 A 0 A_Playsound("weapons/chainsaw/stop");
+		SAW3 DC 1;
+		goto ready.GreenBlood;
+
+	AltContinue:
+		CSA1 P 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 7, "SSawPuff2", 0, 120, 3);
+		CSA1 QI 1;
+		TNT1 A 0 A_JumpIfInventory("PowerBloodOnVisor",1,"AltContinueRed");
+		TNT1 A 0 A_JumpIfInventory("PowerGreenBloodOnVisor",1,"AltContinueGreen");
+		TNT1 A 0 A_JumpIfInventory("PowerBlueBloodOnVisor",1,"AltContinueBlue");
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSA1 JKL 1;
+		TNT1 A 5;
+		CSA1 MNO 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		goto ReallyReady;
+
+	AltFireLeft:
+		TNT1 A 2;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSA1 LKJ 1;
+		TNT1 AAAAA 0 A_Saw("", "", 2, "SSawPuff2", 0, 120, 32);
+		CSA1 I 1 A_Saw("", "", 0, "SSawPuff2", 0, 120, 32);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueleft");
+		CSA1 HGFE 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_GiveInventory("SawFireSeq2", 1);
+		TNT1 A 5;
+		TNT1 A 0 A_ReFire;
+		CSA1 DCBA 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		goto ReallyReady;
+
+	AltContinueLeft:
+		CSA1 P 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 7, "SSawPuff2", 0, 120, 3);
+		CSA1 QI 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueleft");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSA1 HGFE 1;
+		TNT1 A 5;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		CSA1 DCBA 1;
+		goto ReallyReady;
+
+
+
+	AltFire:
+		TNT1 A 0;
+		TNT1 A 0 A_JumpIf(CountInv("ChainSawGas") < 40, "ReallyReady");
+		TNT1 A 0 A_Giveinventory("HasCutingWeapon",1);
+		TNT1 A 0 A_TakeInventory("ChainSawGas",40);
+		TNT1 A 0 A_JumpIfInventory("PowerBloodOnVisor",1,"AltFireRed");
+		TNT1 A 0 A_JumpIfInventory("PowerGreenBloodOnVisor",1,"AltFireGreen");
+		TNT1 A 0 A_JumpIfInventory("PowerBlueBloodOnVisor",1,"AltFireBlue");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/loop",CHAN_WEAPON);
+		//TNT1 A 0 A_PlaySound("DSSAWHIT", 3);
+		TNT1 A 0 A_JumpIfInventory("SawFireSeq2", 1, 15);
+		TNT1 A 0 A_JumpIfInventory("SawFireSeq1", 1, "AltFireLeft");
+		//TNT1 A 0 A_Jump(12, "AltFire2");
+		NULL A 0 A_JumpIf (Vel.z > 0, "AltFire2");
+		NULL A 0 A_JumpIf (Vel.z < 0, "AltFire2");
+		CSA1 ABCD 1;
+		TNT1 AAAAAAAAAAAAAA 0;
+		TNT1 A 0 A_GiveInventory("SawFireSeq1");
+		TNT1 A 0 A_TakeInventory("SawFireSeq2");
+		TNT1 A 5;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSA1 EFG 1;
+		TNT1 AAAAA 0 A_Saw("", "", 2, "SSawPuff2", 0, 120, 16);
+		CSA1 H 1 A_Saw("", "", 0, "SSawPuff2", 0, 120, 16);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue");
+		CSA1 JKL 1;
+		TNT1 A 5;
+		TNT1 A 0 A_ReFire;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		CSA1 MNO 1;
+		goto ReallyReady;
+
+	AltFire2:
+		TNT1 A 0;
+		TNT1 A 0 A_JumpIfInventory("PowerBloodOnVisor",1,"AltFire2Red");
+		TNT1 A 0 A_JumpIfInventory("PowerGreenBloodOnVisor",1,"AltFire2Green");
+		TNT1 A 0 A_JumpIfInventory("PowerBlueBloodOnVisor",1,"AltFire2Blue");
+		CSA2 ABCDDEEEF 1;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSA2 GHI 1 A_JumpIfCloser(119, "AltContinue2");
+		TNT1 AAAAAAAAAAAAAAA 0 A_Saw("", "", 0, "SSawPuff3", 0, 120, 16);
+		CSA2 J 1 A_Saw("", "", 9, "SSawPuff3", 0, 120, 16);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2");
+		CSA2 MNO 1 A_JumpIfCloser(119, "AltContinue2");
+		TNT1 A 5;
+		CSA2 PQ 1;
+		goto ReallyReady;
+
+	AltContinue2:
+		CSA2 J 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 9, "SSawPuff3", 0, 120, 16);
+		CSA2 KL 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSA2 J 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 9, "SSawPuff3", 0, 120, 16);
+		CSA2 KL 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSA2 MNO 1;
+		TNT1 A 5;
+		CSA2 PQ 1;
+		goto ReallyReady;
+
+
+
+	AltFireRed:
+		TNT1 A 0;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/loop",CHAN_WEAPON);
+		//TNT1 A 0 A_PlaySound("DSSAWHIT", 3);
+		TNT1 A 0 A_JumpIfInventory("SawFireSeq2", 1, 15);
+		TNT1 A 0 A_JumpIfInventory("SawFireSeq1", 1, "AltFireLeftRed");
+		//TNT1 A 0 A_Jump(12, "AltFire2");
+		NULL A 0 A_JumpIf (vel.z > 0, "AltFire2");
+		NULL A 0 A_JumpIf (vel.z < 0, "AltFire2");
+		CSR1 ABCD 1;
+		TNT1 AAAAAAAAAAAAAA 0;
+		TNT1 A 0 A_GiveInventory("SawFireSeq1");
+		TNT1 A 0 A_TakeInventory("SawFireSeq2");
+		TNT1 A 5;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSR1 EFG 1;
+		TNT1 AAAAA 0 A_Saw("", "", 2, "SSawPuff2", 0, 120, 16);
+		CSR1 H 1 A_Saw("", "", 0, "SSawPuff2", 0, 120, 16);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueRed");
+		CSR1 JKL 1;
+		TNT1 A 5;
+		TNT1 A 0 A_ReFire;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		CSR1 MNO 1;
+		goto ReallyReady;
+
+	AltContinueRed:
+		CSR1 P 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 7, "SSawPuff2", 0, 120, 16);
+		CSR1 QI 1;
+		CSR1 QI 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueRed");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSR1 JKL 1;
+		TNT1 A 5;
+		CSR1 MNO 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		goto ReallyReady;
+
+	AltFireLeftRed:
+		TNT1 A 2;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSR1 LKJ 1;
+		TNT1 AAAAA 0 A_Saw("", "", 2, "SSawPuff2", 0, 120, 16);
+		CSR1 I 1 A_Saw("", "", 0, "SSawPuff2", 0, 120, 16);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueleftred");
+		CSR1 HGFE 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_GiveInventory("SawFireSeq2", 1);
+		TNT1 A 5;
+		TNT1 A 0 A_ReFire;
+		CSR1 DCBA 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		goto ReallyReady;
+
+	AltContinueLeftRed:
+		CSR1 P 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 7, "SSawPuff2", 0, 120, 16);
+		CSR1 QI 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueleftred");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSR1 HGFE 1;
+		TNT1 A 5;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		CSR1 DCBA 1;
+		goto ReallyReady;
+
+
+
+	AltFire2Red:
+		TNT1 A 0;
+		CSR2 ABCDDEEEF 1;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSR2 GHI 1 A_JumpIfCloser(119, "AltContinue2Red");
+		TNT1 AAAAAAAAAAAAAAA 0 A_Saw("", "", 0, "SSawPuff3", 0, 120, 16);
+		CSR2 J 1 A_Saw("", "", 9, "SSawPuff3",0,120);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2Red");
+		CSR2 MNO 1 A_JumpIfCloser(119, "AltContinue2Red");
+		TNT1 A 5;
+		CSR2 PQ 1;
+		goto ReallyReady;
+
+	AltContinue2Red:
+		CSR2 J 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 9, "SSawPuff3", 0, 120, 16);
+		CSR2 KL 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2Red");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSR2 J 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 9, "SSawPuff3", 0, 120, 16);
+		CSR2 KL 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2Red");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSR2 MNO 1;
+		TNT1 A 5;
+		CSR2 PQ 1;
+		goto ReallyReady;
+
+
+	AltFireBlue:
+		TNT1 A 0;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/loop",CHAN_WEAPON);
+		//TNT1 A 0 A_PlaySound("DSSAWHIT", 3);
+		TNT1 A 0 A_JumpIfInventory("SawFireSeq2", 1, 15);
+		TNT1 A 0 A_JumpIfInventory("SawFireSeq1", 1, "AltFireLeftBlue");
+		//TNT1 A 0 A_Jump(12, "AltFire2");
+		NULL A 0 A_JumpIf (vel.z > 0, "AltFire2");
+		NULL A 0 A_JumpIf (vel.z < 0, "AltFire2");
+		CSB1 ABCD 1;
+		TNT1 AAAAAAAAAAAAAA 0;
+		TNT1 A 0 A_GiveInventory("SawFireSeq1");
+		TNT1 A 0 A_TakeInventory("SawFireSeq2");
+		TNT1 A 5;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSB1 EFG 1;
+		TNT1 AAAAA 0 A_Saw("", "", 2, "SSawPuff2", 0, 120, 16);
+		CSB1 H 1 A_Saw("", "", 0, "SSawPuff2", 0, 120, 16);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueBlue");
+		CSB1 JKL 1;
+		TNT1 A 5;
+		TNT1 A 0 A_ReFire;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		CSB1 MNO 1;
+		goto ReallyReady;
+
+	AltContinueBlue:
+		CSB1 P 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 7, "SSawPuff2", 0, 120, 16);
+		CSB1 QI 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueBlue");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSB1 JKL 1;
+		TNT1 A 5;
+		CSB1 MNO 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		goto ready+35;
+
+	AltFireLeftBlue:
+		TNT1 A 2;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSB1 LKJ 1;
+		TNT1 AAAAA 0 A_Saw("", "", 2, "SSawPuff2", 0, 120, 16);
+		CSB1 I 1 A_Saw("", "", 0, "SSawPuff2", 0, 120, 16);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueleftBlue");
+		CSB1 HGFE 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_GiveInventory("SawFireSeq2", 1);
+		TNT1 A 5;
+		TNT1 A 0 A_ReFire;
+		CSB1 DCBA 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		goto ReallyReady;
+
+	AltContinueLeftBlue:
+		CSB1 P 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 7, "SSawPuff2", 0, 120, 16);
+		CSB1 QI 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueleftBlue");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSB1 HGFE 1;
+		TNT1 A 5;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		CSB1 DCBA 1;
+		goto ready+35;
+
+
+
+	AltFire2Blue:
+		TNT1 A 0;
+		CSB2 ABCDDEEEF 1;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSB2 GHI 1 A_JumpIfCloser(119, "AltContinue2Blue");
+		TNT1 AAAAAAAAAAAAAAA 0 A_Saw("", "", 0, "SSawPuff3", 0, 120, 16);
+		CSB2 J 1 A_Saw("", "", 9, "SSawPuff3",0,120);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2Blue");
+		CSB2 MNO 1 A_JumpIfCloser(119, "AltContinue2Blue");
+		TNT1 A 5;
+		CSB2 PQ 1;
+		goto ReallyReady;
+
+	AltContinue2Blue:
+		CSB2 J 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 9, "SSawPuff3", 0, 120, 16);
+		CSB2 KL 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2Blue");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSB2 J 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 9, "SSawPuff3", 0, 120, 16);
+		CSB2 KL 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2Blue");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSB2 MNO 1;
+		TNT1 A 5;
+		CSB2 PQ 1;
+		goto ReallyReady;
+
+	AltFireGreen:
+		TNT1 A 0;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/loop",CHAN_WEAPON);
+		//TNT1 A 0 A_PlaySound("DSSAWHIT", 3);
+		TNT1 A 0 A_JumpIfInventory("SawFireSeq2", 1, 15);
+		TNT1 A 0 A_JumpIfInventory("SawFireSeq1", 1, "AltFireLeftGreen");
+		//TNT1 A 0 A_Jump(12, "AltFire2");
+		NULL A 0 A_JumpIf (vel.z > 0, "AltFire2");
+		NULL A 0 A_JumpIf (vel.z < 0, "AltFire2");
+		CSG1 ABCD 1;
+		TNT1 AAAAAAAAAAAAAA 0;
+		TNT1 A 0 A_GiveInventory("SawFireSeq1");
+		TNT1 A 0 A_TakeInventory("SawFireSeq2");
+		TNT1 A 5;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSG1 EFG 1;
+		TNT1 AAAAA 0 A_Saw("", "", 2, "SSawPuff2", 0, 120, 16);
+		CSG1 H 1 A_Saw("", "", 0, "SSawPuff2", 0, 120, 16);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueGreen");
+		CSG1 JKL 1;
+		TNT1 A 5;
+		TNT1 A 0 A_ReFire;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		CSG1 MNO 1;
+		goto ReallyReady;
+
+	AltContinueGreen:
+		CSG1 P 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 7, "SSawPuff2", 0, 120, 16);
+		CSG1 QI 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueGreen");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSG1 JKL 1;
+		TNT1 A 5;
+		CSG1 MNO 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		goto ReallyReady;
+
+	AltFireLeftGreen:
+		TNT1 A 2;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSG1 LKJ 1;
+		TNT1 AAAAA 0 A_Saw("", "", 2, "SSawPuff2", 0, 120, 16);
+		CSG1 I 1 A_Saw("", "", 0, "SSawPuff2", 0, 120, 16);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueleftGreen");
+		CSG1 HGFE 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_GiveInventory("SawFireSeq2", 1);
+		TNT1 A 5;
+		TNT1 A 0 A_ReFire;
+		CSG1 DCBA 1;
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		goto ReallyReady;
+
+	AltContinueLeftGreen:
+		CSG1 P 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 7, "SSawPuff2", 0, 120, 16);
+		CSG1 QI 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinueleftGreen");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSG1 HGFE 1;
+		TNT1 A 5;
+		TNT1 A 0 A_TakeInventory("SawFireSeq1", 1);
+		TNT1 A 0 A_TakeInventory("SawFireSeq2", 1);
+		CSG1 DCBA 1;
+		goto ReallyReady;
+
+
+
+	AltFire2Green:
+		TNT1 A 0;
+		CSG2 ABCDDEEEF 1;
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSG2 GHI 1 A_JumpIfCloser(119, "AltContinue2Green");
+		TNT1 AAAAAAAAAAAAAAA 0 A_Saw("", "", 0, "SSawPuff3", 0, 120, 16);
+		CSG2 J 1 A_Saw("", "", 9, "SSawPuff3", 0, 120, 16);
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2Green");
+		CSG2 MNO 1 A_JumpIfCloser(119, "AltContinue2Green");
+		TNT1 A 5;
+		CSG2 PQ 1;
+		goto ReallyReady;
+
+	AltContinue2Green:
+		CSG2 J 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 9, "SSawPuff3", 0, 120, 16);
+		CSG2 KL 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2Green");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSG2 J 1 A_Saw("weapons/chainsaw/loop", "DSSAWHIT", 9, "SSawPuff3", 0, 120, 16);
+		CSG2 KL 1;
+		TNT1 A 0 A_JumpIfCloser(119, "AltContinue2Green");
+		TNT1 A 0 A_PlaySound("weapons/chainsaw/draw", 4);
+		CSG2 MNO 1;
+		TNT1 A 5;
+		CSG2 PQ 1;
+		goto ReallyReady;
+
+		DoKick:
+	    TNT1 A 0;
+		TNT1 A 0
+		{
+			if(countinv("FinisherToken",AAPTR_PLAYER_GETTARGET)>=1 && A_CheckLOF("Null",CLOFF_SETTARGET|CLOFF_NOAIM_VERT|CLOFF_IGNOREGHOST|CLOFF_MUSTBESOLID ,180))
+			{ return ResolveState("PermormGloryKill");	}
+
+			return ResolveState(Null);
+		}
+		TNT1 A 0 A_Takeinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+		TNT1 A 0 A_Takeinventory("ADSmode",1);
+		NULL A 0 A_JumpIf (vel.z > 0, "AirKick");
+		NULL A 0 A_JumpIf (vel.z < 0, "AirKick");
+		RIFF A 0 A_FireProjectile("KickAttackDetectDowned", 0, 0, 0, 0);
+        TNT1 A 0 A_jumpifinventory("PowerStrength",1,"BerserkerKick");
+		TNT1 A 0 A_PlaySound("KICK");
+		TNT1 A 0 SetPlayerProperty(0,1,0);
+		KICK BCD 1;
+		RIFF A 0 A_FireProjectile("KickAttack", 0, 0, 0, -7);
+        KICK H 5;
+		KICK A 0 A_Takeinventory("Kicking",1);
+		KICK I 1;
+		KICK GFEDCBA 1;
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		goto ReallyReady;
+
+    BerserkerKick:
+		TNT1 A 0 A_PlaySound("KICK");
+		TNT1 A 0 SetPlayerProperty(0,1,0);
+		KICK BCD 1;
+        RIFF A 0 A_FireProjectile("SuperKickAttack", 0, 0, 0, -7);
+        KICK H 5;
+		KICK A 0 A_Takeinventory("Kicking",1);
+		KICK I 1;
+		KICK GFEDCBA 1;
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		goto ReallyReady;
+
+	AirKick:
+	    TNT1 A 0 A_jumpifinventory("PowerStrength",1,"SuperAirKick");
+		TNT1 A 0 A_PlaySound("KICK");
+		TNT1 A 0 A_Recoil (-6);
+		KICK JKLMN 1;
+        RIFF A 0 A_FireProjectile("AirKickAttack", 0, 0, 0, -31);
+        KICK O 3;
+		KICK A 0 A_Takeinventory("Kicking",1);
+		KICK PQRST 2;
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		goto ReallyReady;
+
+	SuperAirKick:
+		TNT1 A 0 A_PlaySound("KICK");
+		TNT1 A 0 A_Recoil (-6);
+		KICK JKLMN 1;
+        RIFF A 0 A_FireProjectile("SuperAirKickAttack", 0, 0, 0, -31);
+        KICK O 3;
+		KICK A 0 A_Takeinventory("Kicking",1);
+		KICK PQRST 2;
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		goto ReallyReady;
+	}
+}

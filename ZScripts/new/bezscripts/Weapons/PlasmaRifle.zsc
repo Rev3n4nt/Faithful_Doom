@@ -1,0 +1,593 @@
+// --------------------------------------------------------------------------
+//
+// Plasma rifle
+//
+// --------------------------------------------------------------------------
+
+Class Plasma_Gun : BeWeapon//PlasmaRifle
+{
+	Default
+	{
+	Weapon.SelectionOrder 3;
+	Weapon.AmmoUse1 0;
+	Weapon.AmmoGive1 0;
+	Weapon.AmmoUse2 0;
+	Weapon.AmmoGive2 0;
+    Inventory.PickupSound "PLSDRAW";
+	Weapon.AmmoType1 "Cell2";
+	Weapon.AmmoType2 "PlasmaAmmo";
+    +WEAPON.NOAUTOAIM;
+	+FORCEXYBILLBOARD;
+	+WEAPON.NO_AUTO_SWITCH;
+	Inventory.PickupMessage "Plasma Gun";
+	}
+	States
+	{
+	Warmup:
+		TNT1 A 0 A_TakeInventory("NeverSelectedPlasma",1);
+	    TNT1 A 0 A_Takeinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+		TNT1 A 0 A_PlaySound("PLREADY");
+		PLSR EF 3;
+	//	PLSR F 4;
+		PLSR GHIJKLCB 2;
+		PLSG A 25;
+		Goto ReallyReady;
+	Ready:
+		TNT1 A 0 A_GunFlash;
+		TNT1 A 0 A_JumpIfInventory("NeverSelectedPlasma", 1, "Warmup");        
+		PLS9 ABC 1 A_JumpIfInventory("GoFatality", 1, "Steady");
+        TNT1 A 0 A_PlaySound("PLSDRAW");
+        TNT1 AA 0;
+	ReallyReady:
+		PLSG A 1 A_WeaponReady(WRF_ALLOWRELOAD|WRF_ALLOWUSER1);
+        TNT1 A 0 A_JumpIfInventory("Kicking",1,"DoKick");
+
+		TNT1 A 0 A_JumpIfInventory("TossGrenade",1,"TossGrenade");
+
+		TNT1 A 0 A_JumpIfInventory("QuickPunching",1, "Punch");
+		Loop;
+
+	DontNeedToReload:
+	Goto ReallyReady;
+	Deselect:
+		TNT1 A 0 A_TakeInventory("IsWeaponBFG",1);
+		TNT1 A 0 A_Takeinventory("Reloading",1);
+		TNT1 A 0 A_Takeinventory("HasCutingWeapon",1);
+		TNT1 A 0 A_Takeinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 A_TakeInventory("TossGrenade", 1);
+        PLS9 CBA 1;
+		TNT1 AAAAAAAAAAAAAAAAAAAAAA 0 A_Lower;
+		TNT1 A 1;
+		Wait;
+	Select:
+		TNT1 A 0 A_Takeinventory("HasCutingWeapon",1);
+	    TNT1 A 0 A_Giveinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 A_Takeinventory("FistsSelected",1);
+	TNT1 A 0 A_Takeinventory("SawSelected",1);
+	TNT1 A 0 A_Takeinventory("ShotgunSelected",1);
+	TNT1 A 0 A_Takeinventory("SSGSelected",1);
+	TNT1 A 0 A_Takeinventory("MinigunSelected",1);
+	TNT1 A 0 A_Giveinventory("PlasmaGunSelected",1);
+	TNT1 A 0 A_Takeinventory("RocketLauncherSelected",1);
+    TNT1 A 0 A_Takeinventory("GrenadeLauncherSelected",1);
+	TNT1 A 0 A_Takeinventory("BFGSelected",1);
+	TNT1 A 0 A_Takeinventory("BFG10kSelected",1);
+	TNT1 A 0 A_Takeinventory("RailGunSelected",1);
+	TNT1 A 0 A_Takeinventory("SubMachineGunSelected",1);
+	TNT1 A 0 A_Takeinventory("RevenantLauncherSelected",1);
+	TNT1 A 0 A_Takeinventory("LostSoulSelected",1);
+	TNT1 A 0 A_Takeinventory("FlameCannonSelected",1);
+	TNT1 A 0 A_Takeinventory("HasBarrel",1);
+	TNT1 A 0 A_TakeInventory("TossGrenade", 1);
+	TNT1 A 0 A_GiveInventory("IsWeaponBFG",1);
+	TNT1 A 0 A_Takeinventory("Zoomed",1);
+	TNT1 A 0 A_Takeinventory("ADSmode",1);
+    TNT1 A 0 A_ZoomFactor(1.0);
+		TNT1 A 0 A_Raise;
+		Wait;
+
+		NoAmmo:
+	PLSG A 1 { A_WeaponReady(WRF_ALLOWRELOAD); } //A_PlaySound("weapons/empty");
+	TNT1 A 0 A_StopSound(6);
+	TNT1 A 0 A_PlaySound("BEP",6);
+	TNT1 A 0 A_Takeinventory("Zoomed",1);
+    TNT1 A 0 A_ZoomFactor(1.0);
+	TNT1 A 0 A_Takeinventory("ADSmode",1);
+	Goto ReallyReady;
+
+	User1:
+		TNT1 A 0 A_CheckReload;
+        TNT1 A 0 A_JumpIfInventory("Reloading",1,"Reload");
+		TNT1 A 0
+		{
+			if(GetCvar("be_noautoreload") == 1 && CountInv("PlasmaAmmo") == 0 && CountInv("PowerD4DFS") == 0 && GetCvar("begunnergameplaymode") == 0)
+			{
+					if (GetPlayerInput(MODINPUT_OLDBUTTONS) & BT_USER1)
+					{ return ResolveState("ReallyReady"); }
+					return ResolveState("NoAmmo");				
+			}
+			else if(GetCvar("begunnergameplaymode") == 1 && CountInv("PlasmaAmmo") == 0)
+			{
+				return ResolveState("ReallyReady");				
+			}
+			return ResolveState(Null);
+		}
+        TNT1 A 0 A_JumpIfInventory("PlasmaAmmo",10,2);
+        Goto Reload;
+        TNT1 AAAA 0;
+        TNT1 A 0 A_PlaySound("PlasmaGun/Burst/Fire", CHAN_WEAPON);
+		TNT1 A 0 A_Quake(6, 6, 0, 32);
+		TNT1 A 0 A_FireProjectile("PlasmaFlareSpawn", 0, 0, 0, 0);
+		RIFF A 0 A_FireProjectileSmoke; //A_FireProjectile("GunFireSmoke1", 0, 0, 0, 0, 0, 0)
+		TNT1 A 0 BRIGHT A_FireProjectile("Alerter", 0, 0, 0, 0);
+		TNT1 A 0 A_SetBlend("skyblue",0.15,25);
+		TNT1 A 0 A_ZoomFactor(0.965,ZOOM_NOSCALETURNING);
+		TNT1 A 0 A_SetPitch(pitch-3);
+		TNT1 A 0 A_Jump(128,"FireVar2U1");
+		FireVar1U1:
+		PLSF A 1 BRIGHT A_FireProjectile("BigPlasma_Ball", 0, 0, 0, -8,0);
+		PLSF E 1 BRIGHT;
+		Goto EndFireU1;
+		FireVar2U1:
+		PLSF F 1 BRIGHT A_FireProjectile("BigPlasma_Ball", 0, 0, 0, -8,0);
+		PLSF G 1 BRIGHT;
+		EndFireU1:
+		PLSF B 1 BRIGHT A_FireProjectile("ShakeyourassQuad", 0, 0, 0, 0);
+		PLSF C 1 BRIGHT  A_ZoomFactor(1.0);
+		PLSF D 1 BRIGHT A_SetTics(CountInv("PowerD4DFS") ? 0 : 1);
+		TNT1 A 0 A_Takeinventory("PlasmaAmmo",10);
+        PLSG JKLKJ 2 A_SetPitch(pitch+0.5);
+        TNT1 A 0 A_PlaySound("PLSCOOL", 0);
+		TNT1 A 0 A_GiveInventory("HeatHazeTimer",36);
+        PLSG BBCCDD 1;
+		PLSG EEEEEEEE 3 A_FireProjectileSmoke(0.2,0.17,true,0.55,0.1,0.005,STYLE_Add,"SMK9",FRAME_A,0,8,5);//A_FireProjectile("GunFireSmoke4",0,0,-10,-2)
+		PLSG DDCCBB 1;
+        TNT1 A 0 A_PlaySound("BEPBEP");
+		Goto ReallyReady;
+
+	Fire:
+	TNT1 A 0 A_CheckReload;
+        TNT1 A 0 A_JumpIfInventory("Reloading",1,"Reload");
+		TNT1 A 0
+		{
+			if(GetCvar("be_noautoreload") == 1 && CountInv("PlasmaAmmo") == 0 && CountInv("PowerD4DFS") == 0 && GetCvar("begunnergameplaymode") == 0)
+			{
+					if (GetPlayerInput(MODINPUT_OLDBUTTONS) & BT_ATTACK)
+					{ return ResolveState("ReallyReady"); }
+					return ResolveState("NoAmmo");
+			}
+			else if(GetCvar("begunnergameplaymode") == 1 && CountInv("PlasmaAmmo") == 0)
+			{
+				return ResolveState("ReallyReady");
+			}
+			return ResolveState(Null);
+		}
+        TNT1 A 0 A_JumpIfInventory("PlasmaAmmo",1,2);
+        Goto Reload;
+        TNT1 AAAA 0;
+        TNT1 A 0 A_PlaySound("PLSM9", CHAN_WEAPON);
+		TNT1 A 0 A_Quake(3, 3, 0, 32);
+		TNT1 A 0 A_FireProjectile("PlasmaFlareSpawn", 0, 0, 0, 0);
+		RIFF A 0 A_FireProjectileSmoke; //A_FireProjectile("GunFireSmoke1", 0, 0, 0, 0, 0, 0)
+		TNT1 A 0 BRIGHT A_FireProjectile("Alerter", 0, 0, 0, 0);
+		TNT1 A 0 A_ZoomFactor(0.955,ZOOM_NOSCALETURNING);
+		TNT1 A 0 A_SetBlend("skyblue",0.1,5);
+		TNT1 A 0 A_SetPitch(pitch-0.8);
+		TNT1 A 0 A_Jump(128,"FireVar2");
+		FireVar1:
+		PLSF A 1 BRIGHT A_FireProjectile("PlasmaBall", 0, 1, 0, -8,0);
+		PLSF E 1 BRIGHT;
+		Goto EndFire;
+		FireVar2:
+		PLSF F 1 BRIGHT A_FireProjectile("PlasmaBall", 0, 1, 0, -8,0);
+		PLSF G 1 BRIGHT;
+		EndFire:
+		PLSF B 1 BRIGHT A_FireProjectile("Shakeyourassminor", 0, 0, 0, 0);
+		PLSF C 1 BRIGHT { A_ZoomFactor(1.0); A_SetTics(CountInv("PowerD4DFS") ? 0 : 1); }
+	//	PLSF D 1 BRIGHT;
+		TNT1 A 0 A_SetPitch(pitch+0.5);
+		TNT1 A 0 A_Takeinventory("PlasmaAmmo",1);
+		TNT1 A 0 A_ReFire;
+        TNT1 A 0 A_PlaySound("PLSCOOL", 0);
+		TNT1 A 0 A_GiveInventory("HeatHazeTimer",30);
+        PLSG BBCCDD 1;
+		PLSG EEEEEE 3 A_FireProjectileSmoke(0.2,0.17,true,0.55,0.1,0.005,STYLE_Add,"SMK9",FRAME_Z,0,8,5);//A_FireProjectile("GunFireSmoke4",0,0,-10,-2)
+		PLSG DDCCBB 1;
+        TNT1 A 0 A_PlaySound("BEPBEP");
+		Goto ReallyReady;
+
+// Charging up secondary ------------------------------------------------------------;
+
+	CancelNoAmmo:
+
+			TNT1 A 0 A_TakeInventory("Reloading",1);
+			TNT1 A 0 A_StopSound(6);
+			TNT1 A 0 A_PlaySound("decharg", 5);
+		Goto ReallyReady;
+
+	AltFire:
+		TNT1 A 0
+		{
+			if(GetCvar("be_noautoreload") == 1 && CountInv("PlasmaAmmo") == 0 || CountInv("PlasmaAmmo") < 0 && GetCvar("begunnergameplaymode") == 0)
+			{
+					if (GetPlayerInput(MODINPUT_OLDBUTTONS) & BT_ALTATTACK)
+					{ return ResolveState("ReallyReady"); }
+					return ResolveState("NoAmmo");				
+			}
+			else if(GetCvar("begunnergameplaymode") == 1 && CountInv("PlasmaAmmo") == 0)
+			{
+				return ResolveState("ReallyReady");				
+			}
+			return ResolveState(Null);
+		}
+        TNT1 A 0 A_JumpIfInventory("PlasmaAmmo",1,2);
+        Goto Reload;
+        TNT1 AAA 0;
+		TNT1 A 0 A_PlaySound("PLSCHARG",6,1,1);
+	AltFireCont:
+        TNT1 A 0 A_JumpIfInventory("Reloading",1,"Reload");
+		TNT1 A 0
+		{
+			if(GetCvar("be_noautoreload") == 1 && CountInv("PlasmaAmmo") == 0 || CountInv("PlasmaAmmo") < 0 && GetCvar("begunnergameplaymode") == 0)
+			{
+					if (GetPlayerInput(MODINPUT_OLDBUTTONS) & BT_ALTATTACK)
+					{ return ResolveState("ReallyReady"); }
+					return ResolveState("NoAmmo");				
+			}
+			else if(GetCvar("begunnergameplaymode") == 1 && CountInv("PlasmaAmmo") == 0)
+			{
+				return ResolveState("ReallyReady");				
+			}
+			return ResolveState(Null);
+		}
+        TNT1 A 0 A_JumpIfInventory("PlasmaAmmo",1,2);
+        Goto Reload;
+        TNT1 AAA 0;
+		PLSA A 0 A_JumpIf(CountInv("PlasmaAltFireCounting") == 10, "LetsFlyAltFire");
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Takeinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT A_GiveInventory("PlasmaAltFireCounting",1);
+		TNT1 A 0 A_ReFire("AltFireCont");
+		Goto EndAltFire;
+
+	EndAltFire:
+		PLSA A 1 A_StopSound(6);
+		Goto ReallyReady;
+/*;
+	AltFire:
+        TNT1 A 0 A_JumpIfInventory("Reloading",1,"Reload")
+		TNT1 A 0 A_JumpIf(GetCvar("be_noautoreload") == 1 && CountInv("PlasmaAmmo") == 0 || CountInv("PlasmaAmmo") < 10,"NoAmmo")
+        TNT1 A 0 A_JumpIfInventory("PlasmaAmmo",10,2)
+        Goto Reload;
+        TNT1 AAA 0;
+
+	TNT1 A 0 A_PlaySound("PLSCHARG");
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Takeinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Takeinventory("PlasmaAmmo",1);
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT A_Takeinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Takeinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Takeinventory("PlasmaAmmo",1);
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT A_Takeinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Takeinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Takeinventory("PlasmaAmmo",1);
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT A_Takeinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Takeinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT;
+
+	TNT1 A 0 A_PlaySound("PLSFULL", 6, 0.8, 1);
+	TNT1 A 0 A_ReFire;
+
+// Holding Charge ------------------------------------------------------------;
+
+AltHold:
+	TNT1 A 0 A_JumpIf(GetCvar("be_noautoreload") == 1 && CountInv("PlasmaAmmo") == 0 || CountInv("PlasmaAmmo") < 10,"CancelNoAmmo")
+	TNT1 A 0 A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+	TNT1 A 0 A_JumpIfInventory("Reloading",1,"Cancel")
+	PLFA A 1 BRIGHT offset (0, 32);
+	TNT1 A 0 A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+	TNT1 A 0 A_JumpIfInventory("Reloading",1,"Cancel")
+	PLFA C 1 BRIGHT offset (0, 33);
+	TNT1 A 0 A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+	TNT1 A 0 A_JumpIfInventory("Reloading",1,"Cancel")
+	PLFA A 1 BRIGHT offset (1, 32);
+	TNT1 A 0 A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+	TNT1 A 0 A_JumpIfInventory("Reloading",1,"Cancel")
+	PLFA C 1 BRIGHT offset (-1, 32);
+
+	TNT1 A 0 A_ReFire;
+*/
+// Let Fly --------------------------------------------------------------------------
+LetsFlyAltFire:
+	TNT1 A 0 A_PlaySound("PLSFULL", 6, 0.8, 1);
+	PLFA ACAC 2 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+	TNT1 A 0 A_StopSound(6);
+	PLSF A 2 A_PlaySound("PLSALTFR");
+	TNT1 A 0 A_SetBlend("skyblue",0.2,20);
+	TNT1 A 0 A_ZoomFactor(0.965,ZOOM_NOSCALETURNING);
+	PLSF B 2 BRIGHT A_Recoil(3);
+	RIFF A 0 A_FireProjectile("GunFireSmoke", 0, 0, 0, 0, 0, 0);
+	TNT1 A 0 BRIGHT A_FireProjectile("Alerter", 0, 0, 0, 0);
+	TNT1 AAAAAAAAAAAAA 0 A_FireProjectileSmoke(0.2, 0, false, 0.5, 0.1, 0.005, STYLE_Translucent, "SMK9", FRAME_A,random(-6,6),-1,0,0,random(-4,4));//A_FireProjectile("GunFireSmoke1", random(-6,6), 0, -1, 0, 0, random(-4,4))
+	TNT1 AAAAAAAAAAAAA 0 A_FireProjectile("PlasmaBall75", random(-6,6), 0, -1, 0, 0, random(-4,4));
+		TNT1 A 0 A_FireProjectile("PlasmaFlareSpawn",-5,0,0,0);
+        PLSG J 1 A_FireProjectile("ShakeYourAssQuad", 0, 0, 0, 0);
+        PLSG KLKJ 1;
+		TNT1 A 0 A_ZoomFactor(1.0,ZOOM_NOSCALETURNING);
+	TNT1 A 0 A_SetPitch(pitch - 8.0);
+		TNT1 A 0 A_GiveInventory("HeatHazeTimer",30);
+        PLSG BBCCDD 1;
+		PLSG EEEEEE 3 A_FireProjectileSmoke(0.2,0.17,true,0.55,0.1,0.005,STYLE_Add,"SMK9",FRAME_A,0,8,5);//A_FireProjectile("GunFireSmoke4",0,0,-10,-2)
+		PLSG DDCCBB 1;
+		TNT1 A 0 A_SetInventory("PlasmaAltFireCounting",0);
+		TNT1 A 0 A_JumpIf(GetCvar("be_noautoreload") == 1 && CountInv("PlasmaAmmo") == 0,"NoAmmo");
+        TNT1 A 0 A_JumpIfInventory("PlasmaAmmo",1,2);
+        Goto Reload;
+        TNT1 AAAA 0;
+        TNT1 A 0 A_PlaySound("BEPBEP");
+		Goto ReallyReady;
+
+// Cancel Charge --------------------------------------------------------------------------------------------;
+
+	Cancel:
+
+			TNT1 A 0 A_TakeInventory("Reloading",1);
+			TNT1 A 0 A_StopSound(6);
+			TNT1 A 0 A_PlaySound("decharg", 5);
+
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Giveinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Giveinventory("PlasmaAmmo",1);
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT A_Giveinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Giveinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Giveinventory("PlasmaAmmo",1);
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT A_Giveinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Giveinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Giveinventory("PlasmaAmmo",1);
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT A_Giveinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT;
+		PLSA A 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA B 1 BRIGHT A_Giveinventory("PlasmaAmmo",1);
+		PLSA C 1 BRIGHT A_FireProjectile("PlasmaFlareSpawn",0,0,0,0);
+		PLSA D 1 BRIGHT;
+
+			TNT1 A 0 A_TakeInventory("Reloading",1);
+			TNT1 A 0 A_PlaySound("BEPBEP", 5, 1.2);
+			TNT1 A 0 A_ClearReFire;
+
+		Goto ReallyReady;
+
+//  ------------------------------------------------------------------------------;
+
+	Flash:
+		TNT1 A 4;
+        Goto LightDone;
+	Spawn:
+	    TNT1 A 0;
+		TNT1 A 0
+		{
+			bTHRUACTORS = 1;
+		}
+		PLAS A 20;
+		TNT1 A 0 A_SpawnItem("DropedPlasmaGun");
+		Stop;
+
+    Reload:
+	TNT1 A 0 A_StopSound(6);
+	
+	TNT1 A 0 A_Takeinventory("Reloading",1);
+	TNT1 A 0 A_ClearReFire;
+	TNT1 A 0 A_JumpIfInventory("PlasmaAmmo",50,"ReallyReady");
+	TNT1 A 0 A_JumpIf(CountInv("Cell2") == 0, "ReallyReady");
+	// TNT1 A 0 A_PlaySound("BEP");
+	// PLSR A 1 A_WeaponReady(WRF_NOFIRE);
+	TNT1 A 0 A_CheckReload;
+		TNT1 A 0 A_JumpIf(GetCvar("begunnergameplaymode") == 1,"ReloadingSequence");
+        PLSR AB 2 A_JumpIfInventory("PowerD4DFS",1,"HasteReload");
+		TNT1 A 0 A_PlaySound("PLREADY");
+		PLSR KJIH 2;
+		PLSR GFE 3;
+		TNT1 A 0 A_FireProjectile("PlasmaCaseSpawn",-210,0,20,-20);
+		PLSR E 3
+		{
+			if(CountInv("ReloadSpeed") == 2) {
+			A_SetTics(9);
+			}
+			else if (CountInv("ReloadSpeed") == 1) {
+			A_SetTics(6);
+			}
+			else {
+			A_SetTics(3);
+			}
+		}
+		PLSR F 3;
+	//	PLSR F 4;
+		PLSR GHIJKLCB 2;
+		Goto ReloadingSequence;
+
+		HasteReload:
+		TNT1 A 0 A_FireProjectile("PlasmaCaseSpawn",-210,0,20,-20);
+		ReloadingSequence:
+		TNT1 AAAAAAAAAA 0;
+		TNT1 A 0 A_JumpIfInventory("PlasmaAmmo",50,15);
+		TNT1 A 0 A_JumpIfInventory("Cell2",1,3);
+		Goto ReallyReady;
+        TNT1 AAAAAA 0;
+		TNT1 A 0 A_Giveinventory("PlasmaAmmo",1);
+		TNT1 A 0 A_Takeinventory("Cell2",1);
+		Goto ReloadingSequence;
+		TNT1 AAAAAAAA 0;
+
+		TNT1 A 0 A_Takeinventory("Reloading",1);
+        Goto ReallyReady;
+
+	FlashKicking:
+		PRIR B 1;
+		PR3L A 1;
+		PRIR D 1;
+		PRIR E 3;
+		PRIR F 3;
+		PRIR E 3;
+		PRIR D 1;
+		PR3L A 1;
+		PRIR B 1;
+		PRIR AAA 1;
+		Stop;
+
+		DoKick:
+	    TNT1 A 0;
+		TNT1 A 0
+		{
+			if(countinv("FinisherToken",AAPTR_PLAYER_GETTARGET)>=1 && A_CheckLOF("Null",CLOFF_SETTARGET|CLOFF_NOAIM_VERT|CLOFF_IGNOREGHOST|CLOFF_MUSTBESOLID ,180))
+			{ return ResolveState("PermormGloryKill");	}
+
+			return ResolveState(Null);
+		}
+		TNT1 A 0 A_Takeinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+		TNT1 A 0 A_Takeinventory("ADSmode",1);
+		NULL A 0 A_JumpIf (vel.z > 0, "AirKick");
+		NULL A 0 A_JumpIf (vel.z < 0, "AirKick");
+		NULL A 0 A_JumpIf (pitch > 32, "LowKickChecker1");
+		Goto InitializeNormalKick;
+
+		LowKickChecker1:
+		TNT1 A 0;
+	    NULL A 0 A_JumpIf (pitch > 90, "InitializeNormalKick");
+		Goto LowKick;
+
+		LowKick:
+		TNT1 A 0 A_PlaySound("KICK");
+		TNT1 A 0 A_Takeinventory("HasPlasmaWeapon",1);
+		KICK UVW 1;
+		KICK X 1;
+		RIFF A 0 A_FireProjectile("KickAttackDetectDowned", 0, 0, 0, 0);
+        KICK Y 1;
+		KICK Z 4;
+		KICK YX 1;
+		KICK A 0 A_Takeinventory("Kicking",1);
+		KICK WVU 1;
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 A_Giveinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		Goto ReallyReady;
+
+		InitializeNOrmalKick:
+		TNT1 A 0;
+		TNT1 A 0 A_Takeinventory("Zoomed",1);
+        TNT1 A 0 A_ZoomFactor(1.0);
+		TNT1 A 0 A_Takeinventory("ADSmode",1);
+        TNT1 A 0 A_jumpifinventory("PowerStrength",1,"BerserkerKick");
+		TNT1 A 0 A_PlaySound("KICK");
+		TNT1 A 0 A_Takeinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 SetPlayerProperty(0,1,0);
+		TNT1 A 0 A_GunFlash("FlashKicking");
+		KICK BCD 1;
+		RIFF A 0 A_FireProjectile("KickAttack", 0, 0, 0, -7);
+        KICK H 5;
+		KICK A 0 A_Takeinventory("Kicking",1);
+		KICK I 1;
+		KICK GFEDCBA 1;
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		TNT1 A 0 A_Giveinventory("HasPlasmaWeapon",1);
+		Goto ReallyReady;
+    BerserkerKick:
+		TNT1 A 0 A_PlaySound("KICK");
+		TNT1 A 0 A_Takeinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 SetPlayerProperty(0,1,0);
+		TNT1 A 0 A_GunFlash("FlashKicking");
+		KICK BCD 1;
+        RIFF A 0 A_FireProjectile("SuperKickAttack", 0, 0, 0, -7);
+        KICK H 5;
+		KICK A 0 A_Takeinventory("Kicking",1);
+		KICK I 1;
+		KICK GFEDCBA 1;
+		TNT1 A 0 SetPlayerProperty(0,0,0);
+		TNT1 A 0 A_Giveinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		Goto ReallyReady;
+
+	AirKick:
+	    TNT1 A 0 A_jumpifinventory("PowerStrength",1,"SuperAirKick");
+		TNT1 A 0 A_PlaySound("KICK");
+		TNT1 A 0 A_Takeinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 A_Recoil (-6);
+		KICK JKLMN 1;
+        RIFF A 0 A_FireProjectile("AirKickAttack", 0, 0, 0, -31);
+        KICK O 3;
+		KICK A 0 A_Takeinventory("Kicking",1);
+		KICK PQRST 2;
+		TNT1 A 0 A_Giveinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		Goto ReallyReady;
+
+	SuperAirKick:
+		TNT1 A 0 A_PlaySound("KICK");
+		TNT1 A 0 A_Takeinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 A_Recoil (-6);
+		KICK JKLMN 1;
+        RIFF A 0 A_FireProjectile("SuperAirKickAttack", 0, 0, 0, -31);
+        KICK O 3;
+		KICK A 0 A_Takeinventory("Kicking",1);
+		KICK PQRST 2;
+		TNT1 A 0 A_Giveinventory("HasPlasmaWeapon",1);
+		TNT1 A 0 A_JumpIfInventory("GoFatality", 1, "Steady");
+		Goto ReallyReady;
+	}
+}

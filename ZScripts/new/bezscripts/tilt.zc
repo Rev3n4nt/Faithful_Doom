@@ -1,0 +1,419 @@
+//===========================================================================
+//
+// Tilt++.pk3
+//
+// Unified player camera tilting for strafing, moving, swimming and death
+//
+// Written by Nash Muhandes
+//
+// Feel free to use this in your mods. You don't have to ask my permission!
+//
+//===========================================================================
+
+class TiltPlusPlusHandler : EventHandler
+{
+	override void PlayerEntered(PlayerEvent e)
+	{
+		players[e.PlayerNumber].mo.A_GiveInventory("Z_TiltMe", 1);
+	}
+}
+
+// class Z_AngleMeRight : CustomInventory
+// {
+	// Default
+	// {
+		// Inventory.MaxAmount 1;
+		// +INVENTORY.UNDROPPABLE
+		// +INVENTORY.UNTOSSABLE
+	// }
+	
+	// action void ToggleActive()
+	// {
+		// let player = BEDoomer(invoker.Owner);
+		// if(player)
+		// {
+			// switch(player.baseAngle)
+			// {
+				// case 0:
+						// player.baseAngle = 15;
+					// break;
+				// case -15:
+				// case 15:
+						// player.baseAngle = 0;
+					// break;
+			// }
+		// }
+	// }
+	
+	// States
+	// {
+		// Spawn:
+			// TNT1 A -1;
+			// Stop;
+		// Use:
+			// TNT1 A 1 ToggleActive();
+			// Loop;
+	// }
+// }
+
+// class Z_AngleMeLeft : CustomInventory
+// {
+	// Default
+	// {
+		// Inventory.MaxAmount 1;
+		// +INVENTORY.UNDROPPABLE
+		// +INVENTORY.UNTOSSABLE
+	// }
+	
+	// action void ToggleActive()
+	// {
+		// let player = BEDoomer(invoker.Owner);
+		// if(player)
+		// {
+			// switch(player.baseAngle)
+			// {
+				// case 0:
+						// player.baseAngle = -15;
+					// break;
+				// case -15:
+				// case 15:
+						// player.baseAngle = 0;
+					// break;
+			// }
+		// }
+	// }
+	
+	// States
+	// {
+		// Spawn:
+			// TNT1 A -1;
+			// Stop;
+		// Use:
+			// TNT1 A 1 ToggleActive();
+			// Loop;
+	// }
+// }
+
+class Z_TiltMe : CustomInventory
+{
+	Default
+	{
+		Inventory.MaxAmount 1;
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.UNTOSSABLE
+		+INVENTORY.AUTOACTIVATE
+	}
+	double strafeInput;
+	double moveTiltOsc, underwaterTiltOsc;
+	double deathTiltOsc;
+	double deathTiltAngle;
+	int deathDirection;
+	bool alreadyDead;
+	double lastRoll;
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	bool bIsOnFloor (void)
+	{
+		return (Owner.Pos.Z == Owner.FloorZ) || (Owner.bOnMObj);
+	}
+
+	bool bNoTiltCvar (void)
+	{
+		return Cvar.FindCvar("bepeoplewanttodisabletilt").GetInt();
+	}
+
+	bool bIsCrouching (void)
+	{
+		return Owner.GetCameraHeight() <= (Owner.player.mo.ViewHeight / 2);
+	}
+
+	double GetVelocity (void)
+	{
+		return Owner.Vel.Length();
+	}
+	
+	double GetArmorAmount(void)
+	{
+		let armor = Owner.FindInventory("BasicArmor");
+		if(!armor) return 0;
+		return armor.Amount;
+	}
+
+	int GetWaterLevel (void)
+	{
+		return Owner.WaterLevel;
+	}
+
+	bool bIsPlayerAlive (void)
+	{
+		return Owner.Health > 0;
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+	void Test (void)
+	{
+		UserCmd cmd = Owner.player.cmd;
+		
+		if ( bIsOnFloor() )
+		{
+			bool strafeSpeed = Owner.GetPlayerInput(INPUT_SIDEMOVE);
+			bool forwardSpeed = Owner.GetPlayerInput(INPUT_FORWARDMOVE);
+			
+			if ( !forwardSpeed || !strafeSpeed )
+			{
+				Owner.A_Stop();
+			}
+		}
+	}
+	
+	void Tilt_CalcViewRoll (void)
+	{
+		// CVARS ///////////////////////////////////////////////////////////////
+		bool strafeTiltEnabled = true;
+		bool moveTiltEnabled = true;
+		bool underwaterTiltEnabled = true;
+		bool deathTiltEnabled = true;
+		double strafeTiltSpeed = 1.0;
+		double strafeTiltAngle = 0.5;
+		bool strafeTiltReversed = false;
+		double moveTiltScalar = 0.5;
+		double moveTiltAngle = 0.015;
+		double moveTiltSpeed = 15.000;
+		double underwaterTiltSpeed = 0.8;
+		double underwaterTiltAngle = 0.2;
+		double underwaterTiltScalar = 1.0;
+		//let player = BEDoomer(Owner);
+		// Shared variables we'll need later
+		double r, v;
+
+		//===========================================================================
+		//
+		// Strafe Tilting
+		//
+		//===========================================================================
+		
+		// normalized strafe input
+		if (strafeTiltEnabled && bIsOnFloor() && bIsPlayerAlive())
+		{
+			int dir;
+			if (strafeTiltReversed) dir = -1;
+			else dir = 1;
+			strafeInput = strafeTiltSpeed * (Owner.GetPlayerInput(INPUT_SIDEMOVE) / 10240.0);
+			
+			if(Owner.Health < 25)
+			{
+				strafeInput *= strafeTiltAngle + 0.4;
+			}
+			else
+			{
+				if(GetArmorAmount() >= 111)
+				{
+					strafeInput *= bNoTiltCvar() ? strafeTiltAngle : strafeTiltAngle + (GetArmorAmount() / 1000);
+				}
+				else if(GetArmorAmount() >= 75 && GetArmorAmount() < 110)
+				{
+					strafeInput *= strafeTiltAngle;
+				}
+				else
+				{
+					strafeInput *= 0;
+				}
+			}
+			
+			strafeInput *= dir;
+		}
+
+		// tilt!
+		lastRoll += strafeInput;
+
+		//===========================================================================
+		//
+		// Movement Tilting
+		//
+		//===========================================================================
+
+		if (moveTiltEnabled && bIsOnFloor() && bIsPlayerAlive())
+		{
+			// get player's velocity
+			v = GetVelocity() * moveTiltScalar;
+
+			// increment angle
+			if(GetArmorAmount() > 110)
+			{
+				moveTiltSpeed = bNoTiltCvar() ? 15 : 15 - (GetArmorAmount() / 100);
+			}
+			else
+			{
+				moveTiltSpeed = 15.0;
+			}
+			
+			moveTiltOsc += moveTiltSpeed;
+
+			// clamp angle
+			if (moveTiltOsc >= 360. || moveTiltOsc < 0.)
+			{
+				moveTiltOsc = 0.;
+			}
+
+			// calculate roll
+			r = Sin(moveTiltOsc);
+			
+			if(Owner.Health < 25)
+			{
+				r *= moveTiltAngle + 0.08;
+			}
+			else
+			{
+				if(GetArmorAmount() >= 111)
+				{
+					r *= bNoTiltCvar() ? moveTiltAngle : moveTiltAngle + (GetArmorAmount() / 5000);
+				}
+				else if(GetArmorAmount() >= 75 && GetArmorAmount() < 110)
+				{
+					r *= moveTiltAngle;
+				}
+				else
+				{
+					r *= 0;
+				}
+			}
+			
+			r *= v;
+		}
+
+		// tilt!
+		lastRoll += r;
+
+		//===========================================================================
+		//
+		// Underwater Tilting
+		//
+		//===========================================================================
+
+		if (GetWaterLevel() >= 3 && underwaterTiltEnabled && bIsPlayerAlive())
+		{
+			// fixed rate of 15
+			v = 15. * underwaterTiltScalar;
+
+			// increment angle
+			underwaterTiltOsc += underwaterTiltSpeed;
+
+			// clamp angle
+			if (underwaterTiltOsc >= 360. || underwaterTiltOsc < 0.)
+			{
+				underwaterTiltOsc = 0.;
+			}
+
+			// calculate roll
+			r = Sin(underwaterTiltOsc);
+			r *= underwaterTiltAngle;
+			r *= v;
+		}
+
+		// tilt!
+		lastRoll += r;
+
+		//===========================================================================
+		//
+		// Death Tilting
+		//
+		//===========================================================================
+
+		if (!bIsPlayerAlive() && deathTiltEnabled)
+		{
+			if(!alreadyDead)
+			{
+				deathDirection = RandomPick(0, 1);
+				alreadyDead = true;
+			}
+			double deathTiltSpeed = FRandom(0.5f,1.0f);
+			
+			if (deathTiltAngle == 0)
+			{
+				// vary the angle a little
+				deathTiltAngle += FRandomPick(-90.0f,90.0f);
+				deathTiltAngle += FRandom(-45.0f, 45.0f);
+				deathTiltAngle *= RandomPick(-1, 1);
+			}
+
+			if (deathTiltOsc < 22.5)
+			{
+				deathTiltOsc += deathTiltSpeed;
+			}
+
+			r = Sin(deathTiltOsc);
+			r *= deathTiltAngle;
+		}
+		else
+		{
+			deathTiltOsc = 0;
+			deathTiltAngle = 0;
+			deathDirection = 0;
+		}
+
+		// tilt!
+		lastRoll += r;
+
+		//===========================================================================
+		//
+		// Tilt Post Processing
+		//
+		//===========================================================================
+
+		if (abs(lastRoll) > 0.000001)
+		{
+			// Stabilize tilt
+			lastRoll *= 0.75;
+
+			// Apply the sum of all rolling routines
+			// (including after stabilization)
+			
+			if(deathDirection == 1)
+			{
+			Owner.A_SetPitch(lastRoll,SPF_INTERPOLATE);
+			}
+			else
+			{
+			Owner.A_SetRoll(lastRoll, SPF_INTERPOLATE);
+			}
+		}
+	}
+
+	override void Tick(void)
+	{
+		if (Owner && Owner is "PlayerPawn")
+		{
+			Tilt_CalcViewRoll();
+		//	Test();
+		}
+
+		Super.Tick();
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+	States
+	{
+	Use:
+		TNT1 A 0;
+		Fail;
+	Pickup:
+		TNT1 A 0
+		{
+			return true;
+		}
+		Stop;
+	}
+}

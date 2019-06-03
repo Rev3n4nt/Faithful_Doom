@@ -1,0 +1,47 @@
+version "3.2.4"
+
+#include "bezscripts/Constants.zsc"
+#include "bezscripts/Weapons/BaseClass.zsc"
+#include "bezscripts/Weapons/Chainsaw.zsc"
+#include "bezscripts/Weapons/LoveFistFury.zsc"
+#include "bezscripts/Weapons/Pistol.zsc"
+#include "bezscripts/Weapons/Rifle.zsc"
+#include "bezscripts/Weapons/Shotgun.zsc"
+#include "bezscripts/Weapons/SSG.zsc"
+#include "bezscripts/Weapons/Chaingun.zsc"
+#include "bezscripts/Weapons/RocketLauncher.zsc"
+#include "bezscripts/Weapons/PlasmaRifle.zsc"
+#include "bezscripts/Weapons/BFG9000.zsc"
+#include "bezscripts/Weapons/FlameCannon.zsc"
+#include "bezscripts/Weapons/HellishMissileLauncher.zsc"
+#include "bezscripts/Weapons/HandGrenades.zsc"
+#include "bezscripts/Weapons/MP40.zsc"
+#include "bezscripts/Weapons/SoulCube.zsc"
+#include "bezscripts/Weapons/HitlersBuzzsaw.zsc"
+
+
+#include "bezscripts/Flares.zsc"
+#include "bezscripts/FlashLight.zsc"
+#include "bezscripts/zPlayer.zsc"
+#include "bezscripts/hud.zsc"
+#include "bezscripts/tilt.zc"
+
+#include "bezscripts/Items.zsc"
+#include "bezscripts/Armor.zsc"
+
+#include "bezscripts/kill.zsc"
+#include "bezscripts/menu.zsc"
+#include "bezscripts/listmenu.zsc"
+
+#include "bezscripts/MessagesBox.zsc"
+#include "bezscripts/StatScreen.zsc"
+#include "bezscripts/SpriteShadow.zsc"
+
+
+//made by https://github.com/caligari87/darkdoomz
+#include "bezscripts/DarkDoomZ.zsc"
+
+#include "bezscripts/HandGrenade.zsc"
+#include "bezscripts/titlemap.zsc"
+
+#include "bezscripts/BaseImp.zsc"
