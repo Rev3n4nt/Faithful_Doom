@@ -11,8 +11,8 @@ mod.*/
 
 //WEAPON DECORATE (remove to disable Smooth Doom weapons)
 #include "DECORATE/Doomguy.dec"
-#include "DECORATE/Items.dec"
-#include "DECORATE/monsters.dec"
+// #include "DECORATE/Items.dec"
+// #include "DECORATE/monsters.dec"
 /*
 #include "DECORATE/WEAPONS/Shotgun.dec"
 #include "DECORATE/WEAPONS/Plasma.dec"
@@ -24,3 +24,46 @@ mod.*/
 
 // #include "DECORATE/WEAPONS/FlatDecals-n.dec"
 // #include "DECORATE/WEAPONS/PUFF-n.dec"
+
+
+// bfreedoom
+Actor DebrisGeneral
+{
++MISSILE
++NOBLOCKMAP
++NOGRAVITY
++DROPOFF
++NOTELEPORT
++FORCEXYBILLBOARD
++NOTDMATCH
++GHOST
+radius 1
+height 1
+mass 1
+damage 0
+}
+
+
+// bfreedoom
+#include "DECORATE/BFREE/PARTICLES.txt"
+#include "DECORATE/BFREE/SPARKS.txt"
+// makes sparks shine
+#include "DECORATE/BFREE/FLARES.txt"
+
+#include "DECORATE/BFREE/PUFF.txt"
+#include "DECORATE/BFREE/TRACERS.txt"
+#include "DECORATE/BFREE/FlatDecals.txt"
+
+
+
+
+// //DECORATIONS
+// // #include Decorate/PLASMA.txt
+// #include Decorate/PARTICLES.txt
+// #include Decorate/SPARKS.txt
+// // makes sparks shine
+// #include Decorate/FLARES.txt
+
+// #include Decorate/PUFF.txt
+// #include Decorate/TRACERS.txt
+// #include Decorate/FlatDecals.txt
