@@ -21,3 +21,6 @@ mod.*/
 #include "DECORATE/WEAPONS/fist.dec"
 //#include "DECORATE/WEAPONS/saw.dec"
 */
+
+// #include "DECORATE/WEAPONS/FlatDecals-n.dec"
+// #include "DECORATE/WEAPONS/PUFF-n.dec"

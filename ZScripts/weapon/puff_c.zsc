@@ -1,0 +1,151 @@
+// The following code is used with only a small change, from dawnbreez's BulletZ.pk3. -ww
+
+//Special thanks to WildWeasel's Cola 3 for the idea of replacing the bulletpuff.
+class BulletZPuff : BulletPuff replaces BulletPuff
+{
+	Default
+	{
+		+NODECAL;
+		+PUFFONACTORS;
+		//+ALWAYSPUFF;
+		+PUFFGETSOWNER;
+		+NOBLOOD;
+		+BLOODLESSIMPACT;
+		+SKYEXPLODE;
+		+BOUNCEONWALLS;
+		+USEBOUNCESTATE;
+		-BLOODSPLATTER;
+		BounceType "Doom";
+		VSpeed 0;
+		DamageType "DummyDamage";
+	}
+	States
+	{
+	Spawn:
+	Death:
+	XDeath:	
+	Death.Sky:
+	Bounce.Wall:
+		TNT1 A 1 Bright NoDelay
+		{
+			Vector2 ownerVec = Vec2To(target);
+			double distance = ownerVec.Length();
+            // Code was fixed by AFADoomer so enemy refires work.
+            Actor aimtarget = target.target; // Remember the real actor that is being aimed at
+            target.target = self;
+            target.A_SpawnProjectile("BulletZRound");
+            target.target = aimtarget; // Restore the real target
+        }
+        Stop;
+	}
+}
+
+class BulletZRound : FastProjectile
+{
+	Default
+	{
+		Radius 2;
+		Height 2;
+		Speed 170;
+		DamageFunction 5;
+		MissileHeight 8;
+		Projectile;
+		RenderStyle "Add";
+		Alpha 1;
+		Scale 0.4;
+		+HITTRACER;
+		+GETOWNER;
+		MissileType "BulletZFX";
+		Decal "BulletChip";
+		//SeeSound "weapons/pistol";
+		//DeathSound "dspunch";
+		//MissileType "BulletZFX";
+		//MissileHeight 8;
+	}
+	States
+	{
+		Spawn:
+			PUFF A 1 Bright;
+			PUFF A 1 A_SpawnProjectile("BulletZFX",0);
+			Loop;
+		XDeath:
+			PUFF A 1 Bright;
+			PUFF B 2 Bright
+			{
+				//Console.printf("%s","Spark checking parent");
+				if(tracer != target)
+				{
+					A_SpawnProjectile("blood",0);
+					A_PlaySound("hitflesh");
+				}
+			}
+			PUFF C 2;
+			Stop;
+		Death:
+		Crash:
+			PUFF A 1 Bright {
+				A_PlaySound("ricochet");
+				A_SpawnDebris("TracerSpark");
+				A_SetTranslucent(0.9, 0);
+			}
+			PUFF BCD 1;
+			Stop;
+	}
+}
+
+class BulletZMeleeHit : BulletZRound
+{
+	// This spawns when a melee attack should hit.
+	Default
+	{
+		Speed 0;
+	}
+	States
+	{
+		Spawn:
+			PUFF A 1 Bright;
+			PUFF BC 1 ;//A_SpawnProjectile("blood",0);
+			Stop;
+	}
+}
+
+class BulletZFX : Actor
+{
+	Default
+	{ 
+		+NOBLOCKMAP;
+		+NOGRAVITY;
+		+NOTELEPORT;
+		+CANNOTPUSH;
+		+NODAMAGETHRUST;
+		RenderStyle "Add";
+		Alpha 0.75;
+		Scale 0.4;
+	}
+	States
+	{
+		Spawn:
+			PUFF A 1 Bright A_FadeOut(0.3);
+			TNT1 A 0 A_CheckFloor("SpawnFloor");
+			TNT1 A 0 A_SpawnItemEx ("DetectFloorBullet",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0);
+			TNT1 A 0 A_SpawnItemEx ("DetectCeilBullet",0,0,0,0,0,0,0,SXF_NOCHECKPOSITION,0);
+			Loop;
+
+		// Death:
+		//TNT1 A 0 ThrustThingZ(0,-5,0,1)
+		//TNT1 A 1
+		// TNT1 A 2;
+		// TNT1 A 1 A_Explode(4, 32);
+		// TNT1 A 0 A_CheckFloor("SpawnFloor");
+		// TNT1 A 0;
+		// Stop;
+
+		// SpawnFloor:
+		// 	TNT1 A 0;
+		// 	TNT1 A 0;
+		// 	TNT1 A 2;
+
+		// 	TNT1 A 0 A_SpawnItemEx ("DetectFloorBullet",0,0,5,0,0,0,0,SXF_NOCHECKPOSITION,0);
+		// 	TNT1 A 0 A_SpawnItemEx ("DetectCeilBullet",0,0,0,-5,0,0,0,SXF_NOCHECKPOSITION,0);
+	}
+}
