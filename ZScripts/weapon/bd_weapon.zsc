@@ -1,5 +1,5 @@
 #include "ZScripts/weapon/casings.zsc"
-#include "ZScripts/weapon/tracer_b.zsc"
+#include "ZScripts/weapon/tracer-b.zsc"
 
 Class BDoomWeapon : DoomWeapon abstract
 {

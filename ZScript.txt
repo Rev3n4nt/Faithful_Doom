@@ -16,7 +16,7 @@ version "3.3"
 #include "ZScripts/weapon/PlasmaGun.zsc"
 #include "ZScripts/weapon/BFG.zsc"
 
-// #include "ZScripts/weapon/tracer_c.zsc"
-// #include "ZScripts/weapon/puff_c.zsc"
+// #include "ZScripts/weapon/tracer-c.zsc"
+// #include "ZScripts/weapon/puff-c.zsc"
 
 //#include "ZScripts/items.zsc"
