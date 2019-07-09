@@ -57,7 +57,6 @@ Default {
 	-FLOORCLIP
 	}
 }
-
 class FBulletPuff : BdoomPuff
 {
 //int hitangle;
@@ -118,6 +117,9 @@ states
 						A_SpawnItemEx("RicochetBullet",	0,0,0,	frandom(-1.5,1.5),	frandom(-1.5,1.5),	frandom(1,4),		0,				0,				72);
 					}
 				}
+			if (pos.z > floorz+8 && pos.z < ceilingz-8)
+			A_SprayDecal(decaltype,8);
+				
 			//Console.PrintF("z %d, wallangle %d, %s - %s",traceheight,hitangle,hittex,dtype);
 			}
 		BPUF ABCD 1 bright;

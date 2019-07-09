@@ -1,7 +1,24 @@
 version "3.3"
 
 //taken from Beautiful Doom as a base
-#include "ZScripts/bd_main.zsc"
+// #include "ZScripts/bd_main.zsc"
+
+//base class for most debris
+#include "ZScripts/debris.zsc"
+
+//for backwards compatibility, will be removed after full transition to zscript
+class DummyChecker : Inventory
+{
+Default {
+	+INVENTORY.UNDROPPABLE 
+	+INVENTORY.UNTOSSABLE
+	-COUNTITEM
+	-INVENTORY.INVBAR
+	+INVENTORY.PERSISTENTPOWER
+	inventory.amount 1;
+	inventory.maxamount 9999;
+	}
+}
 
 #include "ZScripts/weapon/bd_weapon.zsc"
 #include "ZScripts/mk_matrix.zsc"

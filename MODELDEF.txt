@@ -24,16 +24,16 @@ Model Tracer
 	//FrameIndex TRAC A 0 0 
 }
 
-Model RicochetBullet
-{
-	Path "models"
-	Model 0 "tracer.md3"
-	Skin 0 "tracer1.png"
-	Scale 0.2 0.8 0.8
-	PITCHFROMMOMENTUM
+// Model RicochetBullet
+// {
+// 	Path "models"
+// 	Model 0 "tracer.md3"
+// 	Skin 0 "tracer1.png"
+// 	Scale 0.2 0.8 0.8
+// 	PITCHFROMMOMENTUM
 	
-	FrameIndex PUFF A 0 0
-}
+// 	FrameIndex PUFF A 0 0
+// }
 
 //	bullet holes on surfaces
 
