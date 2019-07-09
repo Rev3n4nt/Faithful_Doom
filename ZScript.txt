@@ -19,8 +19,7 @@ Default {
 	}
 }
 
-#include "ZScripts/bd_main.zsc"
-
+#include "ZScripts/EnBulletPuff.zsc"
 
 #include "ZScripts/weapon/bd_weapon.zsc"
 #include "ZScripts/mk_matrix.zsc"

@@ -1,6 +1,6 @@
-////////////////////////////////////////////////////////////;
-////////////// ALL BASIC BEAUTIFUL DOOM OBJECTS ////////////;
-////////////////////////////////////////////////////////////
+
+// Puffs
+
 
 //fake bullet that ricochets from bulletpuffs
 class RicochetBullet : DebrisGeneral
@@ -27,8 +27,6 @@ states
 		stop;
 	}
 }
-
-// Puffs
 
 class BdoomPuff : Actor abstract
 {
