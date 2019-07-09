@@ -54,7 +54,7 @@ damage 0
 #include "DECORATE/BFREE/TRACERS.txt"
 #include "DECORATE/BFREE/FlatDecals.txt"
 
-
+// #include "DECORATE/SMOOTH/PUFF-SMOOTH.dec"
 
 
 // //DECORATIONS
