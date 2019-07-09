@@ -1,4 +1,4 @@
-class DebrisGeneral : Actor abstract
+Class DebrisGeneral : Actor abstract
 {
 int sfxtype; //0 = debris, 1 = flames/smoke, 2 = blood, 3 = gibs
 property sfxtype : sfxtype;
@@ -11,10 +11,15 @@ Default {
 	+NOTAUTOAIMED
 	+MISSILE			//enters Death when it hits the floor
 	+NOBLOCKMAP
+	+MOVEWITHSECTOR
+	+RELATIVETOFLOOR
 	+NOGRAVITY
 	+DROPOFF
 	+NOTELEPORT
 	+FORCEXYBILLBOARD
+	+THRUACTORS
+	+FLOORCLIP
+	-ALLOWPARTICLES
 	renderstyle "Translucent";
 	alpha 1.0;
 	radius 1;
@@ -63,18 +68,23 @@ override void Tick()
 	}
 }
 
-// #include TOKENS.txt
-// //MISC
-// #include PUFF.txt
-// #include AMMO.txt
 
-// //Guns Guns Guns
-// #include DEFAULTWEAPON.txt
-// //here also all guns
-// #include TRACERS.txt
-
-// //Player Classes
-// #include PLAYER.txt
-// #include MARINES.txt
-// #include Footsteps.txt
-// #include ClassicWeapons.txt
+//base class for less expensive version for small debris
+Class SmallDebris : DebrisGeneral abstract
+{
+double dgravity; //fake gravity
+property dgravity : dgravity;
+Default {
+	-MISSILE
+	-RELATIVETOFLOOR
+	+NOINTERACTION
+	-FLOORCLIP //this flag can screw up pos.z detection
+	smalldebris.dgravity 0.8;
+	}
+override void Tick() {
+	super.tick();
+	vel.z-=dgravity;
+	if (pos.z <= floorz)
+		self.destroy();
+	}
+}
