@@ -13,36 +13,16 @@ mod.*/
 #include "DECORATE/Doomguy.dec"
 // #include "DECORATE/Items.dec"
 // #include "DECORATE/monsters.dec"
-/*
-#include "DECORATE/WEAPONS/Shotgun.dec"
-#include "DECORATE/WEAPONS/Plasma.dec"
-#include "DECORATE/WEAPONS/Rocket.dec"
-#include "DECORATE/WEAPONS/bfg.dec"
-#include "DECORATE/WEAPONS/fist.dec"
+
+// #include "DECORATE/WEAPONS/Shotgun.dec"
+// #include "DECORATE/WEAPONS/Plasma.dec"
+// #include "DECORATE/WEAPONS/Rocket.dec"
+// #include "DECORATE/WEAPONS/bfg.dec"
+// #include "DECORATE/WEAPONS/fist.dec"
 //#include "DECORATE/WEAPONS/saw.dec"
-*/
 
 // #include "DECORATE/WEAPONS/FlatDecals-n.dec"
 // #include "DECORATE/WEAPONS/PUFF-n.dec"
-
-
-// bfreedoom
-Actor DebrisGeneral
-{
-+MISSILE
-+NOBLOCKMAP
-+NOGRAVITY
-+DROPOFF
-+NOTELEPORT
-+FORCEXYBILLBOARD
-+NOTDMATCH
-+GHOST
-radius 1
-height 1
-mass 1
-damage 0
-}
-
 
 // bfreedoom
 // #include "DECORATE/BFREE/PARTICLES.txt"
@@ -56,14 +36,5 @@ damage 0
 
 // #include "DECORATE/SMOOTH/PUFF-SMOOTH.dec"
 
-
-// //DECORATIONS
-// // #include Decorate/PLASMA.txt
-// #include Decorate/PARTICLES.txt
-// #include Decorate/SPARKS.txt
-// // makes sparks shine
-// #include Decorate/FLARES.txt
-
-// #include Decorate/PUFF.txt
-// #include Decorate/TRACERS.txt
-// #include Decorate/FlatDecals.txt
+//DECORATIONS
+// #include Decorate/PLASMA.txt
