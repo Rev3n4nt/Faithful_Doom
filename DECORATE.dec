@@ -50,9 +50,9 @@ damage 0
 // makes sparks shine
 #include "DECORATE/BFREE/FLARES.txt"
 
-#include "DECORATE/BFREE/PUFF.txt"
-#include "DECORATE/BFREE/TRACERS.txt"
-#include "DECORATE/BFREE/FlatDecals.txt"
+// #include "DECORATE/BFREE/PUFF.txt"
+// #include "DECORATE/BFREE/TRACERS.txt"
+// #include "DECORATE/BFREE/FlatDecals.txt"
 
 // #include "DECORATE/SMOOTH/PUFF-SMOOTH.dec"
 
