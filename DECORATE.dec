@@ -45,10 +45,10 @@ damage 0
 
 
 // bfreedoom
-#include "DECORATE/BFREE/PARTICLES.txt"
-#include "DECORATE/BFREE/SPARKS.txt"
+// #include "DECORATE/BFREE/PARTICLES.txt"
+// #include "DECORATE/BFREE/SPARKS.txt"
 // makes sparks shine
-#include "DECORATE/BFREE/FLARES.txt"
+// #include "DECORATE/BFREE/FLARES.txt"
 
 // #include "DECORATE/BFREE/PUFF.txt"
 // #include "DECORATE/BFREE/TRACERS.txt"

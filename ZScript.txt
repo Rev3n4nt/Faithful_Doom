@@ -22,6 +22,8 @@ Default {
 #include "ZScripts/EnBulletPuff.zsc"
 #include "ZScripts/tracer.zsc"
 #include "ZScripts/FlatDecals.zsc"
+#include "ZScripts/flares.zsc"
+#include "ZScripts/particles.zsc"
 
 #include "ZScripts/weapon/bd_weapon.zsc"
 #include "ZScripts/mk_matrix.zsc"

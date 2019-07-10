@@ -1,0 +1,36 @@
+
+class YellowFlareSmall : YellowFlare
+{
+    Default {
+        scale 0.15;
+    }
+}
+
+class YellowFlare : Flare_General
+{
+states
+	{
+	Spawn:
+		TNT1 A 0;
+		TNT1 A 0 A_Jump(128,2);
+		LENY A 2 bright;
+		stop;
+		TNT1 A 0;
+		LENY B 2 bright;
+		stop;
+	}
+}
+
+class Flare_General : Actor abstract
+{
+    Default {
+        +NOINTERACTION
+        +NOGRAVITY
+        +CLIENTSIDEONLY
+        renderstyle "Add";
+        radius 1;
+        height 1;
+        alpha 0.4;
+        scale 0.4;
+    }
+}
