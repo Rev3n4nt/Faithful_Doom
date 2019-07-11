@@ -53,35 +53,22 @@ states
 	Deselect:
 		TNT1 A 0 {
 			A_ClearOverlays(2,3);
-			// invoker.fcombo = 0;
-			// invoker.lcombo = 0;
-			// invoker.tcombo = 0;
-			// invoker.hurtchance = 0;
 			speed = 1.0;
 			}
-		// TNT1 A 0 A_JumpIf(bdoom_weapons == 1, "Deselect.Enhanced");
 		FIS0 A 1 A_Lower;
 		wait;
 	Ready:
 		TNT1 A 0 {
 			A_ClearOverlays(2,3);
-			// invoker.fcombo = 0;
-			// invoker.lcombo = 0;
-			// invoker.tcombo = 0;
-			// invoker.hurtchance = 0;
 			speed = 1.0;
 			}
-		// TNT1 A 0 A_JumpIf(bdoom_weapons == 1, "Ready.Enhanced");
 		FIS0 A 1 A_WeaponReady(WRF_NOSECONDARY);
 		loop;
 	Fire: //pre-fire 4 tics, fire 13 tics, refire 5 tics
-		// TNT1 A 0 A_JumpIf(bdoom_weapons == 1, "Fire.Enhanced");
 		TNT1 A 0 A_AlertMonsters;
-		// TNT1 A 0 A_jumpifinventory("PowerStrength",1,"FireStrong");
 			FIS0 A 1;
 			TNT1 A 0 A_playsound("weapons/fist/swing");
 			FI10 BCD 1;
-			// FIS0 E 3 A_CustomPunch(2*random(1,10), TRUE,0, "FistPuff_Vanilla");
 			FIS0 E 3 A_Punch();
 			FIS0 FGHIJ 2;
 		TNT1 A 0 A_Refire;
@@ -90,10 +77,8 @@ states
 			FIS0 AAAA 1 A_WeaponOffset(0.0,-7.0,WOF_ADD|WOF_INTERPOLATE);
  		goto ready;
 	Hold:
-		// TNT1 A 0 A_jumpifinventory("PowerStrength",1,"HoldStrong");
 			TNT1 A 1;
 			FIS0 BCD 1;
-			// FIS0 E 3 A_CustomPunch(2*random(1,10), TRUE,0, "FistPuff_Vanilla");
 			FIS0 E 3 A_Punch();
 			FIS0 FGHIJ 2;
 		TNT1 A 0 A_Refire;

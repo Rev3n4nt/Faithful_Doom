@@ -19,10 +19,7 @@ Default {
 states
 	{
 	Spawn:
-		TNT1 A 0 NoDelay {
-			//if (bdoom_sparks == 1)
-				//A_PlaySound("weapons/ricochet");
-			}
+		TNT1 A 0 NoDelay;
 		PUFF A 2;
 		stop;
 	}
@@ -170,7 +167,6 @@ states
 		stop;
 	}
 }
-
 
 class RicoChet : Actor// abstract
 {

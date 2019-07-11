@@ -1,33 +1,187 @@
-//Tracing projectiles goes here
 
-class Tracer : FastProjectile
-// Actor Tracer: FastProjectile
+Class BulletTracer : FastProjectile
 {
-    Default
-	{
-    Projectile;
-    +RANDOMIZE
-    +FORCEXYBILLBOARD
-    +DONTSPLASH
-    // +BLOODSPLATTER 
-    +NOEXTREMEDEATH
-    damage 0;
-    radius 2;
-    height 2;
-    speed 140;
-    renderstyle "Add";
-    alpha 0.9;
-    scale 0.15;
+Default {
+	-ACTIVATEIMPACT;
+	-ACTIVATEPCROSS;
+	+NOTELEPORT;
+	+BLOODLESSIMPACT;
+	+THRUGHOST;
+	alpha 0.75;
+	renderstyle "add";
+	damage 0;
+	speed 150;
+	radius 4;
+	height 4;
+	seesound "null";
+	deathsound "null";
+	}    
+//override snippet by phantombeta
+override void Tick () {
+        Super.Tick ();
+
+        if (!playeringame [consolePlayer])
+            return;
+        
+        let curCamera = players [consolePlayer].camera;
+        if (!curCamera) // If the player's "camera" variable is null, set it to their PlayerPawn
+            curCamera = players [consolePlayer].mo;
+        if (!curCamera) // If the player's PlayerPawn is null too, just stop trying
+            return;
+
+        if (CheckIfCloser (curCamera, 192))
+            A_PlaySound("weapons/tracerwhizz",1,1.0,0,8);
     }
 states
 	{
 	Spawn:
-        TRAC A 1 BRIGHT;
-        Loop;
-    Death:
-        Stop;
-    XDeath:
-        TNT1 A 0;
-        Stop;
+		PUFF A 1 bright {
+			if (fdoom_tracers == 0)
+				self.destroy();
+			}
+		loop;
+	Xdeath:
+		TNT1 A 1;
+		stop;
+	Death:
+		TNT1 A 1;
+		stop;
+	}
+}
+
+Class RealBullet : BulletTracer
+{
+double bulletdamage;
+double falloffstrength;
+double mindamage;
+int falloffdistance;
+int bulletspeed;
+int hitangle;
+property bulletspeed : bulletspeed;
+property falloffstrength : falloffstrength;
+property falloffdistance : falloffdistance;
+property mindamage : mindamage;
+Default {
+	//RealBullet.bulletspeed 200;
+	RealBullet.FalloffDistance 1024;
+	RealBullet.falloffstrength 0.3;
+	RealBullet.mindamage 1;
+	+ACTIVATEIMPACT
+	+ACTIVATEPCROSS
+	+NOTELEPORT
+	-BLOODLESSIMPACT
+	+BLOODSPLATTER
+	+THRUGHOST
+	decal "none";
+	speed 170;
+	radius 1;
+	height 1;
+	DamageFunction bulletdamage;
+	}
+override void PostBeginPlay()
+	{
+	super.PostBeginPlay();
+	//vel = vel.Unit () * bulletspeed;
+	BulletDamage = 3 * frandom(4,8);
+	}
+override void Tick() {
+	super.Tick();
+	if (target && distance3d(target) > falloffdistance)
+		bulletdamage = clamp(bulletdamage*falloffstrength,mindamage,100);
+	//console.printf("Damage %f",bulletdamage);
+	}
+states
+	{
+	Death:
+		TNT1 A 1;
+		stop;
+	}
+}
+
+Class BD_PistolBullet : RealBullet
+{
+Default {
+	//RealBullet.bulletspeed 170;
+	speed 170;
+	RealBullet.FalloffDistance 512;
+	RealBullet.falloffstrength 0.9;
+	}
+override void PostBeginPlay()
+	{
+	super.PostBeginPlay();
+	BulletDamage = 15; //3 * frandom(4,8);
+	}
+}
+
+Class BD_RifleBullet : RealBullet
+{
+Default {
+	//RealBullet.bulletspeed 230;
+	speed 230;
+	RealBullet.FalloffDistance 640;
+	RealBullet.falloffstrength 0.93;
+	}
+override void PostBeginPlay()
+	{
+	super.PostBeginPlay();
+	BulletDamage = 15; //3 * frandom(6.5,8.0);
+	}
+}
+
+Class BD_ShotgunPellet : RealBullet
+{
+Default {
+	//RealBullet.bulletspeed 140;
+	speed 140;
+	RealBullet.FalloffDistance 400;
+	RealBullet.falloffstrength 0.85;
+	RealBullet.mindamage 0.4;
+	}
+override void PostBeginPlay()
+	{
+	super.PostBeginPlay();
+	BulletDamage = 12; //3 * frandom(3,5);
+	}
+}
+
+Class BD_SSGPellet : RealBullet
+{
+private int ripdepth; //how much health it can pierce through
+private actor hitvictim;
+Default {
+	//RealBullet.bulletspeed 140;
+	damage 0;
+	speed 140;
+	RealBullet.FalloffDistance 300;
+	RealBullet.falloffstrength 0.8;
+	RealBullet.mindamage 0.5;
+	+RIPPER
+	//+NOBOSSRIP
+	}
+override void Tick() {
+	super.Tick();
+	if (ripdepth <= 0)
+		self.destroy();
+	}
+override int specialmissilehit(actor victim) {
+	if (victim && !victim.player) {
+		ripdepth = ripdepth - victim.health; //reduce ripping ability before anything else
+		if (victim != hitvictim) { //deal damage only ONCE even if the pellet rips through
+			hitvictim = victim;
+			victim.DamageMobj(self,target,bulletdamage,"Normal");
+			//console.PrintF("Ripdepth %d, Health %d",ripdepth,victim.health);
+			}
+		}
+	if (ripdepth <= 0)
+		return -1;
+	else
+		return 1;
+	//bulletdamage*= 0.5;
+	}
+override void PostBeginPlay()
+	{
+	super.PostBeginPlay();
+	BulletDamage = 12;
+	ripdepth = 200;
 	}
 }

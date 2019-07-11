@@ -11,32 +11,7 @@ Model BulletTracer
 	//FrameIndex TRAC A 0 0 
 }
 
-Model Tracer
-{
-	Path "Models/Projectiles"
-	Model 0 "tracer.md3"
-	Skin 0 "tracer1.png"
-	Scale 1.0 1.0 1.0
-	//Scale 4.5 4.5 1.5 // Scale values
-	PITCHFROMMOMENTUM
-	
-	FrameIndex PUFF A 0 0
-	//FrameIndex TRAC A 0 0 
-}
-
-// Model RicochetBullet
-// {
-// 	Path "models"
-// 	Model 0 "tracer.md3"
-// 	Skin 0 "tracer1.png"
-// 	Scale 0.2 0.8 0.8
-// 	PITCHFROMMOMENTUM
-	
-// 	FrameIndex PUFF A 0 0
-// }
-
 //	bullet holes on surfaces
-
 Model DetectFloorBullet     
 {
    Path "models/bulletdecals"
@@ -46,7 +21,6 @@ Model DetectFloorBullet
    ZOffset 0.1
    FrameIndex XXX1 A 0 0      
 }
-
 
 Model DetectCeilBullet     
 {

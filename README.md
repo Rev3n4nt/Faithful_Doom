@@ -35,7 +35,7 @@ Jekyll_Grim_Payne, Agent_Ash - for Beautiful Doom
 Gifty - for Smooth Doom
 hidfan - Doom Neural Upscale 2X sprites & textures
 Perkristian - smooth weapons animation sprites based upon, Doom HD sound pack which is included
-Sergeant Mark IV - sprites and coding	
+Sergeant Mark IV - sprites and coding: ceiling & floor bullet decals 
 Z86 - spritework for weapons
 Blox - spritework for weapons
 

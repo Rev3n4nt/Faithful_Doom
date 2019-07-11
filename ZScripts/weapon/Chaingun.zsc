@@ -69,7 +69,6 @@ states
 	Fire:
 		CHGG A 1 {
 			a_gunflash();
-			// A_PlaySound("weapons/chaingun/fire");
 			If(fdoom_weapons==1)
 				A_PlaySound("weapons/chaingun/fire");
 			else
@@ -89,7 +88,6 @@ states
 //
 		CHGG A 1 {
 			a_gunflash();
-			// A_PlaySound("weapons/chaingun/fire");
 			If(fdoom_weapons==1)
 				A_PlaySound("weapons/chaingun/fire");
 			else
