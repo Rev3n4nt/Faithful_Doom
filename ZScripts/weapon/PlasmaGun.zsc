@@ -1,0 +1,94 @@
+//***********
+// PLASMAGUN
+//***********
+
+Class PlasmaGun : BDoomWeapon replaces Plasmarifle
+{
+double HeatCounter;
+Default {
+	Weapon.SelectionOrder 10;
+	Inventory.PickupMessage "$GOTPLASMA";
+	Tag "$TAG_PLASMARIFLE";
+	inventory.pickupsound "pickups/plasmarifle";
+	attacksound "weapons/plasma/railgun";
+	Weapon.AmmoType 	"Cell";
+	Weapon.AmmoUse 		1;
+	Weapon.AmmoGive 		40;
+	Weapon.ammotype2 		"Cell";
+	weapon.ammouse2		20;
+	weapon.ammogive2 	0;
+	decal "PlasmaRailSplat";
+	weapon.slotnumber 6;
+	}
+
+states
+	{
+	Spawn:
+		PLAS A 1;
+		loop;
+	Select:
+		TNT1 A 0 {
+			If(fdoom_weapons == 1)
+				A_PlaySound("weapons/plasma/draw");
+			}
+		PLSG A 1 A_Raise();
+		loop;
+	Deselect:
+		TNT1 A 0 {
+			A_ClearRefire();
+			A_StopSound(6);
+			A_ClearOverlays(5,7);
+			}
+		PLSG A 1 A_Lower();
+		loop;
+	Ready:
+		TNT1 A 0 A_ClearOverlays(5,7);
+		PLSG A 1 {
+			if (fdoom_weapons == 0)
+				A_WeaponReady(WRF_NOSECONDARY);
+			else
+				A_WeaponReady();
+			}
+		loop;
+	Fire:
+		PLSF A 3 {
+			A_FirePlasma();
+			A_GunFlash("Flash1");
+		}
+		TNT1 A 0 A_refire("fire2");
+	fire2:
+		PLSF E 3 {
+			A_FirePlasma();
+			A_GunFlash("Flash1");
+			}
+		TNT1 A 0 A_refire("fire3");
+	fire3:
+		PLSF B 3 {
+			A_FirePlasma();
+			A_GunFlash("Flash1");
+			}
+		TNT1 A 0 A_refire("fire");
+	Cooldown:
+		PLSG A 1 Bright;
+		PKPL C 1;
+		PKPL CD 1;
+		PKPL DE 1;
+		PLSG B 0 A_WeaponOffset(5,40);//right 5,down 8
+		PLSG B 1;
+		PLSG B 0 A_WeaponOffset(-2,34);//-2,-2
+		PLSG B 1;
+		PLSG B 5;
+		PLSG BB 2;
+		PKPL E 0 A_WeaponOffset(0,32);//0,0
+		PKPL ED 2;
+		PKPL C 1;
+		PLSG A 1;
+		goto Ready;
+	Flash1:
+		TNT1 A 1 A_light1();
+		goto lightdone;
+		TNT1 A 1 A_light1();
+		goto lightdone;
+		
+	}
+}

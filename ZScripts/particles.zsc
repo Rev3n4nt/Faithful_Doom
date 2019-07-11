@@ -1,0 +1,70 @@
+
+class SparkXNoModel : SparkX
+{
+    Default {
+    Gravity 0.7;
+    }
+}
+
+class SparkX : ExplosionParticleHeavy
+{
+    Default {
+        speed 10;
+        Gravity 0.8;
+        -NOGRAVITY
+        Scale 0.05;
+        radius 1;
+        height 1;
+        +DOOMBOUNCE
+        +GHOST
+        BounceFactor 0.5;
+        Damage 0;
+        alpha 1.0;
+    }
+    States
+    {
+     Spawn:
+        SPKO AAA 1 BRIGHT;
+        SPKO AAAAAAA 1 Bright A_FadeOut(0.20);
+        stop;
+     Death:
+        TNT1 A 0;
+        Stop;
+    }
+}
+
+class ExplosionParticleHeavy : Actor 
+{
+Default {
+    speed 5;
+    radius 1;
+    height 1;
+    Gravity 0.5;
+    renderstyle "Add";
+    Scale 0.2;
+    +MISSILE
+    +CLIENTSIDEONLY
+    +NOTELEPORT
+    +NOBLOCKMAP
+    +BLOODLESSIMPACT 
+    +FORCEXYBILLBOARD
+    +FORCEXYBILLBOARD
+    +CLIENTSIDEONLY
+    +DOOMBOUNCE
+    +DONTSPLASH
+    +THRUACTORS
+    +THRUGHOST
+    +GHOST
+    Damage 0;
+    BounceFactor 0.01;
+}
+    States
+    {
+    Spawn:
+        SPRK SSSSS 1 BRIGHT;
+        SPRK SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS 1 Bright A_FadeOut(0.02);
+        stop;
+    Death:
+        Stop;
+    }
+}

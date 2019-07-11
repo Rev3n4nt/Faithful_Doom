@@ -1,0 +1,73 @@
+
+decal Crack
+{
+	pic BFGLITE1
+	shade "00 00 00"
+	randomflipy
+	randomflipx
+}
+
+decal GiantScorch
+{
+	pic SCORCH1
+	shade "00 00 00"
+	x-scale 5.75
+	y-scale 5.75
+	randomflipx
+	randomflipy
+}
+
+decal SkullScorch
+{ 
+   pic PLASMA1 
+   shade "00 00 00" 
+   x-scale 0.6 
+   y-scale 0.6 
+   randomflipx 
+   randomflipy 
+} 
+
+slider BSlide1
+{
+DistY -26
+SlideStart 0
+SlideTime 9
+}
+
+stretcher BStretch1
+{
+GoalX 1.0
+GoalY 3.5
+StretchStart 0
+StretchTime 9
+}
+
+decal BigScorch
+{
+	pic SCORCH1
+	shade "00 00 00"
+	x-scale 1.5
+	y-scale 1.5
+	randomflipx
+	randomflipy
+}
+
+decal FireworxScorch
+{
+	pic SCORCH1
+	shade "00 00 00"
+	x-scale 1.1
+	y-scale 1.1
+	randomflipx
+	randomflipy
+}
+
+decal SmallerScorch
+{
+	pic SCORCH1
+	shade "00 00 00"
+	x-scale 0.6
+	y-scale 0.6
+	randomflipx
+	randomflipy
+}

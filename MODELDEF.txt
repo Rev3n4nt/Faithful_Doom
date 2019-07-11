@@ -11,115 +11,91 @@ Model BulletTracer
 	//FrameIndex TRAC A 0 0 
 }
 
-Model RicochetBullet
+//	bullet holes on surfaces
+Model DetectFloorBullet     
 {
-	Path "models"
-	Model 0 "tracer.md3"
-	Skin 0 "tracer1.png"
-	Scale 0.2 0.8 0.8
-	PITCHFROMMOMENTUM
-	
-	FrameIndex PUFF A 0 0
+   Path "models/bulletdecals"
+   Model 0 "buldecground1" 
+   Skin 0 "BULLETDECAL1.png"
+   Scale 5.0 5.0 5.0        
+   ZOffset 0.1
+   FrameIndex XXX1 A 0 0      
+}
+
+Model DetectCeilBullet     
+{
+   Path "models/bulletdecals"    
+   Model 0 "buldecceil1"    
+   Skin 0 "BULLETDECAL1.png"     
+   Scale 5.0 5.0 5.0        
+   ZOffset 0.1
+   FrameIndex XXX1 A 0 0      
+}
+
+Model DetectFloorCrater    
+{
+   Path "models/bulletdecals"  
+   Model 0 "buldecground1"    
+   Skin 0 "SCORCH1.png"     
+   Scale 10.0 10.0 10.0         
+   ZOffset 0.1
+   FrameIndex XXX1 A 0 0       
 }
 
 
-// Model Tracer // Name of actor in DECORATE
-// { 
-//    Path "Models/Projectiles" // Path to model in PK3
-//    SKIN 0 "tracer1.tga" // Model index, model file
-//    MODEL 0 "Tracer.md3" // Model index, texture (can be in any format supported by GZDoom)
-//    Scale 4.5 4.5 1.5 // Scale values
-//    PITCHFROMMOMENTUM // A flag that will fix the model pitch for projectiles
-//    FrameIndex TRAC A 0 0 // The sprite lump, sprite frame, model index, frame number
-// }
-
-//	bullet holes on surfaces
-
-// Model DetectFloorBullet     
-// {
-//    Path "models/bulletdecals"
-//    Model 0 "buldecground1" 
-//    Skin 0 "BULLETDECAL1.png"
-//    Scale 5.0 5.0 5.0        
-//    ZOffset 0.1
-//    FrameIndex XXX1 A 0 0      
-// }
+Model DetectFloorCraterNoSplashes    
+{
+   Path "models/bulletdecals"   
+   Model 0 "buldecground1"   
+   Skin 0 "SCORCH1.png"    
+   Scale 10.0 10.0 10.0         
+   ZOffset 0.1
+   FrameIndex XXX1 A 0 0        
+}
 
 
-// Model DetectCeilBullet     
-// {
-//    Path "models/bulletdecals"    
-//    Model 0 "buldecceil1"    
-//    Skin 0 "BULLETDECAL1.png"     
-//    Scale 5.0 5.0 5.0        
-//    ZOffset 0.1
-//    FrameIndex XXX1 A 0 0      
-// }
+Model DetectCeilCrater     
+{
+   Path "models/bulletdecals"   
+   Model 0 "BULDECCEIL1"    
+   Skin 0 "SCORCH1.png"    
+   Scale 10.0 10.0 10.0           
+   ZOffset -0.1
+   FrameIndex XXX1 A 0 0        
+}
 
-// Model DetectFloorCrater    
-// {
-//    Path "models/bulletdecals"  
-//    Model 0 "buldecground1"    
-//    Skin 0 "SCORCH1.png"     
-//    Scale 10.0 10.0 10.0         
-//    ZOffset 0.1
-//    FrameIndex XXX1 A 0 0       
-// }
-
-
-// Model DetectFloorCraterNoSplashes    
-// {
-//    Path "models/bulletdecals"   
-//    Model 0 "buldecground1"   
-//    Skin 0 "SCORCH1.png"    
-//    Scale 10.0 10.0 10.0         
-//    ZOffset 0.1
-//    FrameIndex XXX1 A 0 0        
-// }
+Model DetectFloorCraterSmall    
+{
+   Path "models/bulletdecals"   
+   Model 0 "buldecground1"    
+   Skin 0 "SCORCH1.png"   
+   Scale 10.0 10.0 10.0      
+   ZOffset 0.1
+   FrameIndex XXX1 A 0 0     
+}
 
 
-// Model DetectCeilCrater     
-// {
-//    Path "models/bulletdecals"   
-//    Model 0 "BULDECCEIL1"    
-//    Skin 0 "SCORCH1.png"    
-//    Scale 10.0 10.0 10.0           
-//    ZOffset -0.1
-//    FrameIndex XXX1 A 0 0        
-// }
-
-// Model DetectFloorCraterSmall    
-// {
-//    Path "models/bulletdecals"   
-//    Model 0 "buldecground1"    
-//    Skin 0 "SCORCH1.png"   
-//    Scale 10.0 10.0 10.0      
-//    ZOffset 0.1
-//    FrameIndex XXX1 A 0 0     
-// }
+Model DetectCeilCraterSmall 
+{
+   Path "models/bulletdecals"  
+   Model 0 "BULDECCEIL1"    
+   Skin 0 "SCORCH1.png"     
+   Scale 10.0 10.0 10.0         
+   ZOffset -0.1
+   FrameIndex XXX1 A 0 0         
+}
 
 
-// Model DetectCeilCraterSmall 
-// {
-//    Path "models/bulletdecals"  
-//    Model 0 "BULDECCEIL1"    
-//    Skin 0 "SCORCH1.png"     
-//    Scale 10.0 10.0 10.0         
-//    ZOffset -0.1
-//    FrameIndex XXX1 A 0 0         
-// }
-
-
-// Model SparkX
-// { 
-//    Path "Models/Projectiles" 
-//    SKIN 0 "tracer1.tga" 
-//    MODEL 0 "Tracer.md3" 
-//    Scale 2.0 2.0 2.0 
-//    PITCHFROMMOMENTUM 
+Model SparkX
+{ 
+   Path "Models/Projectiles" 
+   SKIN 0 "tracer1.tga" 
+   MODEL 0 "Tracer.md3" 
+   Scale 2.0 2.0 2.0 
+   PITCHFROMMOMENTUM 
    
-//    FrameIndex SPKO A 0 0 
-// }
+   FrameIndex SPKO A 0 0 
+}
 
 // Model ShotgunPellet
 // {

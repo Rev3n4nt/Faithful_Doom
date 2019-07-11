@@ -1,0 +1,90 @@
+
+//***************
+// EMPTY CASINGS
+//***************
+
+Class Casing_General : DebrisGeneral
+{
+Default {
+	-FLOORCLIP
+	-THRUACTORS
+	-NOGRAVITY
+	-THRUACTORS
+	+ROLLCENTER
+	+BOUNCEONACTORS
+	-FLOORCLIP
+	-RELATIVETOFLOOR
+	renderstyle "normal";
+	bouncetype "doom";
+	seesound "none";
+	mass 1;
+	Radius 1;
+	Height 1;
+	bouncefactor 0.5;
+	Scale 0.15;
+	}
+states
+	{
+	Spawn:
+		CAS1 A 0 NoDelay {
+			if (self is "PistolCasing")
+				self.sprite = GetSpriteIndex("CAS1");
+			else if (self is "ShotgunCasing")
+				self.sprite = GetSpriteIndex("CAS2");
+			else if (self is "ChaingunCasing")
+				self.sprite = GetSpriteIndex("CAS3");
+			roll = random(88,92);
+			}
+	Fly:
+		#### AABBCCBBAABBCCBBAABBCCBBAABBCCBB 1 {
+			if(!target)
+				self.destroy();
+			roll+=22;
+			if (waterlevel > 0)
+				return ResolveState("Death");
+			return ResolveState(null);	
+			}
+		goto death;
+	Death:
+		#### # 1 {
+			roll = (randompick(0,180) + random(-8,8));
+			if (target && target.bISMONSTER)
+				self.destroy();
+			A_QueueCorpse();
+			A_Stop();
+			ClearBounce();
+			//bNOINTERACTION = true;
+			//bRELATIVETOFLOOR = true;
+			}
+		#### # -1;
+		stop;
+	loadsprites:
+		CAS1 ABC 0;	CAS2 ABC 0;	CAS3 ABC 0;
+		stop;
+	}
+}
+
+
+Class PistolCasing : Casing_General
+{
+Default {
+	Scale 0.11;
+	bouncesound "weapons/casing";
+	}
+}
+
+Class ShotgunCasing : Casing_General
+{ 
+Default {
+	Scale 0.2;
+	bouncesound "weapons/shotgunshells";
+	}
+}
+
+Class ChaingunCasing : Casing_General
+{ 
+Default {
+	Scale 0.15;
+	bouncesound "chaingun/casing";
+	}
+}

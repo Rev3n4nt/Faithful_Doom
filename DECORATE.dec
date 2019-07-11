@@ -11,13 +11,30 @@ mod.*/
 
 //WEAPON DECORATE (remove to disable Smooth Doom weapons)
 #include "DECORATE/Doomguy.dec"
-#include "DECORATE/Items.dec"
-#include "DECORATE/monsters.dec"
-/*
-#include "DECORATE/WEAPONS/Shotgun.dec"
-#include "DECORATE/WEAPONS/Plasma.dec"
-#include "DECORATE/WEAPONS/Rocket.dec"
-#include "DECORATE/WEAPONS/bfg.dec"
-#include "DECORATE/WEAPONS/fist.dec"
+// #include "DECORATE/Items.dec"
+// #include "DECORATE/monsters.dec"
+
+// #include "DECORATE/WEAPONS/Shotgun.dec"
+// #include "DECORATE/WEAPONS/Plasma.dec"
+// #include "DECORATE/WEAPONS/Rocket.dec"
+// #include "DECORATE/WEAPONS/bfg.dec"
+// #include "DECORATE/WEAPONS/fist.dec"
 //#include "DECORATE/WEAPONS/saw.dec"
-*/
+
+// #include "DECORATE/WEAPONS/FlatDecals-n.dec"
+// #include "DECORATE/WEAPONS/PUFF-n.dec"
+
+// bfreedoom
+// #include "DECORATE/BFREE/PARTICLES.txt"
+// #include "DECORATE/BFREE/SPARKS.txt"
+// makes sparks shine
+// #include "DECORATE/BFREE/FLARES.txt"
+
+// #include "DECORATE/BFREE/PUFF.txt"
+// #include "DECORATE/BFREE/TRACERS.txt"
+// #include "DECORATE/BFREE/FlatDecals.txt"
+
+// #include "DECORATE/SMOOTH/PUFF-SMOOTH.dec"
+
+//DECORATIONS
+// #include Decorate/PLASMA.txt
