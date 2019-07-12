@@ -1,0 +1,42 @@
+// ACTOR ExplosionFire
+class ExplosionFire: ACTOR
+{
+    Default {
+	Radius 1;
+	Height 1;
+	Speed 4;
+	Damage 0 ;
+    +NOBLOCKMAP
+    +NOTELEPORT
+    +DONTSPLASH
+	+MISSILE
+	+FORCEXYBILLBOARD
+    +CLIENTSIDEONLY
+    +NOINTERACTION
+	+NOCLIP
+    DamageType 'Flames';
+	Gravity 0;
+	Renderstyle 'Add';
+    	}
+	States
+	{
+    Spawn:
+        MISL BCDEFG 2;// BRIGHT();
+        Stop;
+	}
+}
+
+// ACTOR smoothfatshot : fatshot replaces fatshot
+class smoothfatshot : fatshot replaces fatshot
+{
+        Default {
+	decal 'scorch';
+        }
+	states
+	{
+	death: 
+        expl a 3;// bright();
+        expl bcdef 2;// bright();
+        stop;
+	}
+}

@@ -25,6 +25,11 @@ Default {
 #include "ZScripts/flares.zsc"
 #include "ZScripts/particles.zsc"
 
+#include "ZScripts/monsters/sarge.zsc"
+#include "ZScripts/monsters/zombie.zsc"
+#include "ZScripts/monsters/imp.zsc"
+// #include "ZScripts/xplode.zsc"
+
 #include "ZScripts/weapon/bd_weapon.zsc"
 #include "ZScripts/mk_matrix.zsc"
 
@@ -37,8 +42,5 @@ Default {
 #include "ZScripts/weapon/RocketGun.zsc"
 #include "ZScripts/weapon/PlasmaGun.zsc"
 #include "ZScripts/weapon/BFG.zsc"
-
-// #include "ZScripts/weapon/tracer-c.zsc"
-// #include "ZScripts/weapon/puff-c.zsc"
 
 //#include "ZScripts/items.zsc"
