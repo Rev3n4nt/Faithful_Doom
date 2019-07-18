@@ -1,119 +1,230 @@
-// ITEMS
-
-Actor FD_HealthBonus : HealthBonus replaces HealthBonus
+class HealthVial : HealthBonus replaces HealthBonus
 {
-inventory.pickupsound "pickups/health0"
+Default {
+	inventory.pickupsound "pickups/health0";
+	}
 states
 	{
 	spawn:
-		bonu abcdefgfedcb 3
-		loop
+		// BONU abcdefgfedcb 4;
+		BONU abcdefg 2;
+		BONU gfedcb 3;
+		loop;
 	}
 }
 
-actor FD_ArmorBonus : ArmorBonus replaces ArmorBonus
+class ArmorShard : ArmorBonus replaces ArmorBonus
 {
-inventory.pickupsound "pickups/armor0"
+Default {
+	inventory.pickupsound "pickups/armor0";
+	}
 states
 	{
-		Spawn:
-			HELB abcdefghgfedcb 3
-			loop
-		}
+	Spawn:
+		HELB abcdefgh 2;
+		HELB hgfedcb 3;
+		loop;
+	}
 }
 
-actor FD_GreenArmor : GreenArmor replaces GreenArmor
+class FGreenArmor : GreenArmor replaces GreenArmor
 {
-inventory.pickupsound "pickups/armor1"
+	Default {
+		inventory.pickupsound "pickups/armor1";
+	}
 states
 	{
 	spawn:
-		garm abcdefgh 4 bright
-		garm hgfedcb 4
-		loop
+		GARM abcd 2;
+		GARM efgh 2;
+		// GARM h 2 bright;
+		GARM hgfedcb 3;
+		loop;
 	}
 }
 
-actor FD_Backpack : Backpack replaces Backpack
+class FBLueArmor : BLueArmor replaces BLueArmor
 {
-inventory.pickupsound "pickups/backpack"
+	Default {
+		inventory.pickupsound "pickups/armor1";
+	}
+states
+	{
+	spawn:
+		BLAR abcd 2;
+		BLAR efgh 2;
+		// GARM h 2 bright;
+		BLAR hgfedcb 3;
+		loop;
+	}
 }
 
-Actor FD_Radsuit : Radsuit replaces Radsuit
+class FBackpack : Backpack replaces Backpack
 {
-inventory.pickupsound "pickups/radsuit"
+	Default {
+inventory.pickupsound "pickups/backpack";
+}
+}
+
+class FRadsuit : Radsuit replaces Radsuit
+{
+	Default {
+inventory.pickupsound "pickups/radsuit";
+	}
+}
+
+Class FSoulsphere : Soulsphere replaces Soulsphere
+{
+Default {
+	+FLOATBOB
+	+FORCEXYBILLBOARD
+	floatbobstrength 0.3;
+	inventory.pickupsound "pickups/soulsphere";
+	// renderstyle "Add";
+	// alpha 1;
+	}
+states
+	{
+	Spawn:
+		SOUL ABCDEFGFEDCB 4 bright;
+		loop;
+	}
+}
+
+Class FMegasphere : Megasphere replaces Megasphere
+{
+Default {
+	+FORCEXYBILLBOARD
+	+FLOATBOB
+	floatbobstrength 0.3;
+	inventory.pickupsound "pickups/megasphere";
+	// renderstyle "Add";
+	// alpha 1.0;
+	}	
+states
+	{
+	spawn:
+		MEGA abcdefGGFedcb 4 bright;
+		loop;
+	}
+}
+
+Class GodMode : InvulnerabilitySphere replaces InvulnerabilitySphere
+{
+Default {
+	+FORCEXYBILLBOARD
+	+FLOATBOB
+	floatbobstrength 0.3;
+	inventory.pickupsound "pickups/invulnerability";
+	// renderstyle "Add";
+	// alpha 1.0;
+	}	
+states
+	{
+	spawn:
+		NVUL abcdefFedcb 4 bright;
+		loop;
+	}
+}
+
+Class FBlursphere : Blursphere replaces Blursphere
+{
+Default {
+	+FORCEXYBILLBOARD
+	+FLOATBOB
+	floatbobstrength 0.3;
+	inventory.pickupsound "pickups/invisibility";
+	// renderstyle "Add";
+	// alpha 1.0;
+	}	
+states
+	{
+	spawn:
+		NVIS abcdefGGFedcb 4 bright;
+		loop;
+	}
 }
 
 //// KEYS
 
-ACTOR FD_RedCard : redcard replaces redcard
+class FRedCard : redcard replaces redcard
 {
-inventory.pickupsound "pickups/keycard"
-species RedCard
+	Default {
+inventory.pickupsound "pickups/keycard";
+species "RedCard";
+	}
   States
   {
   Spawn:
-	RDCK ABCDEF 5 bright
-    Loop
+	RDCK ABCDEF 5 bright;
+    Loop;
   }
 }
 
-ACTOR FD_BlueCard : bluecard replaces bluecard
+class FBlueCard : bluecard replaces bluecard
 {
-inventory.pickupsound "pickups/keycard"
-species BlueCard
+	Default {
+inventory.pickupsound "pickups/keycard";
+species "BlueCard";
+	}
   States
   {
   Spawn:
-	BLCK ABCDEF 5 bright
-    Loop
+	BLCK ABCDEF 5 bright;
+    Loop;
   }
 }
 
-ACTOR FD_RedSkull : redskull replaces redskull
+class FRedSkull : redskull replaces redskull
 {
-inventory.pickupsound "pickups/skullkey"
-species RedSkull
-scale .6
+	Default {
+inventory.pickupsound "pickups/skullkey";
+species "RedSkull";
+scale .6;
+	}
 states
 	{
 	Spawn:
-		RSKK AB 5
-		RSKK BC 5 bright
-		RSKK CB 5 bright
-		RSKK BA 5
-		loop
+		RSKK AB 5;
+		RSKK BC 5 bright;
+		RSKK CB 5 bright;
+		RSKK BA 5;
+		loop;
 	}
 }
 
-ACTOR FD_BlueSkull : blueskull replaces blueskull
+class FBlueSkull : blueskull replaces blueskull
 {
-inventory.pickupsound "pickups/skullkey"
-Species BlueSkull
-scale .6
+	Default {
+inventory.pickupsound "pickups/skullkey";
+Species "BlueSkull";
+scale .6;
+	}
 states
 	{
 	Spawn:
-		BSKK AB 5
-		BSKK BC 5 bright
-		BSKK CB 5 bright
-		BSKK BA 5
-		loop
+		BSKK AB 5;
+		BSKK BC 5 bright;
+		BSKK CB 5 bright;
+		BSKK BA 5;
+		loop;
 	}
 }
 
-ACTOR FD_YellowSkull : yellowskull replaces yellowskull
+class FYellowSkull : yellowskull replaces yellowskull
 {
-inventory.pickupsound "pickups/skullkey"
-species YellowSkull
-scale .6
+	Default {
+inventory.pickupsound "pickups/skullkey";
+species "YellowSkull";
+scale .6;
+	}
 states
 	{
 	Spawn:
-		YSKK AB 5
-		YSKK BC 5 bright
-		YSKK CB 5 bright
-		YSKK BA 5
-		loop
+		YSKK AB 5;
+		YSKK BC 5 bright;
+		YSKK CB 5 bright;
+		YSKK BA 5;
+		loop;
 	}
 }
