@@ -81,8 +81,9 @@ Default {
 	Obituary "$OB_MPROCKET";
 	scale 1.0;
 	decal "scorch";
-	seesound "none";
-	deathsound "none";
+	SeeSound "weapons/rocklf";
+	DeathSound "weapons/rocklx";
+	// deathsound "none";
 	}
 states
 	{
@@ -120,6 +121,9 @@ states
 			A_Explode();
 			}
 		expl ABCDEF 3 bright;
+		stop;
+	BrainExplode:
+		expl ABCDEF 4 Bright A_BrainExplode;
 		stop;
 	}
 }
