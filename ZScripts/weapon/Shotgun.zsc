@@ -92,7 +92,7 @@ States
 		SHTG A 7 A_ReFire();
 		Goto Ready;
 	Flash:
-		SHTF B 3 bright A_Light2();
+		SHTF B 2 bright A_Light2();
 		SHTF A 2 bright A_Light1();
 		goto lightdone;
 }
