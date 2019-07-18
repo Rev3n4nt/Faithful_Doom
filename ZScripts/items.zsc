@@ -13,6 +13,20 @@ states
 	}
 }
 
+class FStimpack : Stimpack //replaces Stimpack
+{
+Default {
+	inventory.pickupsound "pickups/health1";
+	}
+}
+
+class FMedikit : Medikit //replaces Medikit
+{
+Default {
+	inventory.pickupsound "pickups/health2";
+	}
+}
+
 class ArmorShard : ArmorBonus replaces ArmorBonus
 {
 Default {
@@ -73,7 +87,33 @@ inventory.pickupsound "pickups/radsuit";
 	}
 }
 
-Class FSoulsphere : Soulsphere replaces Soulsphere
+class Fullmap : Allmap replaces Allmap
+{
+Default {
+	inventory.pickupsound "pickups/allmap";
+	}
+states
+	{
+	spawn:
+		CMAP abcdefgh 3 bright;
+		loop;
+	}
+}
+
+class Nightvision : Infrared //replaces Infrared
+{
+Default {
+	inventory.pickupsound "pickups/googles";
+	}
+states
+	{
+	spawn:
+		SVIS abcdEEEEE 3 bright;
+		loop;
+	}
+}
+
+class FSoulsphere : Soulsphere replaces Soulsphere
 {
 Default {
 	+FLOATBOB
@@ -91,7 +131,7 @@ states
 	}
 }
 
-Class FMegasphere : Megasphere replaces Megasphere
+class FMegasphere : Megasphere replaces Megasphere
 {
 Default {
 	+FORCEXYBILLBOARD
@@ -109,7 +149,7 @@ states
 	}
 }
 
-Class GodMode : InvulnerabilitySphere replaces InvulnerabilitySphere
+class GodSphere : InvulnerabilitySphere replaces InvulnerabilitySphere
 {
 Default {
 	+FORCEXYBILLBOARD
@@ -127,7 +167,7 @@ states
 	}
 }
 
-Class FBlursphere : Blursphere replaces Blursphere
+class FBlursphere : Blursphere replaces Blursphere
 {
 Default {
 	+FORCEXYBILLBOARD
@@ -171,6 +211,20 @@ species "BlueCard";
   {
   Spawn:
 	BLCK ABCDEF 5 bright;
+    Loop;
+  }
+}
+
+class FYellowCard : yellowcard replaces yellowcard
+{
+	Default {
+inventory.pickupsound "pickups/keycard";
+species "YellowCard";
+	}
+  States
+  {
+  Spawn:
+	YLCK ABCDEF 5 bright;
     Loop;
   }
 }
