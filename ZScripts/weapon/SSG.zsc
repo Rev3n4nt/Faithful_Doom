@@ -98,7 +98,7 @@ states
 				if (fdoom_tracers == 1)
 					A_FireBullets(11.2, 7.1, 20, 5, "EnBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ,0,"BulletTracer",0,0);
 				else
-					A_FireBullets(11.2, 7.1, 20, 5, "EnBulletPuff",FBF_NORANDOMPUFFZ);
+					A_FireBullets(11.2, 7.1, 20, 5, "EnBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ);
 				}
 		SHT2 A 2;
 		SHT2 A 2;

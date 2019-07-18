@@ -69,7 +69,7 @@ States
 				If(fdoom_tracers==1) {
 					A_FireBullets (5.6, 3, 7, 5, "EnBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ,0,"BulletTracer",0,0); }
 				else {
-					A_FireBullets (5.6, 0, 7, 5, "EnBulletPuff",FBF_NORANDOMPUFFZ); }
+					A_FireBullets (5.6, 0, 7, 5, "EnBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ); }
 				}
 //
 		SHTG AEFBBGGC 1;
