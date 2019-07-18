@@ -1,4 +1,4 @@
-class Impy : DoomImp Replaces DoomImp
+class Imp : DoomImp Replaces DoomImp
 {
 	States
 	{
@@ -29,7 +29,6 @@ class Impy : DoomImp Replaces DoomImp
 		TRAI b 2 A_Pain();
 		Goto See;
 		
-		
 	Death:
 		// TNT1 A 0 A_JumpIf(CallACS("MoDeathToggle")==1, "DeathExtra")
 		TNT1 a 0 A_JumpIfHealthLower(-20,"xdeath");
@@ -39,7 +38,6 @@ class Impy : DoomImp Replaces DoomImp
 		TNT1 A 0 A_Jump(255, "Death1", "Death2");
 		goto Death1;
 		
-		
 	Death.GibbyHaynes:
 		// TNT1 A 0 A_JumpIf(CallACS("StudioGibbly")==0, "Death")
 		TNT1 A 0 A_JumpIfCloser(128, "XDeath");
@@ -48,7 +46,6 @@ class Impy : DoomImp Replaces DoomImp
 		// TNT1 A 0 A_JumpIf(CallACS("ChainsawGib")==0, "Death")
 		goto Xdeath;
 
-	
 	Death1:
 		5OSS J 2 A_Scream();
 		5OSS K 2 A_NoBlocking();
@@ -69,7 +66,6 @@ class Impy : DoomImp Replaces DoomImp
 		TRO2 M -1;
 		stop;
 
-	
 	XDeath:
 		TROX ab 2;
 		// TNT1 A 0 A_JumpIf(CallACS("Gibtoggle")==0, +2)

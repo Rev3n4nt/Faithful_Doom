@@ -61,6 +61,7 @@ class Zombik : Zombieman replaces Zombieman
 	
 	Death:
 		// TNT1 A 0 A_JumpIf(CallACS("MoDeathToggle")==1, "DeathExtra");
+		// TNT1 a 0 A_JumpIfHealthLower(-10,"xdeath");
 		TNT1 A 0 A_Jump(255, "Death1");
 		Goto Death1;
 	

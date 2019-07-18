@@ -33,6 +33,7 @@ Default {
 #include "ZScripts/monsters/commando.zsc"
 #include "ZScripts/monsters/imp.zsc"
 #include "ZScripts/monsters/Demon.zsc"
+#include "ZScripts/monsters/Cacodemon.zsc"
 #include "ZScripts/monsters/Mastermind.zsc"
 
 #include "ZScripts/weapon/bd_weapon.zsc"
