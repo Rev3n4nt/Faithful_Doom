@@ -11,6 +11,8 @@ mod.*/
 
 //WEAPON DECORATE (remove to disable Smooth Doom weapons)
 #include "DECORATE/Doomguy.dec"
+#include "DECORATE/BurningBarrel.dec"
+#include "DECORATE/archvile.dec"
 // #include "DECORATE/Items.dec"
 // #include "DECORATE/monsters.dec"
 
