@@ -26,6 +26,7 @@ Default {
 #include "ZScripts/particles.zsc"
 
 #include "ZScripts/xplode.zsc"
+#include "ZScripts/barrel.zsc"
 #include "ZScripts/items.zsc"
 
 #include "ZScripts/monsters/sarge.zsc"
