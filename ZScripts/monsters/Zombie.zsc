@@ -113,8 +113,9 @@ Default {
 		TGIB cd 2 A_XScream();
 		TGIB e 2 a_noblocking();
 		TGIB f 2;
-		TGIB ghijklmnop 2;
-		TGIB q -1;
+		TGIB ghijkl 1;
+		TGIB mnop 1;
+		TGIB p -1;
 		Stop;
 		
 	Death.massacre:
