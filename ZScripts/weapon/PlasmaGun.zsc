@@ -51,19 +51,18 @@ states
 			}
 		loop;
 	Fire:
-		PLSF A 3 {
+		PLSF A 2 {
 			A_FirePlasma();
 			A_GunFlash("Flash1");
 		}
 		TNT1 A 0 A_refire("fire2");
 	fire2:
-		PLSF E 3 {
-			A_FirePlasma();
+		PLSF C 2 {
 			A_GunFlash("Flash1");
 			}
 		TNT1 A 0 A_refire("fire3");
 	fire3:
-		PLSF B 3 {
+		PLSF B 2 {
 			A_FirePlasma();
 			A_GunFlash("Flash1");
 			}
