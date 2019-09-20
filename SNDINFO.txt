@@ -120,8 +120,8 @@ pickups/invisibility    INVSPKUP
 pickups/berserk		BERSPKUP
 
 // KEYS
-pickups/keycard     SKULPKUP
-pickups/skullkey    CARDPKUP
+pickups/keycard     CARDPKUP
+pickups/skullkey    SKULPKUP
 // AMMO
 pickups/backpack    BKPKPKUP
 
