@@ -36,7 +36,7 @@ states
 		SPSR F 3 bright{
 			A_PlaySound("weapons/shotgun/fire");
 			if (fdoom_Debris == 1){
-				A_SpawnItemEx("ShotgunCasing",0,0,28, frandom(2,4),0,random(2,4),	random(-30,-40),SXF_SETTARGET);
+				A_SpawnItemEx("ShotgunCasing",0,0,28, frandom(2,4),0,random(2,4), random(-30,-40),SXF_SETTARGET);
 			}
 			if (fdoom_tracers==1) {
 				A_CustomBulletAttack(20.0, 1.5, 6, 0, "EnBulletPuff", 0, CBAF_NORANDOM,AAPTR_TARGET,"BulletTracer",30,8);
@@ -69,7 +69,7 @@ states
 	Death:
 		TNT1 A 0{
 			// if (fdoom_gibs == 1 && health < -5)
-			if (health < -5)
+			if (health < -15)
 				return ResolveState("XDeath");
 			else
 				return A_Jump(256,"Death.Vanilla","Death1","Death2");
