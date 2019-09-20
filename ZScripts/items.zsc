@@ -1,3 +1,6 @@
+// ITEMS
+
+// MEDICAL
 class HealthVial : HealthBonus replaces HealthBonus
 {
 Default {
@@ -13,19 +16,21 @@ states
 	}
 }
 
-class FStimpack : Stimpack //replaces Stimpack
+class FStimpack : Stimpack replaces Stimpack
 {
 Default {
 	inventory.pickupsound "pickups/health1";
 	}
 }
 
-class FMedikit : Medikit //replaces Medikit
+class FMedikit : Medikit replaces Medikit
 {
 Default {
 	inventory.pickupsound "pickups/health2";
 	}
 }
+
+// ARMOR
 
 class ArmorShard : ArmorBonus replaces ArmorBonus
 {
@@ -73,12 +78,7 @@ states
 	}
 }
 
-class FBackpack : Backpack replaces Backpack
-{
-	Default {
-inventory.pickupsound "pickups/backpack";
-}
-}
+// POWERUPS
 
 class FRadsuit : Radsuit replaces Radsuit
 {
@@ -100,7 +100,7 @@ states
 	}
 }
 
-class Nightvision : Infrared //replaces Infrared
+class Nightvision : Infrared replaces Infrared
 {
 Default {
 	inventory.pickupsound "pickups/googles";
@@ -186,7 +186,6 @@ states
 }
 
 //// KEYS
-
 class FRedCard : redcard replaces redcard
 {
 	Default {
@@ -280,5 +279,69 @@ states
 		YSKK CB 5 bright;
 		YSKK BA 5;
 		loop;
+	}
+}
+
+// AMMO
+class FBackpack : Backpack replaces Backpack
+{
+	Default {
+inventory.pickupsound "pickups/backpack";
+}
+}
+
+class FClip : Clip replaces Clip
+{
+Default {
+	inventory.pickupsound "ammo/clip";
+	}
+}
+
+class FClipBox : ClipBox replaces ClipBox
+{
+Default {
+	inventory.pickupsound "ammo/clipbox";
+	}
+}
+
+class FShell : Shell replaces Shell
+{
+Default {
+	inventory.pickupsound "ammo/shells";
+	}
+}
+
+class FShellBox : ShellBox replaces ShellBox
+{
+Default {
+	inventory.pickupsound "ammo/shells";
+	}
+}
+
+class FRocketAmmo : RocketAmmo replaces RocketAmmo
+{
+Default {
+	inventory.pickupsound "ammo/rockets";
+	}
+}
+
+class FRocketBox : RocketBox replaces RocketBox
+{
+Default {
+	inventory.pickupsound "ammo/rockets";
+	}
+}
+
+class FCell : Cell replaces Cell
+{
+Default {
+	inventory.pickupsound "ammo/cells";
+	}
+}
+
+class FCellPack : CellPack replaces CellPack
+{
+Default {
+	inventory.pickupsound "ammo/cells";
 	}
 }

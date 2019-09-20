@@ -10,6 +10,7 @@ weapons/casing1	dscasin1
 weapons/casing2	dscasin2
 weapons/casing3	dscasin3
 
+//CASINGS
 $random weapons/tracerwhizz { weapons/tracerwhizz1 weapons/tracerwhizz2 weapons/tracerwhizz3 }
 $limit weapons/tracerwhizz 2
 weapons/tracerwhizz1	TRACER1
@@ -98,3 +99,39 @@ weapons/bfg/altfire		BFGACH3
 weapons/bfg/railcharge	BFGLCHR
 weapons/bfg/railfire	BFGLSH
 weapons/bfg/railcool	BFGLEND
+
+//ITEMS
+//ARMOR
+pickups/armor0		ARMSHARD
+pickups/armor1      ARM1PKUP
+pickups/armor1      ARM2PKUP
+// HEALTH
+pickups/health0     MED0PKUP
+pickups/health1     MED1PKUP
+pickups/health2     MED2PKUP
+// POWERUP
+pickups/radsuit     SUITPKUP
+pickups/allmap      AMAPPKUP
+pickups/googles     GGLSPKUP
+pickups/soulsphere  SOULPKUP
+pickups/megasphere  MEGAPKUP
+pickups/invulnerability INVUPKUP
+pickups/invisibility    INVSPKUP
+pickups/berserk		BERSPKUP
+
+// KEYS
+pickups/keycard     SKULPKUP
+pickups/skullkey    CARDPKUP
+// AMMO
+pickups/backpack    BKPKPKUP
+
+ammo/clip			CLIPPKUP
+ammo/clipbox		CBOXPKUP
+ammo/shells			SHELPKUP
+ammo/rockets		ROCKPKUP
+ammo/cells			CELLPKUP
+
+pickups/chaingun		CHGNPKUP
+pickups/rocketlauncher	RLANDRAW
+pickups/plasmarifle		PLSDRAW
+pickups/bfg				BFGDRAW
