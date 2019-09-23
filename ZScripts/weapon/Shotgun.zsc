@@ -50,11 +50,13 @@ States
 		SHTG A 1 A_Lower();
 		wait;
 	Select:
-		TNT1 A 0 { if (fdoom_weapons == 1)
-					A_PlaySound("weapons/shotgun/draw");
-				}
-		SHTG AAAAAAAA 1 A_Raise();
-		goto ready;
+		TNT1 A 0 {
+			if (fdoom_weapons == 1)
+				A_PlaySound("weapons/shotgun/draw");
+			}
+		SHTG A 1 A_Raise();
+		wait;
+		// goto ready;
 	Fire: //fire 37 tics, refire 7 tics;
 		SHTG A 3 { 
 				A_AlertMonsters();

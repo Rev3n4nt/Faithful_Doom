@@ -30,7 +30,7 @@ states
 	Select:
 		TNT1 A 0 {
 			If(fdoom_weapons==1)
-				A_PlaySound("weapons/bfg/draw");
+				A_PlaySound("pickups/bfg");
 			}
 		BFGG A 1 A_Raise();
 		wait;

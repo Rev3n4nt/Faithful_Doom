@@ -78,10 +78,8 @@ weapons/ssg/fire2	SSGSHOT2
 weapons/chaingun/fire	PISTSHOT
 $volume weapons/chaingun/fire 0.6
 $limit weapons/chaingun/fire 0
-weapons/chaingun/pickup	CHGNPKUP
 
 // BFG
-weapons/bfg/draw	BFGDRAW
 weapons/bfg/start	BFGCHRG	//BFGSTART //BFGSTRT1
 weapons/bfg/fire	BFGSHOOT
 $random weapons/bfg/explosion { weapons/bfg/explosion1 weapons/bfg/explosion2 weapons/bfg/explosion3 weapons/bfg/explosion4 }
