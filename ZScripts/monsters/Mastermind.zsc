@@ -48,7 +48,7 @@ states
         SSMA a 2 BRIGHT A_SPosAttackUseAtkSound();
         SSMA b 1{
             // A_PlaySound("spiderdemon/fire");
-            A_PlaySound("weapons/pistol/fire");
+            A_PlaySound("weapons/shotgun/fire");
             if (fdoom_Debris == 1){
 			    A_SpawnItemEx("PistolCasing",12,-15,40, frandom(2,4),0,random(2,4), random(-85,-95),SXF_SETTARGET);
             }
@@ -62,7 +62,7 @@ states
         SSMA a 2 BRIGHT A_SPosAttackUseAtkSound();
         SSMA b 1{
             // A_PlaySound("spiderdemon/fire");
-            A_PlaySound("weapons/pistol/fire");
+            A_PlaySound("weapons/shotgun/fire");
             if (fdoom_Debris == 1){
 			A_SpawnItemEx("PistolCasing",12,-15,40, frandom(2,4),0,random(2,4), random(-85,-95),SXF_SETTARGET);
             }
