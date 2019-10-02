@@ -87,7 +87,7 @@ States
 				}
 		SHTG H 0 A_WeaponOffset(0,32);//0,0
 		SHTG HCGGBBFFE 1;
-		SHTG EAA 2 {
+		SHTG AA 2 {
 			if (fdoom_weapons == 1)
 				A_WeaponReady(WRF_NOPRIMARY);
 			}
