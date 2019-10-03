@@ -21,4 +21,17 @@ object SmoothBulletPuff
     frame PUFFA { light BPUFF1 }
     frame PUFFB { light BPUFF2 }
 }
+
 */
+object Rocket
+{
+    frame MISLA { light ROCKET    }
+
+	frame EXPLA { light ROCKET_X2 }
+	frame EXPLB { light ROCKET_X1 }
+	frame EXPLC { light ROCKET_X2 }
+	frame EXPLD { light ROCKET_X3 }
+	frame EXPLE { light ROCKET_X2 }
+	frame EXPLF { light ROCKET_X1 }
+   
+}

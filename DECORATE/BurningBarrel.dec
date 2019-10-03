@@ -1,0 +1,14 @@
+ACTOR BurningBarrel
+{
+  Radius 16
+  Height 32
+  Scale .5
+  ProjectilePassHeight -16
+  +SOLID
+  States
+  {
+  Spawn:
+    FCAN ABC 4 Bright
+    Loop
+  }
+}

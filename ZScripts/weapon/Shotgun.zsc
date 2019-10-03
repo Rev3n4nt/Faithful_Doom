@@ -50,11 +50,13 @@ States
 		SHTG A 1 A_Lower();
 		wait;
 	Select:
-		TNT1 A 0 { if (fdoom_weapons == 1)
-					A_PlaySound("weapons/shotgun/draw");
-				}
-		SHTG AAAAAAAA 1 A_Raise();
-		goto ready;
+		TNT1 A 0 {
+			if (fdoom_weapons == 1)
+				A_PlaySound("weapons/shotgun/draw");
+			}
+		SHTG A 1 A_Raise();
+		wait;
+		// goto ready;
 	Fire: //fire 37 tics, refire 7 tics;
 		SHTG A 3 { 
 				A_AlertMonsters();
@@ -69,7 +71,7 @@ States
 				If(fdoom_tracers==1) {
 					A_FireBullets (5.6, 3, 7, 5, "EnBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ,0,"BulletTracer",0,0); }
 				else {
-					A_FireBullets (5.6, 0, 7, 5, "EnBulletPuff",FBF_NORANDOMPUFFZ); }
+					A_FireBullets (5.6, 0, 7, 5, "EnBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ); }
 				}
 //
 		SHTG AEFBBGGC 1;
@@ -85,14 +87,14 @@ States
 				}
 		SHTG H 0 A_WeaponOffset(0,32);//0,0
 		SHTG HCGGBBFFE 1;
-		SHTG EAA 2 {
+		SHTG AA 2 {
 			if (fdoom_weapons == 1)
 				A_WeaponReady(WRF_NOPRIMARY);
 			}
 		SHTG A 7 A_ReFire();
 		Goto Ready;
 	Flash:
-		SHTF B 3 bright A_Light2();
+		SHTF B 2 bright A_Light2();
 		SHTF A 2 bright A_Light1();
 		goto lightdone;
 }

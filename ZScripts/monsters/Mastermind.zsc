@@ -1,0 +1,96 @@
+class Mastermind : Actor replaces Spidermastermind
+{
+    Default
+    {
+	Health 3000;
+	Radius 128;
+	Height 100;
+	Mass 1000;
+	Speed 12;
+	PainChance 40;
+	Monster;
+	+BOSS
+	+MISSILEMORE
+	+FLOORCLIP
+	+NORADIUSDMG
+	+DONTMORPH
+	+BOSSDEATH
+	SeeSound "spider/sight";
+	PainSound "spider/pain";
+	DeathSound "spider/death";
+	ActiveSound "spider/active";
+	Obituary "$OB_SPIDER";
+	Tag "$FN_SPIDER";
+	}
+states
+	{
+	spawn:
+        SPID AB 10 A_Look();
+        Loop;
+	
+	see:
+	    SMMA a 3 a_metal;
+		SMMA a 3 a_chase;
+		SMMA b 3 a_chase;
+		SMMA c 3 a_chase;
+		SMMA d 3 a_metal;
+		SMMA e 3 a_chase;
+		SMMA e 3 a_chase;
+		SMMA f 3 a_chase;
+		SMMA g 3 a_metal;
+		SMMA h 3 a_chase;
+		SMMA i 3 a_chase;
+		SMMA j 3 a_chase;
+		loop;
+	
+	missile:
+        SMMA a 20 A_FaceTarget();
+        SSMA a 2 BRIGHT A_SPosAttackUseAtkSound();
+        SSMA b 1{
+            // A_PlaySound("spiderdemon/fire");
+            A_PlaySound("weapons/shotgun/fire");
+            if (fdoom_Debris == 1){
+			    A_SpawnItemEx("PistolCasing",12,-15,40, frandom(2,4),0,random(2,4), random(-85,-95),SXF_SETTARGET);
+            }
+            if (fdoom_tracers==1) {
+                A_CustomBulletAttack(5.0, 1, 1, 0, "EnBulletPuff", 0, CBAF_NORANDOM,AAPTR_TARGET,"BulletTracer",43,10);
+            }
+            A_SPosAttackUseAtkSound();
+            A_Light1();
+        }
+        SSMA c 1;
+        SSMA a 2 BRIGHT A_SPosAttackUseAtkSound();
+        SSMA b 1{
+            // A_PlaySound("spiderdemon/fire");
+            A_PlaySound("weapons/shotgun/fire");
+            if (fdoom_Debris == 1){
+			A_SpawnItemEx("PistolCasing",12,-15,40, frandom(2,4),0,random(2,4), random(-85,-95),SXF_SETTARGET);
+            }
+            if (fdoom_tracers==1) {
+			A_CustomBulletAttack(5.0, 1, 1, 0, "EnBulletPuff", 0, CBAF_NORANDOM,AAPTR_TARGET,"BulletTracer",43,10);
+            }
+            A_SPosAttackUseAtkSound();
+            A_Light2();
+        }
+        SSMA c 1;
+        SSMA c 1 A_SpidRefire();
+        goto missile+1;
+	
+	pain:
+	    SPMA a 2;
+		SPMA b 2;
+		SPMA c 2 a_pain();
+		goto see;
+	
+	death:
+	SDMA a 20 a_scream();
+	SDMA b 5;
+	SDMA c 5 a_noblocking();
+	SDMA defghijklmnopq 4 {
+        // A_CustomMissile ("Gibs1", 32, 0, random (0, 360), 2, random (0, 160))
+    }
+	SDMA r 100;
+	SDMA r -1 a_bossdeath();
+	stop;
+	}
+}

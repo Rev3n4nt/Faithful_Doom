@@ -1,119 +1,347 @@
 // ITEMS
 
-Actor FD_HealthBonus : HealthBonus replaces HealthBonus
+// MEDICAL
+class HealthVial : HealthBonus replaces HealthBonus
 {
-inventory.pickupsound "pickups/health0"
+Default {
+	inventory.pickupsound "pickups/health0";
+	}
 states
 	{
 	spawn:
-		bonu abcdefgfedcb 3
-		loop
+		// BONU abcdefgfedcb 4;
+		BONU abcdefg 2;
+		BONU gfedcb 3;
+		loop;
 	}
 }
 
-actor FD_ArmorBonus : ArmorBonus replaces ArmorBonus
+class FStimpack : Stimpack replaces Stimpack
 {
-inventory.pickupsound "pickups/armor0"
-states
-	{
-		Spawn:
-			HELB abcdefghgfedcb 3
-			loop
-		}
+Default {
+	inventory.pickupsound "pickups/health1";
+	}
 }
 
-actor FD_GreenArmor : GreenArmor replaces GreenArmor
+class FMedikit : Medikit replaces Medikit
 {
-inventory.pickupsound "pickups/armor1"
+Default {
+	inventory.pickupsound "pickups/health2";
+	}
+}
+
+// ARMOR
+
+class ArmorShard : ArmorBonus replaces ArmorBonus
+{
+Default {
+	inventory.pickupsound "pickups/armor0";
+	}
+states
+	{
+	Spawn:
+		HELB abcdefgh 2;
+		HELB hgfedcb 3;
+		loop;
+	}
+}
+
+class FGreenArmor : GreenArmor replaces GreenArmor
+{
+	Default {
+		inventory.pickupsound "pickups/armor1";
+	}
 states
 	{
 	spawn:
-		garm abcdefgh 4 bright
-		garm hgfedcb 4
-		loop
+		GARM abcd 2;
+		GARM efgh 2;
+		// GARM h 2 bright;
+		GARM hgfedcb 3;
+		loop;
 	}
 }
 
-actor FD_Backpack : Backpack replaces Backpack
+class FBLueArmor : BLueArmor replaces BLueArmor
 {
-inventory.pickupsound "pickups/backpack"
+	Default {
+		inventory.pickupsound "pickups/armor1";
+	}
+states
+	{
+	spawn:
+		BLAR abcd 2;
+		BLAR efgh 2;
+		// GARM h 2 bright;
+		BLAR hgfedcb 3;
+		loop;
+	}
 }
 
-Actor FD_Radsuit : Radsuit replaces Radsuit
+// POWERUPS
+
+class FRadsuit : Radsuit replaces Radsuit
 {
-inventory.pickupsound "pickups/radsuit"
+	Default {
+inventory.pickupsound "pickups/radsuit";
+	}
+}
+
+class Fullmap : Allmap replaces Allmap
+{
+Default {
+	inventory.pickupsound "pickups/allmap";
+	}
+states
+	{
+	spawn:
+		CMAP abcdefgh 3 bright;
+		loop;
+	}
+}
+
+class Nightvision : Infrared replaces Infrared
+{
+Default {
+	inventory.pickupsound "pickups/googles";
+	}
+states
+	{
+	spawn:
+		SVIS abcdEEEEE 3 bright;
+		loop;
+	}
+}
+
+class FSoulsphere : Soulsphere replaces Soulsphere
+{
+Default {
+	+FLOATBOB
+	+FORCEXYBILLBOARD
+	floatbobstrength 0.3;
+	inventory.pickupsound "pickups/soulsphere";
+	// renderstyle "Add";
+	// alpha 1;
+	}
+states
+	{
+	Spawn:
+		SOUL ABCDEFGFEDCB 4 bright;
+		loop;
+	}
+}
+
+class FMegasphere : Megasphere replaces Megasphere
+{
+Default {
+	+FORCEXYBILLBOARD
+	+FLOATBOB
+	floatbobstrength 0.3;
+	inventory.pickupsound "pickups/megasphere";
+	// renderstyle "Add";
+	// alpha 1.0;
+	}	
+states
+	{
+	spawn:
+		MEGA abcdefGGFedcb 4 bright;
+		loop;
+	}
+}
+
+class GodSphere : InvulnerabilitySphere replaces InvulnerabilitySphere
+{
+Default {
+	+FORCEXYBILLBOARD
+	+FLOATBOB
+	floatbobstrength 0.3;
+	inventory.pickupsound "pickups/invulnerability";
+	// renderstyle "Add";
+	// alpha 1.0;
+	}	
+states
+	{
+	spawn:
+		NVUL abcdefFedcb 4 bright;
+		loop;
+	}
+}
+
+class FBlursphere : Blursphere replaces Blursphere
+{
+Default {
+	+FORCEXYBILLBOARD
+	+FLOATBOB
+	floatbobstrength 0.3;
+	inventory.pickupsound "pickups/invisibility";
+	// renderstyle "Add";
+	// alpha 1.0;
+	}	
+states
+	{
+	spawn:
+		NVIS abcdefGGFedcb 4 bright;
+		loop;
+	}
 }
 
 //// KEYS
-
-ACTOR FD_RedCard : redcard replaces redcard
+class FRedCard : redcard replaces redcard
 {
-inventory.pickupsound "pickups/keycard"
-species RedCard
+	Default {
+inventory.pickupsound "pickups/keycard";
+species "RedCard";
+	}
   States
   {
   Spawn:
-	RDCK ABCDEF 5 bright
-    Loop
+	RDCK ABCDEF 5 bright;
+    Loop;
   }
 }
 
-ACTOR FD_BlueCard : bluecard replaces bluecard
+class FBlueCard : bluecard replaces bluecard
 {
-inventory.pickupsound "pickups/keycard"
-species BlueCard
+	Default {
+inventory.pickupsound "pickups/keycard";
+species "BlueCard";
+	}
   States
   {
   Spawn:
-	BLCK ABCDEF 5 bright
-    Loop
+	BLCK ABCDEF 5 bright;
+    Loop;
   }
 }
 
-ACTOR FD_RedSkull : redskull replaces redskull
+class FYellowCard : yellowcard replaces yellowcard
 {
-inventory.pickupsound "pickups/skullkey"
-species RedSkull
-scale .6
+	Default {
+inventory.pickupsound "pickups/keycard";
+species "YellowCard";
+	}
+  States
+  {
+  Spawn:
+	YLCK ABCDEF 5 bright;
+    Loop;
+  }
+}
+
+class FRedSkull : redskull replaces redskull
+{
+	Default {
+inventory.pickupsound "pickups/skullkey";
+species "RedSkull";
+scale .6;
+	}
 states
 	{
 	Spawn:
-		RSKK AB 5
-		RSKK BC 5 bright
-		RSKK CB 5 bright
-		RSKK BA 5
-		loop
+		RSKK AB 5;
+		RSKK BC 5 bright;
+		RSKK CB 5 bright;
+		RSKK BA 5;
+		loop;
 	}
 }
 
-ACTOR FD_BlueSkull : blueskull replaces blueskull
+class FBlueSkull : blueskull replaces blueskull
 {
-inventory.pickupsound "pickups/skullkey"
-Species BlueSkull
-scale .6
+	Default {
+inventory.pickupsound "pickups/skullkey";
+Species "BlueSkull";
+scale .6;
+	}
 states
 	{
 	Spawn:
-		BSKK AB 5
-		BSKK BC 5 bright
-		BSKK CB 5 bright
-		BSKK BA 5
-		loop
+		BSKK AB 5;
+		BSKK BC 5 bright;
+		BSKK CB 5 bright;
+		BSKK BA 5;
+		loop;
 	}
 }
 
-ACTOR FD_YellowSkull : yellowskull replaces yellowskull
+class FYellowSkull : yellowskull replaces yellowskull
 {
-inventory.pickupsound "pickups/skullkey"
-species YellowSkull
-scale .6
+	Default {
+inventory.pickupsound "pickups/skullkey";
+species "YellowSkull";
+scale .6;
+	}
 states
 	{
 	Spawn:
-		YSKK AB 5
-		YSKK BC 5 bright
-		YSKK CB 5 bright
-		YSKK BA 5
-		loop
+		YSKK AB 5;
+		YSKK BC 5 bright;
+		YSKK CB 5 bright;
+		YSKK BA 5;
+		loop;
+	}
+}
+
+// AMMO
+class FBackpack : Backpack replaces Backpack
+{
+	Default {
+inventory.pickupsound "pickups/backpack";
+}
+}
+
+class FClip : Clip replaces Clip
+{
+Default {
+	inventory.pickupsound "ammo/clip";
+	}
+}
+
+class FClipBox : ClipBox replaces ClipBox
+{
+Default {
+	inventory.pickupsound "ammo/clipbox";
+	}
+}
+
+class FShell : Shell replaces Shell
+{
+Default {
+	inventory.pickupsound "ammo/shells";
+	}
+}
+
+class FShellBox : ShellBox replaces ShellBox
+{
+Default {
+	inventory.pickupsound "ammo/shells";
+	}
+}
+
+class FRocketAmmo : RocketAmmo replaces RocketAmmo
+{
+Default {
+	inventory.pickupsound "ammo/rockets";
+	}
+}
+
+class FRocketBox : RocketBox replaces RocketBox
+{
+Default {
+	inventory.pickupsound "ammo/rockets";
+	}
+}
+
+class FCell : Cell replaces Cell
+{
+Default {
+	inventory.pickupsound "ammo/cells";
+	}
+}
+
+class FCellPack : CellPack replaces CellPack
+{
+Default {
+	inventory.pickupsound "ammo/cells";
 	}
 }
