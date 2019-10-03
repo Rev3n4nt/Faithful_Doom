@@ -1,8 +1,0 @@
-Fix first frames for guns to make them centered.
-For SSG -  add muzzle into weapons sprites.
-For brass knuckles there is a sound hitting metal in Brutal Doom I think.
-Chainsaw - I'll probably add 2 versions - the one that shakes will be in "enchanced", and one that is still in vanilla.
-The hardest part now is monsters - some sprites are not looking well in upscaled version.
-Smooth animations for liquids(water, blood, e.t.c. )
-x Bullet effects & casings for monsters;
-write things that added in git into changes log & in here
