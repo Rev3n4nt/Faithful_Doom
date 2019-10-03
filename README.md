@@ -18,7 +18,7 @@ Download this pack - https://drive.google.com/file/d/1zIPsFW6SZ2HJ-TFwJHk882HOYu
 Launch in gzdoom 3.5+
 
 Use with other mod:
-Neural upscale textures - https://www.doomworld.com/forum/topic/99021-doom-neural-upscale-2x-v-10/
+Neural upscale textures - https://www.doomworld.com/forum/topic/99021/
 (load before Faithful Doom mod).
 
 Latest dev. build version is available on GitHub - https://github.com/Rev3n4nt/Faithful_Doom 
@@ -32,4 +32,4 @@ What is main goal? - Original Doom faithfulness, close to original with improvem
 See CHANGE.LOG for changelog of releases.(updates sometimes from GitHub)
 
 Faithful Doom mod Forum thread:
-https://www.doomworld.com/forum/topic/103824-faithful-doom-mod/
+https://www.doomworld.com/forum/topic/103824/
