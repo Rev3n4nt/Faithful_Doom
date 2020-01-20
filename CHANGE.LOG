@@ -1,4 +1,8 @@
 //		CHANGE.LOG:
+2020-01-21
+--  Added sprites for monsters/ Zombie;
+--  Added HIRES sprites for monsters/ Zombie;
+--  Changed ZScripts/monsters/ Zombie;
 
 2020-01-20
 --  Added sprites for monsters/ Sarge: die;
