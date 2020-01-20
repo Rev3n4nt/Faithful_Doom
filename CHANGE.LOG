@@ -1,10 +1,13 @@
 //		CHANGE.LOG:
-2020-01-21
---  Added sprites for monsters/ Zombie;
---  Added HIRES sprites for monsters/ Zombie;
---  Changed ZScripts/monsters/ Zombie;
 
 2020-01-20
+--  Added sprites for monsters/ Sarge/see from SmoothDoom;
+--  Added HIRES sprites for monsters/ Sarge/see from SmoothDoom;
+
+--  Added sprites for monsters/ Zombie from SmoothDoom;
+--  Added HIRES sprites for monsters/ Zombie from SmoothDoom;
+--  Changed ZScripts/monsters/ Zombie;
+
 --  Added sprites for monsters/ Sarge: die;
 --  Changed sprites for monsters/ Sarge: see;
 --  Added sprites for monsters/ Cacodemon: bite, death, gib, pain;
