@@ -1,5 +1,14 @@
 //		CHANGE.LOG:
 
+2020-01-20
+--  Added sprites for monsters/ Sarge: die;
+--  Changed sprites for monsters/ Sarge: see;
+--  Added sprites for monsters/ Cacodemon: bite, death, gib, pain;
+--  Added sprites for monsters/ Spider Mastermind: die, missile, see, 
+--  Added HIRES sprites for monsters/ Sarge: die, hurt, missile, xdeth(gib);
+--  Changed HIRES sprites for monsters/ Sarge: xdeth(old gib);
+--  Added HIRES sprites for monsters/ Spider Mastermind: die(gib);
+
 30, Apr, 2019	//	version 0.5
 --    Added monsters hd version for 8-side rotate sprites (unfinished)
 --    Added items hd version with smooth sprites (unfinished)
