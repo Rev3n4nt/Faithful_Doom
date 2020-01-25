@@ -40,9 +40,9 @@ states
 		SSRG G 3 fast;
 		Goto See;
 	Pain:
+		SSRG M 2;
+		SSRG N 3 A_Pain();
 		SSRG M 1 fast;
-		SSRG N 2 fast;
-		SSRG M 1 fast A_Pain();
 		Goto See;
 	Death:
 		TNT1 a 0 A_JumpIfHealthLower(-30,"xdeath");
@@ -74,7 +74,7 @@ states
 	}
 }
 
-Class FSpectre : Spectre replaces Spectre
+Class FSpectre : Pinky replaces Spectre
 {
 Default
 	{
