@@ -4,7 +4,7 @@ Actor FDoomPlayer : Doomplayer
 	player.startitem "WPistol"
 	player.startitem "WFist"
 	Player.StartItem "Clip", 50
-	player.startitem "SSGClip", 2
+	//player.startitem "SSGClip", 2
 	player.startitem "Fist"
 	player.displayname "Faithful Marine"
 	Player.WeaponSlot 1, WFist, CSaw
