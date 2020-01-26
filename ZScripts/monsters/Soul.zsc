@@ -1,0 +1,43 @@
+class hellsoul : lostsoul replaces lostsoul
+{
+	Default
+	{
+		species "LostSoul";
+		// translation "80:95=48:63", "96:111=64:79", "236:239=0:0", "3:3=13:13";
+		// renderstyle "Normal";
+		+NOBLOOD
+		+ FORCEXYBILLBOARD
+		+ FLOATBOB
+		FloatBobStrength 0.2;
+		// speed 1.334;
+		speed 4;
+	}
+	States
+	{
+		Spawn:
+			zkul abcd 6 bright A_Look();
+			Loop;
+		see:
+			ZKUL a 3 bright A_Chase;
+			ZKUL b 3 bright A_Chase(null, null, CHF_DONTTURN);
+			ZKUL c 3 bright A_Chase;
+			ZKUL d 3 bright A_Chase(null, null, CHF_DONTTURN);
+			loop;
+		missile:
+			ssku abcda 2 bright a_facetarget;
+			ssku b 4 bright a_skullattack;
+			ssku abcd 2 bright;
+			goto missile + 6;
+		Pain:
+			LSTP A 3 Bright;
+			LSTP B 3 Bright A_Pain;
+			goto See;
+		death:
+			ssou ab 3 bright;
+			ssou c 3 bright a_scream;
+			ssou de 3 bright;
+			ssou f 3 bright A_noblocking;
+			ssou ghij 3 bright;
+			stop;
+	}
+}
