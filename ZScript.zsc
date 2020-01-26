@@ -36,6 +36,7 @@ Default {
 #include "ZScripts/monsters/Demon.zsc"
 #include "ZScripts/monsters/Cacodemon.zsc"
 #include "ZScripts/monsters/Mastermind.zsc"
+#include "ZScripts/monsters/Baron.zsc"
 
 #include "ZScripts/weapon/bd_weapon.zsc"
 #include "ZScripts/mk_matrix.zsc"
