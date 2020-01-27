@@ -1,6 +1,39 @@
 //		CHANGE.LOG:
 
-2020-01-20
+Commits on Jan 27, 2020
+changed: HIRES items/ inisibility & megahealth +bk;
+changed: HIRES items/ hazard suit & invulnerability;
+added: zscript codem sprites & HIRES monsters/:
+arachnotron,
+chaingunner,
+cyberdemon,
+mancubus,
+hellknight,
+pain elemental,
+revenant,
+archvile,
+lost soul;
+
+Commits on Jan 26, 2020
+added: code, sprites & HIRES monsters/ Hell Knight & Baron of Hell;
+changed: fixed HIRES items/blue armor; …
+removed: unused sprites monsters/ chaingunner;
+renamed: bfree -> fx;
+changed: monsters/sarge & imp code; …
+removed: unused sprites monsters/imp & sarge;
+changed: folder names monsters/imp & sarge;
+renamed: temp BurningBarrel;
+
+Commits on Jan 25, 2020
+changed: monsters/ cacodemon & pinky demon code; …
+added: monsters/ cacodemon spawn sprite frames(unused);
+renamed: frame monsters/ cacodemon;
+removed: unused frames monsters/ cacodemon;
+removed: old unused monsters sprites; 
+added: HIRES monsters/ cacodemon;
+fixed: HIRES monsters/ chaingunner, pinky demon;
+
+Commits on Jan 20, 2020
 --  Added HIRES sprites for monsters/ Spider Mastermind from SmoothDoom;
 --  Added HIRES sprites for monsters/ chaingun zombie, demon, imp from SmoothDoom;
 
