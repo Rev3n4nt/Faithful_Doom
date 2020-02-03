@@ -102,7 +102,7 @@ weapons/bfg/railcool	BFGLEND
 //ARMOR
 pickups/armor0		ARMSHARD
 pickups/armor1      ARM1PKUP
-pickups/armor1      ARM2PKUP
+pickups/armor2      ARM2PKUP
 // HEALTH
 pickups/health0     MED0PKUP
 pickups/health1     MED1PKUP

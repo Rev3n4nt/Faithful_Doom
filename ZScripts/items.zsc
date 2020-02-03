@@ -65,7 +65,7 @@ states
 class FBLueArmor : BLueArmor replaces BLueArmor
 {
 	Default {
-		inventory.pickupsound "pickups/armor1";
+		inventory.pickupsound "pickups/armor2";
 	}
 states
 	{
