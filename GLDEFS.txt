@@ -35,3 +35,365 @@ object Rocket
 	frame EXPLF { light ROCKET_X1 }
    
 }
+
+// Plasma
+pointlight PLASMABALL
+{
+    color 0.0 0.1 1.0
+    size 56
+}
+
+flickerlight PLASMA_X1
+{
+    color 0.2 0.2 1.0
+    size 64
+    secondarySize 72
+    chance 0.4
+}
+
+flickerlight PLASMA_X2
+{
+    color 0.2 0.2 0.8
+    size 80
+    secondarySize 88
+    chance 0.4
+}
+
+flickerlight PLASMA_X3
+{
+    color 0.1 0.1 0.5
+    size 64
+    secondarySize 72
+    chance 0.4
+}
+
+flickerlight PLASMA_X4
+{
+    color 0.0 0.0 0.2
+    size 8
+    secondarySize 16
+    chance 0.4
+}
+
+object smoothblueplasma
+{
+    frame BLPLA { light PLASMABALL }
+    frame BLPLB { light PLASMABALL }
+
+    frame BLPLA { light PLASMA_X1 }
+    frame BLPLB { light PLASMA_X2 }
+    frame BLPLC { light PLASMA_X2 }
+    frame BLPLD { light PLASMA_X3 }
+    frame BLPLE { light PLASMA_X3 }
+	frame BLPLF { light PLASMA_X3 }
+	frame BLPLG { light PLASMA_X3 }
+	frame BLPLH { light PLASMA_X2 }
+	
+	frame SPLSA { light PLASMA_X1 }
+	frame SPLSB { light PLASMA_X1 }
+	frame SPLSC { light PLASMA_X2 }
+	frame SPLSD { light PLASMA_X2 }
+	frame SPLSE { light PLASMA_X3 }
+	frame SPLSF { light PLASMA_X3 }
+	frame SPLSG { light PLASMA_X3 }
+	frame SPLSH { light PLASMA_X4 }
+	frame SPLSI { light PLASMA_X4 } 
+	frame SPLSJ { light PLASMA_X4 }
+	frame SPLSK { light PLASMA_X4 }
+	frame SPLSL { light PLASMA_X4 }
+}
+
+// Beta Plasma 1
+pointlight PLASMABALL1
+{
+    color 0.1 1.0 0.0
+    size 56
+}
+
+flickerlight PLASMA1_X1
+{
+    color 0.2 1.0 0.2
+    size 64
+    secondarySize 72
+    chance 0.4
+}
+
+flickerlight PLASMA1_X2
+{
+    color 0.2 0.8 0.2
+    size 80
+    secondarySize 88
+    chance 0.4
+}
+
+flickerlight PLASMA1_X3
+{
+    color 0.1 0.5 0.1
+    size 64
+    secondarySize 72
+    chance 0.4
+}
+
+flickerlight PLASMA1_X4
+{
+    color 0.0 0.2 0.0
+    size 8
+    secondarySize 16
+    chance 0.4
+}
+
+object PlasmaBall1
+{
+    frame PLS1A { light PLASMABALL1 }
+    frame PLS1B { light PLASMABALL1 }
+
+    frame PLS1C { light PLASMA1_X1 }
+    frame PLS1D { light PLASMA1_X2 }
+    frame PLS1E { light PLASMA1_X2 }
+    frame PLS1F { light PLASMA1_X3 }
+    frame PLS1G { light PLASMA1_X4 }
+}
+
+// Beta Plasma 2
+pointlight PLASMABALL2
+{
+    color 1.0 0.1 0.0
+    size 56
+}
+
+flickerlight PLASMA1_X1
+{
+    color 0.9 0.2 0.2
+    size 64
+    secondarySize 72
+    chance 0.4
+}
+
+flickerlight PLASMA1_X2
+{
+    color 0.6 0.2 0.2
+    size 80
+    secondarySize 88
+    chance 0.4
+}
+
+flickerlight PLASMA1_X3
+{
+    color 0.2 0.0 0.0
+    size 8
+    secondarySize 16
+    chance 0.4
+}
+
+object PlasmaBall2
+{
+    frame PLS2A { light PLASMABALL2 }
+    frame PLS2B { light PLASMABALL2 }
+
+    frame PLS2C { light PLASMA2_X1 }
+    frame PLS2D { light PLASMA2_X2 }
+    frame PLS2E { light PLASMA2_X3 }
+}
+
+
+
+// Armour Helmet
+pointlight ARMORBONUSx1
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 5
+}
+pointlight ARMORBONUSx2
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 7
+}
+pointlight ARMORBONUSx3
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 9
+}
+pointlight ARMORBONUSx4
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 11
+}
+pointlight ARMORBONUSx5
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 13
+}
+pointlight ARMORBONUSx6
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 15
+}
+pointlight ARMORBONUSx7
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 17
+}
+pointlight ARMORBONUSx8
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 19
+}
+
+object ArmorShard
+{
+    frame HELBa { light ARMORBONUSx1 }
+	frame HELBb { light ARMORBONUSx2 }
+	frame HELBc { light ARMORBONUSx3 }
+	frame HELBd { light ARMORBONUSx4 }
+	frame HELBe { light ARMORBONUSx5 }
+	frame HELBf { light ARMORBONUSx6 }
+	frame HELBg { light ARMORBONUSx7 }
+	frame HELBh { light ARMORBONUSx8 }
+}
+
+
+// Health Potion
+pointlight HEALTHPOTION1
+{
+    color 0.0 0.0 0.6
+    // attenuate 1
+    size 10
+}
+pointlight HEALTHPOTION2
+{
+    color 0.0 0.0 0.6
+    // attenuate 1
+    size 11
+}
+pointlight HEALTHPOTION3
+{
+    color 0.0 0.0 0.6
+    // attenuate 1
+    size 12
+}
+pointlight HEALTHPOTION4
+{
+    color 0.0 0.0 0.6
+    // attenuate 1
+    size 13
+}
+pointlight HEALTHPOTION5
+{
+    color 0.0 0.0 0.6
+    // attenuate 1
+    size 14
+}
+pointlight HEALTHPOTION6
+{
+    color 0.0 0.0 0.6
+    // attenuate 1
+    size 15
+}
+pointlight HEALTHPOTION7
+{
+    color 0.0 0.0 0.6
+    // attenuate 1
+    size 16
+}
+
+object HealthVial
+{
+    frame BONUA { light HEALTHPOTION1 }
+    frame BONUB { light HEALTHPOTION2 }
+    frame BONUC { light HEALTHPOTION3 }
+    frame BONUD { light HEALTHPOTION4 }
+    frame BONUE { light HEALTHPOTION5 }
+    frame BONUF { light HEALTHPOTION6 }
+    frame BONUG { light HEALTHPOTION7 }
+}
+
+// Soul Sphere
+pulselight SOULSPHERE
+{
+    color 0.0 0.0 1.0
+    size 40
+    secondarySize 42
+    interval 2.0
+    offset 0 16 0
+}
+
+object FSoulsphere
+{
+    frame SOUL { light SOULSPHERE }
+}
+
+// Green armour
+pointlight GREENARMOR1
+{
+    color 0.0 0.6 0.0
+    attenuate 1
+    size 20
+}
+pointlight GREENARMOR2
+{
+    color 0.0 0.6 0.0
+    attenuate 1
+    size 18
+}
+pointlight GREENARMOR3
+{
+    color 0.0 0.6 0.0
+    attenuate 1
+    size 16
+}
+pointlight GREENARMOR4
+{
+    color 0.0 0.6 0.0
+    attenuate 1
+    size 14
+}
+
+object FGreenArmor
+{
+    frame GARMA { light GREENARMOR1 }
+    frame GARMB { light GREENARMOR2 }
+    frame GARMC { light GREENARMOR3 }
+    frame GARMD { light GREENARMOR4 }
+}
+
+// Blue armour
+pointlight BLUEARMOR1
+{
+    color 0.0 0.0 0.8
+    attenuate 1
+    size 20
+}
+pointlight BLUEARMOR2
+{
+    color 0.0 0.0 0.8
+    attenuate 1
+    size 18
+}
+pointlight BLUEARMOR3
+{
+    color 0.0 0.0 0.8
+    attenuate 1
+    size 16
+}
+pointlight BLUEARMOR4
+{
+    color 0.0 0.0 0.8
+    attenuate 1
+    size 14
+}
+
+object FBLueArmor
+{
+    frame BLARA { light BLUEARMOR1 }
+    frame BLARB { light BLUEARMOR2 }
+    frame BLARC { light BLUEARMOR3 }
+    frame BLARD { light BLUEARMOR4 }
+}

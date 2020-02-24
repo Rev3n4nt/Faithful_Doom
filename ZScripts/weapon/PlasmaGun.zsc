@@ -93,3 +93,29 @@ states
 		
 	}
 }
+
+class smoothblueplasma : plasmaball replaces plasmaball
+{
+	Default {
+	decal "doomimpscorch";
+	}
+states
+	{
+	spawn:
+		BLPL abcd 2 bright;
+		loop;
+	fancyspawn:
+		TNT1 A 0;
+		BLPL a 2 bright ;
+		// TNT1 AAAAAA 0 A_SpawnItemEx("BlueSparkle", random(-20, 20), random(-20, 20), random(0, 20));
+		BLPL b 2 bright;
+		BLPL c 2 bright;
+		// TNT1 AAAAAA 0 A_SpawnItemEx("BlueSparkle", random(-20, 20), random(-20, 20), random(0, 20));
+		BLPL d 2 bright;
+		loop;
+	death:
+		// TNT1 AAAAAA 0 A_SpawnItemEx("BlueSparkle", 0, 0, 0, random(-2, 2), random(-2, 2), random(-1, 2), random(0, 360));
+		SPLS abcdefghijklmn 2 bright;
+		stop;
+	}
+}

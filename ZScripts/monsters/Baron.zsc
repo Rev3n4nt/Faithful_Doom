@@ -27,32 +27,26 @@ Default
 states
 	{
 	Spawn:
-		BOSS AC 10 A_Look;
+		BOS1 A 10 A_Look;
 		Loop;
 	See:
-		BOSS A 3 A_Chase;
-		
-		BOSS BC 3 A_Chase;
-		BOSS D 2 A_Chase;
-		
-		BOSS E 3 A_Chase;
-		
-		BOSS FG 3 A_Chase;
-		BOSS H 2 A_Chase;
+		BOS1 A 3 A_Chase;
+		BOS1 BC 3 A_Chase;
+		BOS1 D 2 A_Chase;
+		BOS1 E 3 A_Chase;
+		BOS1 FG 3 A_Chase;
+		BOS1 H 2 A_Chase;
 		loop;
 	Melee:
 	Missile:
 		zBOS a 4 a_facetarget;
-		zBOS abcd 3 a_facetarget;
-
+		zBOS bcde 3 a_facetarget;
 		// zBOS e 4 A_custommissile("fastbooger");
-		zBOS e 4 A_bruisattack;
-		
-		zBOS f 4;
+		zBOS f 4 A_bruisattack;
 		Goto See;
 	Pain:
-		BARP a 2;
-		BARP b 2 A_Pain;
+		BARP a 3;
+		BARP b 3 A_Pain;
 		Goto See;
 	Death:
 		TNT1 a 0 A_JumpIfHealthLower(-30,"Xdeath");
@@ -76,8 +70,7 @@ states
 		XBAR q -1 a_bossdeath;
 		stop;
 	Raise:
-		BOSS O 8;
-		BOSS NMLKJI 8;
+		BSDS LKJIHGFEDCBA 3;
 		Goto See;
 	}
 }
@@ -103,35 +96,22 @@ Default {
 		BOS2 AB 10 A_Look;
 		Loop;
 	See:
-		BOS2 A 4 a_chase;
-		
-		BOS2 B 3 a_chase;
-		BOS2 c 2 a_chase;
-		
-		BOS2 D 4 A_chase;
-		
-		BOS2 C 3 a_chase;
-		BOS2 B 2 a_chase;
-
+		BOS2 ABCDCBA 3 a_chase;
 		loop;
 	Melee:
 	Missile:
 		sBOS a 4 a_facetarget;
-		sBOS abcd 3;
-
-		sBOS e 4 A_bruisattack;
+		sBOS bcde 3;
+		sBOS f 8 A_bruisattack;
 		// sBOS e 4 A_custommissile("fastbooger");
-
-		sBOS f 4;
 		Goto See;
 	Pain:
-		PKNI a 2;
-		PKNI b 2 A_Pain;
+		PKNI a 3;
+		PKNI b 3 A_Pain;
 		Goto See;
-		
 	Death:
 		TNT1 a 0 A_JumpIfHealthLower(-30,"Xdeath");
-		SKNI b 3;
+		SKNI ab 3;
 		SKNI c 3 A_scream;
 		SKNI defg 3;
 		SKNI h 3 a_noblocking;
@@ -140,7 +120,6 @@ Default {
 		Stop;
 	Xdeath:
 		XKNI a 3;
-
 		XKNI bc 3;
 		// TNT1 a 0 a_playsound ("misc/gibbed");
 		XKNI d 3 a_scream;
@@ -150,8 +129,7 @@ Default {
 		XKNI q -1;
 		stop;
 	Raise:
-		BOS2 O 8;
-		BOS2 NMLKJI 8;
+		SKNI LKJIHGFEDCBA 3;
 		Goto See;
 	}
 }

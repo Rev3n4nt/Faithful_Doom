@@ -1,0 +1,267 @@
+texture optional BLOOD1
+pic BLOOD1 tics 3600
+pic BLOOD1 tics 3600
+texture optional BLOOD2
+pic BLOOD1 tics 3600
+pic BLOOD1 tics 3600
+texture optional BLOOD3
+pic BLOOD1 tics 3600
+pic BLOOD1 tics 3600
+
+texture optional BLOOD01
+pic BLOOD01 tics 3600
+pic BLOOD01 tics 3600
+texture optional BLOOD02
+pic BLOOD01 tics 3600
+pic BLOOD01 tics 3600
+texture optional BLOOD03
+pic BLOOD01 tics 3600
+pic BLOOD01 tics 3600
+
+texture optional FWATER1
+pic FWATER1 tics 3600
+pic FWATER1 tics 3600
+texture optional FWATER2
+pic FWATER1 tics 3600
+pic FWATER1 tics 3600
+texture optional FWATER3
+pic FWATER1 tics 3600
+pic FWATER1 tics 3600
+texture optional FWATER4
+pic FWATER1 tics 3600
+pic FWATER1 tics 3600
+
+texture optional FWATER01
+pic FWATER01 tics 3600
+pic FWATER01 tics 3600
+texture optional FWATER02
+pic FWATER01 tics 3600
+pic FWATER01 tics 3600
+texture optional FWATER03
+pic FWATER01 tics 3600
+pic FWATER01 tics 3600
+texture optional FWATER04
+pic FWATER01 tics 3600
+pic FWATER01 tics 3600
+
+texture optional LAVA1
+pic LAVA1 tics 3600
+pic LAVA1 tics 3600
+texture optional LAVA2
+pic LAVA1 tics 3600
+pic LAVA1 tics 3600
+texture optional LAVA3
+pic LAVA1 tics 3600
+pic LAVA1 tics 3600
+texture optional LAVA4
+pic LAVA1 tics 3600
+pic LAVA1 tics 3600
+
+texture optional LAVA01
+pic LAVA01 tics 3600
+pic LAVA01 tics 3600
+texture optional LAVA02
+pic LAVA01 tics 3600
+pic LAVA01 tics 3600
+texture optional LAVA03
+pic LAVA01 tics 3600
+pic LAVA01 tics 3600
+texture optional LAVA04
+pic LAVA01 tics 3600
+pic LAVA01 tics 3600
+
+texture optional DBRAIN1
+pic DBRAIN1 tics 3600
+pic DBRAIN1 tics 3600
+texture optional DBRAIN2
+pic DBRAIN1 tics 3600
+pic DBRAIN1 tics 3600
+texture optional DBRAIN3
+pic DBRAIN1 tics 3600
+pic DBRAIN1 tics 3600
+texture optional DBRAIN4
+pic DBRAIN1 tics 3600
+pic DBRAIN1 tics 3600
+
+texture optional SLIME01
+pic SLIME01 tics 3600
+pic SLIME01 tics 3600
+texture optional SLIME02
+pic SLIME02 tics 3600
+pic SLIME02 tics 3600
+texture optional SLIME03
+pic SLIME03 tics 3600
+pic SLIME03 tics 3600
+texture optional SLIME04
+pic SLIME04 tics 3600
+pic SLIME04 tics 3600
+texture optional SLIME05
+pic SLIME05 tics 3600
+pic SLIME05 tics 3600
+texture optional SLIME06
+pic SLIME06 tics 3600
+pic SLIME06 tics 3600
+texture optional SLIME07
+pic SLIME07 tics 3600
+pic SLIME07 tics 3600
+texture optional SLIME08
+pic SLIME08 tics 3600
+pic SLIME08 tics 3600
+warp texture SLIME01
+warp texture SLIME02
+warp texture SLIME03
+warp texture SLIME04
+warp texture SLIME05
+warp texture SLIME06
+warp texture SLIME07
+warp texture SLIME08
+
+texture optional NUKAGE1
+pic NUKAGE1 tics 3600
+pic NUKAGE1 tics 3600
+texture optional NUKAGE2
+pic NUKAGE1 tics 3600
+pic NUKAGE1 tics 3600
+texture optional NUKAGE3
+pic NUKAGE1 tics 3600
+pic NUKAGE1 tics 3600
+
+texture optional NUKAGE01
+pic NUKAGE01 tics 3600
+pic NUKAGE01 tics 3600
+texture optional NUKAGE02
+pic NUKAGE01 tics 3600
+pic NUKAGE01 tics 3600
+texture optional NUKAGE03
+pic NUKAGE01 tics 3600
+pic NUKAGE01 tics 3600
+
+// warp texture LAVA1 0.5
+// warp texture DBRAIN1 0.2
+warp2 texture NUKAGE1 0.2;
+warp2 texture NUKAGE01
+warp texture LAVA01
+warp2 texture BLOOD1
+warp2 texture BLOOD01
+warp2 texture FWATER1
+warp2 texture FWATER01
+
+texture optional SFALL1
+pic SFALL1 tics 3600
+pic SFALL1 tics 3600
+texture optional SFALL2
+pic SFALL1 tics 3600
+pic SFALL1 tics 3600
+texture optional SFALL3
+pic SFALL1 tics 3600
+pic SFALL1 tics 3600
+texture optional SFALL4
+pic SFALL1 tics 3600
+pic SFALL1 tics 3600
+
+texture optional BFALL1
+pic BFALL1 tics 3600
+pic BFALL1 tics 3600
+texture optional BFALL2
+pic BFALL1 tics 3600
+pic BFALL1 tics 3600
+texture optional BFALL3
+pic BFALL1 tics 3600
+pic BFALL1 tics 3600
+texture optional BFALL4
+pic BFALL1 tics 3600
+pic BFALL1 tics 3600
+
+texture optional WFALL1
+pic WFALL1 tics 3600
+pic WFALL1 tics 3600
+texture optional WFALL2
+pic WFALL1 tics 3600
+pic WFALL1 tics 3600
+texture optional WFALL3
+pic WFALL1 tics 3600
+pic WFALL1 tics 3600
+texture optional WFALL4
+pic WFALL1 tics 3600
+pic WFALL1 tics 3600
+
+texture optional LFALL1
+pic LFALL1 tics 3600
+pic LFALL1 tics 3600
+texture optional LFALL2
+pic LFALL1 tics 3600
+pic LFALL1 tics 3600
+texture optional LFALL3
+pic LFALL1 tics 3600
+pic LFALL1 tics 3600
+texture optional LFALL4
+pic LFALL1 tics 3600
+pic LFALL1 tics 3600
+
+
+// Switches by Enjay
+
+//First the Doom Share Ware Switches
+
+//All Doom1 SW switches have been given custom sounds
+
+
+//Altered doom1 SW switches
+
+switch doom 1 SW1BRCOM on sound switches/electri3 pic SW2BRCOM tics 0
+switch doom 1 SW1BRN1 on sound switches/clunk pic SW2BRN1 tics 0
+switch doom 1 SW1BRN2 on sound switches/electri2 pic SW2BRN2 tics 0
+switch doom 1 SW1BRNGN on sound switches/electri2 pic SW2BRNGN tics 0
+switch doom 1 SW1BROWN on sound switches/clunk pic SW2BROWN tics 0
+switch doom 1 SW1COMM on sound switches/electri3 pic SW2COMM tics 0
+switch doom 1 SW1COMP on sound switches/electri3 pic SW2COMP tics 0
+switch doom 1 SW1DIRT on sound switches/electri3 pic SW2DIRT tics 0
+switch doom 1 SW1EXIT on sound switches/electri3 pic SW2EXIT tics 0
+switch doom 1 SW1GRAY on sound switches/electri3 pic SW2GRAY tics 0
+switch doom 1 SW1GRAY1 on sound switches/electri2 pic SW2GRAY1 tics 0
+switch doom 1 SW1METAL on sound switches/electri2 pic SW2METAL tics 0
+switch doom 1 SW1PIPE on sound switches/clunk pic SW2PIPE tics 0
+switch doom 1 SW1SLAD on sound switches/electri2 pic SW2SLAD tics 0
+switch doom 1 SW1STARG on sound switches/clunk pic SW2STARG tics 0
+switch doom 1 SW1STON1 on sound switches/electri3 pic SW2STON1 tics 0
+switch doom 1 SW1STON2 on sound switches/electri2 pic SW2STON2 tics 0
+switch doom 1 SW1STONE on sound switches/electri3 pic SW2STONE tics 0
+switch doom 1 SW1STRTN on sound switches/electri3 pic SW2STRTN tics 0
+
+//Now the Doom1 registered switches
+
+//All Doom1 registered switches have been given custom sounds
+
+
+//Altered doom1 registered switches
+
+switch doom 2 SW1BLUE on sound switches/clunk pic SW2BLUE tics 0
+switch doom 2 SW1CMT on sound switches/clunk pic SW2CMT tics 0
+switch doom 2 SW1GARG on sound switches/gargoyle pic SW2GARG tics 0
+switch doom 2 SW1GSTON on sound switches/clunk pic SW2GSTON tics 0
+switch doom 2 SW1HOT on sound switches/clunk pic SW2HOT tics 0
+switch doom 2 SW1LION on sound switches/gargoyle pic SW2LION tics 0
+switch doom 2 SW1SATYR on sound switches/gargoyle pic SW2SATYR tics 0
+switch doom 2 SW1SKIN on sound switches/skin pic SW2SKIN tics 0
+switch doom 2 SW1VINE on sound switches/electri2 pic SW2VINE tics 0
+switch doom 2 SW1WOOD on sound switches/clunk pic SW2WOOD tics 0
+
+//Now the Doom2 switches
+
+
+switch doom 3 SW1WDMET on pic SW2WDMET tics 0
+
+
+//Altered Doom2 switches
+
+switch doom 3 SW1BRIK on sound switches/electri3 pic SW2BRIK tics 0
+switch doom 3 SW1MARB on sound switches/clunk pic SW2MARB tics 0
+switch doom 3 SW1MET2 on sound switches/electri3 pic SW2MET2 tics 0
+switch doom 3 SW1MOD1 on sound switches/electri2 pic SW2MOD1 tics 0
+switch doom 3 SW1PANEL on sound switches/clunk pic SW2PANEL tics 0
+switch doom 3 SW1ROCK on sound switches/clunk pic SW2ROCK tics 0
+switch doom 3 SW1SKULL on sound switches/clunk pic SW2SKULL tics 0
+switch doom 3 SW1STON6 on sound switches/electri3 pic SW2STON6 tics 0
+switch doom 3 SW1TEK on sound switches/electri2 pic SW2TEK tics 0
+switch doom 3 SW1ZIM on sound switches/clunk pic SW2ZIM tics 0
+
