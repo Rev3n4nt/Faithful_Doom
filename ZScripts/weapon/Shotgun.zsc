@@ -64,7 +64,6 @@ States
 					A_PlaySound("weapons/shotgun/fire"); }
 				else {
 					A_PlaySound("weapons/shotgf");}
-				
 				}
 		SHTG A 3 {
 				A_gunflash();
@@ -73,21 +72,17 @@ States
 				else {
 					A_FireBullets (5.6, 0, 7, 5, "EnBulletPuff",FBF_USEAMMO|FBF_NORANDOMPUFFZ); }
 				}
-//
-		SHTG AEFBBGGC 1;
-		SHTG H 2 {
+		SHTW ABCDEFGHIJKL 1;
+		SHTW M 2 {
 				if (fdoom_weapons == 1) {
 					 A_playsound("weapons/shotgun/pump",5); }
 				}
-		SHTG H 3;
-		SHTG D 0 A_WeaponOffset(-4,46);//-4,-14
 		SHTG D 3 { 
 				If(fdoom_debris==1)
 					A_Eject("ShotgunCasing",20,frandom(-7,-8),6.5,frandom(0,1),FRandom(3,5),frandom(3,4));
 				}
-		SHTG H 0 A_WeaponOffset(0,32);//0,0
-		SHTG HCGGBBFFE 1;
-		SHTG AA 2 {
+		SHTW MLKJIHGFEDCB 1;
+		SHTW AA 2 {
 			if (fdoom_weapons == 1)
 				A_WeaponReady(WRF_NOPRIMARY);
 			}
