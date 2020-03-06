@@ -196,7 +196,6 @@ object PlasmaBall2
 }
 
 
-
 // Armour Helmet
 pointlight ARMORBONUSx1
 {
@@ -334,26 +333,50 @@ object FSoulsphere
 pointlight GREENARMOR1
 {
     color 0.0 0.6 0.0
-    attenuate 1
+    // attenuate 1
     size 20
 }
 pointlight GREENARMOR2
 {
     color 0.0 0.6 0.0
-    attenuate 1
+    // attenuate 1
     size 18
 }
 pointlight GREENARMOR3
 {
     color 0.0 0.6 0.0
-    attenuate 1
+    // attenuate 1
     size 16
 }
 pointlight GREENARMOR4
 {
     color 0.0 0.6 0.0
-    attenuate 1
+    // attenuate 1
     size 14
+}
+pointlight GREENARMOR5
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 12
+}
+pointlight GREENARMOR6
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 10
+}
+pointlight GREENARMOR7
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 8
+}
+pointlight GREENARMOR8
+{
+    color 0.0 0.6 0.0
+    // attenuate 1
+    size 6
 }
 
 object FGreenArmor
@@ -362,32 +385,60 @@ object FGreenArmor
     frame GARMB { light GREENARMOR2 }
     frame GARMC { light GREENARMOR3 }
     frame GARMD { light GREENARMOR4 }
+    frame GARME { light GREENARMOR5 }
+    frame GARMF { light GREENARMOR6 }
+    frame GARMG { light GREENARMOR7 }
+    frame GARMH { light GREENARMOR8 }
 }
 
 // Blue armour
 pointlight BLUEARMOR1
 {
     color 0.0 0.0 0.8
-    attenuate 1
+    // attenuate 1
     size 20
 }
 pointlight BLUEARMOR2
 {
     color 0.0 0.0 0.8
-    attenuate 1
+    // attenuate 1
     size 18
 }
 pointlight BLUEARMOR3
 {
     color 0.0 0.0 0.8
-    attenuate 1
+    // attenuate 1
     size 16
 }
 pointlight BLUEARMOR4
 {
     color 0.0 0.0 0.8
-    attenuate 1
+    // attenuate 1
     size 14
+}
+pointlight BLUEARMOR5
+{
+    color 0.0 0.0 0.8
+    // attenuate 1
+    size 12
+}
+pointlight BLUEARMOR6
+{
+    color 0.0 0.0 0.8
+    // attenuate 1
+    size 10
+}
+pointlight BLUEARMOR7
+{
+    color 0.0 0.0 0.8
+    // attenuate 1
+    size 8
+}
+pointlight BLUEARMOR8
+{
+    color 0.0 0.0 0.8
+    // attenuate 1
+    size 6
 }
 
 object FBLueArmor
@@ -396,4 +447,8 @@ object FBLueArmor
     frame BLARB { light BLUEARMOR2 }
     frame BLARC { light BLUEARMOR3 }
     frame BLARD { light BLUEARMOR4 }
+    frame BLARE { light BLUEARMOR5 }
+    frame BLARF { light BLUEARMOR6 }
+    frame BLARG { light BLUEARMOR7 }
+    frame BLARH { light BLUEARMOR8 }
 }
