@@ -194,132 +194,316 @@ object PlasmaBall2
     frame PLS2D { light PLASMA2_X2 }
     frame PLS2E { light PLASMA2_X3 }
 }
+//
+// BFG
+pointlight BFGBALL
+{
+    color 0.0 1.0 0.0
+    attenuate 1
+    size 80
+}
 
+flickerlight BFGBALL_X1
+{
+    color 0.2 1.0 0.2
+    attenuate 1
+    size 80
+    secondarySize 88
+    chance 0.3
+}
+
+flickerlight BFGBALL_X2
+{
+    color 0.3 1.0 0.3
+    attenuate 1
+    size 104
+    secondarySize 112
+    chance 0.3
+}
+
+flickerlight BFGBALL_X3
+{
+    color 0.5 1.0 0.5
+    attenuate 1
+    size 120
+    secondarySize 128
+    chance 0.3
+}
+
+flickerlight BFGBALL_X4
+{
+    color 0.2 0.7 0.2
+    attenuate 1
+    size 56
+    secondarySize 64
+    chance 0.3
+}
+
+flickerlight BFGBALL_X5
+{
+    color 0.1 0.3 0.1
+    attenuate 1
+    size 48
+    secondarySize 56
+    chance 0.3
+}
+
+object BD_BFGBall
+{
+    frame BFGB { light BFGBALL }
+
+    frame BFGXA { light BFGBALL_X1 }
+    frame BFGXB { light BFGBALL_X2 }
+    frame BFGXC { light BFGBALL_X3 }
+    frame BFGXD { light BFGBALL_X4 }
+    frame BFGXE { light BFGBALL_X5 }
+	frame BFGXF { light BFGBALL_X4 }
+    frame BFGXG { light BFGBALL_X4 }
+    frame BFGXH { light BFGBALL_X3 }
+    frame BFGXI { light BFGBALL_X3 }
+    frame BFGXJ { light BFGBALL_X2 }
+    frame BFGXK { light BFGBALL_X1 }
+}
+
+flickerlight BFGRailBall_Hold
+{
+	color 0.1 1.0 0.1
+    attenuate 1
+	size 28
+	secondarySize 30
+	chance 0.1
+}
+
+object BFGRailBall_Hold
+{
+	frame PEXP { light BFGRailBall_Hold }
+}
+
+object BFGRailBall
+{
+    frame PEXPA { light BFGBALL_X1 }
+    frame PEXPB { light BFGBALL_X2 }
+    frame PEXPC { light BFGBALL_X3 }
+    frame PEXPD { light BFGBALL_X4 }
+    frame PEXPE { light BFGBALL_X5 }
+	frame PEXPF { light BFGBALL_X4 }
+    frame PEXPG { light BFGBALL_X4 }
+    frame PEXPH { light BFGBALL_X3 }
+    frame PEXPI { light BFGBALL_X3 }
+    frame PEXPJ { light BFGBALL_X2 }
+    frame PEXPK { light BFGBALL_X2 }
+    frame PEXPL { light BFGBALL_X1 }
+    frame PEXPM { light BFGBALL_X1 }
+}
+
+object ModernBFGBall
+{
+    frame COIR { light BFGBALL }
+
+    frame COIXA { light BFGBALL_X1 }
+    frame COIXB { light BFGBALL_X2 }
+    frame COIXC { light BFGBALL_X3 }
+    frame COIXD { light BFGBALL_X4 }
+    frame COIXE { light BFGBALL_X5 }
+	frame COIXF { light BFGBALL_X4 }
+    frame COIXG { light BFGBALL_X4 }
+    frame COIXH { light BFGBALL_X3 }
+    frame COIXI { light BFGBALL_X3 }
+    frame COIXJ { light BFGBALL_X2 }
+    frame COIXK { light BFGBALL_X1 }
+}
+
+// ALTBFG
+pointlight ALTBFGBALL
+{
+    color 0.0 1.0 0.1
+    attenuate 1
+    size 56
+}
+
+flickerlight ALTBFG_X1
+{
+    color 0.2 1.0 0.2
+    attenuate 1
+    size 64
+    secondarySize 72
+    chance 0.4
+}
+
+flickerlight ALTBFG_X2
+{
+    color 0.2 0.8 0.2
+    attenuate 1
+    size 80
+    secondarySize 88
+    chance 0.4
+}
+
+flickerlight ALTBFG_X3
+{
+    color 0.1 0.5 0.1
+    attenuate 1
+    size 64
+    secondarySize 72
+    chance 0.4
+}
+
+flickerlight ALTBFG_X4
+{
+    color 0.0 0.2 0.0
+    attenuate 1
+    size 8
+    secondarySize 16
+    chance 0.4
+}
+
+object BD_BFGExtra
+{
+    frame PEXPA { light BFGBALL_X1 }
+    frame PEXPB { light BFGBALL_X2 }
+    frame PEXPC { light BFGBALL_X3 }
+    frame PEXPD { light BFGBALL_X4 }
+    frame PEXPE { light BFGBALL_X5 }
+	frame PEXPF { light BFGBALL_X4 }
+    frame PEXPG { light BFGBALL_X4 }
+    frame PEXPH { light BFGBALL_X3 }
+    frame PEXPI { light BFGBALL_X3 }
+    frame PEXPJ { light BFGBALL_X2 }
+    frame PEXPK { light BFGBALL_X2 }
+    frame PEXPL { light BFGBALL_X1 }
+    frame PEXPM { light BFGBALL_X1 }
+}
 
 // Armour Helmet
-pointlight ARMORBONUSx1
+pointlight p-green-1
 {
     color 0.0 0.6 0.0
-    // attenuate 1
+    attenuate 1
     size 5
 }
-pointlight ARMORBONUSx2
+pointlight p-green-2
 {
     color 0.0 0.6 0.0
-    // attenuate 1
+    attenuate 1
     size 7
 }
-pointlight ARMORBONUSx3
+pointlight p-green-3
 {
     color 0.0 0.6 0.0
-    // attenuate 1
+    attenuate 1
     size 9
 }
-pointlight ARMORBONUSx4
+pointlight p-green-4
 {
     color 0.0 0.6 0.0
-    // attenuate 1
+    attenuate 1
     size 11
 }
-pointlight ARMORBONUSx5
+pointlight p-green-5
 {
     color 0.0 0.6 0.0
-    // attenuate 1
+    attenuate 1
     size 13
 }
-pointlight ARMORBONUSx6
+pointlight p-green-6
 {
     color 0.0 0.6 0.0
-    // attenuate 1
+    attenuate 1
     size 15
 }
-pointlight ARMORBONUSx7
+pointlight p-green-7
 {
     color 0.0 0.6 0.0
-    // attenuate 1
+    attenuate 1
     size 17
 }
-pointlight ARMORBONUSx8
+pointlight p-green-8
 {
     color 0.0 0.6 0.0
-    // attenuate 1
+    attenuate 1
     size 19
 }
 
 object ArmorShard
 {
-    frame HELBa { light ARMORBONUSx1 }
-	frame HELBb { light ARMORBONUSx2 }
-	frame HELBc { light ARMORBONUSx3 }
-	frame HELBd { light ARMORBONUSx4 }
-	frame HELBe { light ARMORBONUSx5 }
-	frame HELBf { light ARMORBONUSx6 }
-	frame HELBg { light ARMORBONUSx7 }
-	frame HELBh { light ARMORBONUSx8 }
+    frame HELBa { light p-green-1 }
+	frame HELBb { light p-green-2 }
+	frame HELBc { light p-green-3 }
+	frame HELBd { light p-green-4 }
+	frame HELBe { light p-green-5 }
+	frame HELBf { light p-green-6 }
+	frame HELBg { light p-green-7 }
+	frame HELBh { light p-green-8 }
 }
 
 
 // Health Potion
-pointlight HEALTHPOTION1
+pointlight p-blue-1
 {
     color 0.0 0.0 0.6
-    // attenuate 1
+    attenuate 1
+    size 6
+}
+pointlight p-blue-2
+{
+    color 0.0 0.0 0.6
+    attenuate 1
+    size 8
+}
+pointlight p-blue-3
+{
+    color 0.0 0.0 0.6
+    attenuate 1
     size 10
 }
-pointlight HEALTHPOTION2
+pointlight p-blue-4
 {
     color 0.0 0.0 0.6
-    // attenuate 1
-    size 11
-}
-pointlight HEALTHPOTION3
-{
-    color 0.0 0.0 0.6
-    // attenuate 1
+    attenuate 1
     size 12
 }
-pointlight HEALTHPOTION4
+pointlight p-blue-5
 {
     color 0.0 0.0 0.6
-    // attenuate 1
-    size 13
-}
-pointlight HEALTHPOTION5
-{
-    color 0.0 0.0 0.6
-    // attenuate 1
+    attenuate 1
     size 14
 }
-pointlight HEALTHPOTION6
+pointlight p-blue-6
 {
     color 0.0 0.0 0.6
-    // attenuate 1
-    size 15
-}
-pointlight HEALTHPOTION7
-{
-    color 0.0 0.0 0.6
-    // attenuate 1
+    attenuate 1
     size 16
+}
+pointlight p-blue-7
+{
+    color 0.0 0.0 0.6
+    attenuate 1
+    size 18
+}
+pointlight p-blue-8
+{
+    color 0.0 0.0 0.6
+    attenuate 1
+    size 20
 }
 
 object HealthVial
 {
-    frame BONUA { light HEALTHPOTION1 }
-    frame BONUB { light HEALTHPOTION2 }
-    frame BONUC { light HEALTHPOTION3 }
-    frame BONUD { light HEALTHPOTION4 }
-    frame BONUE { light HEALTHPOTION5 }
-    frame BONUF { light HEALTHPOTION6 }
-    frame BONUG { light HEALTHPOTION7 }
+    frame BONUA { light p-blue-1 }
+    frame BONUB { light p-blue-2 }
+    frame BONUC { light p-blue-3 }
+    frame BONUD { light p-blue-4 }
+    frame BONUE { light p-blue-5 }
+    frame BONUF { light p-blue-6 }
+    frame BONUG { light p-blue-7 }
 }
 
 // Soul Sphere
 pulselight SOULSPHERE
 {
     color 0.0 0.0 1.0
-    size 40
-    secondarySize 42
+    size 35
+    secondarySize 45
     interval 2.0
     offset 0 16 0
 }
@@ -330,125 +514,135 @@ object FSoulsphere
 }
 
 // Green armour
-pointlight GREENARMOR1
-{
-    color 0.0 0.6 0.0
-    // attenuate 1
-    size 20
-}
-pointlight GREENARMOR2
-{
-    color 0.0 0.6 0.0
-    // attenuate 1
-    size 18
-}
-pointlight GREENARMOR3
-{
-    color 0.0 0.6 0.0
-    // attenuate 1
-    size 16
-}
-pointlight GREENARMOR4
-{
-    color 0.0 0.6 0.0
-    // attenuate 1
-    size 14
-}
-pointlight GREENARMOR5
-{
-    color 0.0 0.6 0.0
-    // attenuate 1
-    size 12
-}
-pointlight GREENARMOR6
-{
-    color 0.0 0.6 0.0
-    // attenuate 1
-    size 10
-}
-pointlight GREENARMOR7
-{
-    color 0.0 0.6 0.0
-    // attenuate 1
-    size 8
-}
-pointlight GREENARMOR8
-{
-    color 0.0 0.6 0.0
-    // attenuate 1
-    size 6
-}
-
 object FGreenArmor
 {
-    frame GARMA { light GREENARMOR1 }
-    frame GARMB { light GREENARMOR2 }
-    frame GARMC { light GREENARMOR3 }
-    frame GARMD { light GREENARMOR4 }
-    frame GARME { light GREENARMOR5 }
-    frame GARMF { light GREENARMOR6 }
-    frame GARMG { light GREENARMOR7 }
-    frame GARMH { light GREENARMOR8 }
+    frame GARMa { light p-green-1 }
+	frame GARMb { light p-green-2 }
+	frame GARMc { light p-green-3 }
+	frame GARMd { light p-green-4 }
+	frame GARMe { light p-green-5 }
+	frame GARMf { light p-green-6 }
+	frame GARMg { light p-green-7 }
+	frame GARMh { light p-green-8 }
 }
 
 // Blue armour
-pointlight BLUEARMOR1
-{
-    color 0.0 0.0 0.8
-    // attenuate 1
-    size 20
-}
-pointlight BLUEARMOR2
-{
-    color 0.0 0.0 0.8
-    // attenuate 1
-    size 18
-}
-pointlight BLUEARMOR3
-{
-    color 0.0 0.0 0.8
-    // attenuate 1
-    size 16
-}
-pointlight BLUEARMOR4
-{
-    color 0.0 0.0 0.8
-    // attenuate 1
-    size 14
-}
-pointlight BLUEARMOR5
-{
-    color 0.0 0.0 0.8
-    // attenuate 1
-    size 12
-}
-pointlight BLUEARMOR6
-{
-    color 0.0 0.0 0.8
-    // attenuate 1
-    size 10
-}
-pointlight BLUEARMOR7
-{
-    color 0.0 0.0 0.8
-    // attenuate 1
-    size 8
-}
-pointlight BLUEARMOR8
-{
-    color 0.0 0.0 0.8
-    // attenuate 1
-    size 6
-}
-
 object FBLueArmor
 {
-    frame BLARA { light BLUEARMOR1 }
-    frame BLARB { light BLUEARMOR2 }
-    frame BLARC { light BLUEARMOR3 }
-    frame BLARD { light BLUEARMOR4 }
-    frame BLARE { light BLUEARMOR5 }
-    frame BLARF { light BLUEARMOR6 }
-    frame BLARG { light BLUEARMOR7 }
-    frame BLARH { light BLUEARMOR8 }
+    frame BLARA { light p-blue-1 }
+    frame BLARB { light p-blue-2 }
+    frame BLARC { light p-blue-3 }
+    frame BLARD { light p-blue-4 }
+    frame BLARE { light p-blue-5 }
+    frame BLARF { light p-blue-6 }
+    frame BLARG { light p-blue-7 }
+    frame BLARH { light p-blue-8 }
+}
+
+// KEY CARDS
+pointlight REDCARD
+{
+	color 0.6 0.0 0.0
+    attenuate 1
+	size 20
+}
+pointlight YELLOWCARD
+{
+	color 0.6 0.6 0.0
+    attenuate 1
+	size 20
+}
+pointlight BLUECARD
+{
+	color 0.0 0.0 0.7
+    attenuate 1
+	size 20
+}
+
+pointlight KEYCARD1
+{
+	color 0.8 0.8 0.0
+    attenuate 1
+	size 9
+}
+
+pointlight KEYCARD2
+{
+	color 0.8 0.8 0.0
+    attenuate 1
+	size 10
+}
+
+pointlight KEYCARD3
+{
+	color 0.8 0.8 0.0
+    attenuate 1
+	size 11
+}
+
+pointlight KEYCARD4
+{
+	color 0.8 0.8 0.0
+    attenuate 1
+	size 12
+}
+
+pointlight KEYCARD5
+{
+	color 0.8 0.8 0.0
+    attenuate 1
+	size 13
+}
+
+object FRedCard
+{
+	frame RDCK { light REDCARD }
+	frame RDCKB { light KEYCARD1 }
+	frame RDCKC { light KEYCARD2 }
+	frame RDCKD { light KEYCARD3 }
+	frame RDCKE { light KEYCARD4 }
+	frame RDCKF { light KEYCARD5 }
+	frame RDCKG { light KEYCARD3 }
+	frame RDCKH { light KEYCARD1 }
+}
+
+
+object FBlueCard
+{
+	frame BLCK { light BLUECARD }
+	frame BLCKB { light KEYCARD1 }
+	frame BLCKC { light KEYCARD2 }
+	frame BLCKD { light KEYCARD3 }
+	frame BLCKE { light KEYCARD4 }
+	frame BLCKF { light KEYCARD5 }
+	frame BLCKG { light KEYCARD3 }
+	frame BLCKH { light KEYCARD1 }
+}
+
+
+object FYellowCard
+{
+	frame YLCK { light YELLOWCARD }
+	frame YLCKB { light KEYCARD1 }
+	frame YLCKC { light KEYCARD2 }
+	frame YLCKD { light KEYCARD3 }
+	frame YLCKE { light KEYCARD4 }
+	frame YLCKF { light KEYCARD5 }
+	frame YLCKG { light KEYCARD3 }
+	frame YLCKH { light KEYCARD1 }
+}
+
+flickerlight PFireRed
+{
+    color 0.3 0.1 0.0
+    attenuate 1
+    size 32
+    secondarysize 40
+    chance 0.5
+}
+
+
+object ParticleFire_DoomImp
+{
+    frame FIPR { light PFireRed }
 }

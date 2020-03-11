@@ -56,6 +56,7 @@ pic LAVA1 tics 3600
 texture optional LAVA4
 pic LAVA1 tics 3600
 pic LAVA1 tics 3600
+warp2 texture LAVA1 0.2
 
 texture optional LAVA01
 pic LAVA01 tics 3600
@@ -69,6 +70,7 @@ pic LAVA01 tics 3600
 texture optional LAVA04
 pic LAVA01 tics 3600
 pic LAVA01 tics 3600
+warp2 texture LAVA01
 
 texture optional DBRAIN1
 pic DBRAIN1 tics 3600
@@ -138,9 +140,9 @@ pic NUKAGE01 tics 3600
 
 // warp texture LAVA1 0.5
 // warp texture DBRAIN1 0.2
-warp2 texture NUKAGE1 0.2;
+warp2 texture NUKAGE1 0.2
 warp2 texture NUKAGE01
-warp texture LAVA01
+// warp texture LAVA01
 warp2 texture BLOOD1
 warp2 texture BLOOD01
 warp2 texture FWATER1
