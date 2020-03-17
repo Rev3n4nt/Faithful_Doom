@@ -126,7 +126,7 @@ Default {
 states
 	{
 	Spawn:
-		SOUL ABCDEFGFEDCB 4 bright;
+		SOUL ABCDEFGHIJKJIHGFEDCB 3 bright;
 		loop;
 	}
 }
