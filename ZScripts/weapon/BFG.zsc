@@ -25,7 +25,7 @@ states
 		loop;
 	Select:
 		TNT1 A 0 {
-			If(fdoom_weapons==1)
+			If(enh_snd==1)
 				A_PlaySound("pickups/bfg");
 			}
 		BFGG A 1 A_Raise();
@@ -38,7 +38,7 @@ states
 		wait;
 	Ready:
 		BFGG A 1 {
-			if (fdoom_weapons == 1)
+			if (enh_snd == 1)
 				A_WeaponReady();
 			else
 				A_WeaponReady(WRF_NOSECONDARY);
@@ -46,7 +46,7 @@ states
 		loop;
 	Fire:
 		TNT1 A 0 {
-			if (fdoom_weapons == 0)
+			if (enh_snd == 0)
 				A_playsound("weapons/bfgf");
 			else
 				A_PlaySound("weapons/bfg/start",5);
@@ -66,7 +66,7 @@ states
 
 		BFGG G 5 bright {
 			A_FireBFG();
-			if (fdoom_weapons == 1)
+			if (enh_snd == 1)
 				A_PlaySound("weapons/bfg/fire",5);
 			}
 			
@@ -79,7 +79,7 @@ states
 		BFGG B 2;
 		TNT1 A 0 A_ReFire();
 		TNT1 A 0 {
-			If(fdoom_weapons==1)
+			If(enh_snd==1)
 				A_Playsound("weapons/bfg/cool");
 			}
 		BFGG A 3 offset (0, 33);
@@ -91,5 +91,66 @@ states
 		TNT1 A 3 bright A_light1();
 		TNT1 A 3 bright A_light2();
 		goto lightdone;
+	}
+}
+
+// FUCK a-h
+// ball
+
+// BFGba-k
+// splash
+class bfgplasma : BFGball replaces BFGball
+{
+// decal BFGlightning
+Default {
+	decal "BFGlightning";
+	}
+states
+{
+	spawn:
+		// TNT1 A 0
+		// TNT1 A 0 A_JumpIf(CallACS("Sparkletoggle")==1, "fancyspawn")
+		// TNT1 A 0 A_JumpIf(CallACS("Sparkletoggle")==2, "fancyspawn")
+		FUCK abcdefgh 2 bright;
+		loop;
+	fancyspawn:
+		// TNT1 A 0
+		FUCK a 2 bright;
+		// TNT1 AAAAAAAAAAAAAAAAAAAAAAAA 0 A_SpawnItemEx("GreenSparkle", random(-40, 40), random(-40, 40), random(0, 30))
+		FUCK b 2 bright;
+		FUCK c 2 bright;
+		// TNT1 AAAAAAAAAAAAAAAAAAAAAAAA 0 A_SpawnItemEx("GreenSparkle", random(-40, 40), random(-40, 40), random(0, 30))
+		FUCK d 2 bright;
+		FUCK e 2 bright;
+		// TNT1 AAAAAAAAAAAAAAAAAAAAAAAA 0 A_SpawnItemEx("GreenSparkle", random(-40, 40), random(-40, 40), random(0, 30))
+		FUCK f 2 bright;
+		FUCK g 2 bright;
+		// TNT1 AAAAAAAAAAAAAAAAAAAAAAAA 0 A_SpawnItemEx("GreenSparkle", random(-40, 40), random(-40, 40), random(0, 30))
+		FUCK h 2 bright;
+		loop;
+	death:
+		// TNT1 A 0 A_JumpIf(CallACS("RumbleToggle")==1, "QuakeDeath")
+		// TNT1 A 0 A_JumpIf(CallACS("Sparkletoggle")==1, "fancydeath")
+		// TNT1 A 0 A_JumpIf(CallACS("Sparkletoggle")==2, "fancydeath")
+		BFGB abcde 2 bright;
+		BFGB f 1 bright;
+		BFGB f 3 bright a_BFGspray;
+		BFGB ghijk 3 bright;
+		stop;
+	fancydeath:
+		BFGB abcde 2 bright;
+		// TNT1 AAAAAAAAAAAAAAAAAAAAAAAA 0 A_SpawnItemEx("GreenSparkle", random(-20, 20), random(-20, 20), random(0, 20), random(-2, 2), random(-2, 2), random(-1, 2), random(0, 360))
+		BFGB f 1 bright;
+		BFGB f 3 bright a_BFGspray;
+		BFGB ghijk 3 bright;
+		stop;
+	quakedeath:
+		expl d 0 a_quake (3,10,0,750,0);
+		expl d 0 a_quake (1,25,0,1000,0);
+		BFGB abcde 2 bright;
+		BFGB f 1 bright;
+		BFGB f 3 bright a_BFGspray;
+		BFGB ghijk 3 bright;
+		stop;
 	}
 }

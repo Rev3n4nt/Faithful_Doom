@@ -1,29 +1,60 @@
 // Bullet puff
-/*
-flickerlight BPUFF1
+
+// flickerlight BPUFF1
+// {
+//     color 0.5 0.5 0.0
+//     size 6
+//     secondarySize 8
+//     chance 0.8
+// }
+
+// flickerlight BPUFF2
+// {
+//     color 0.5 0.5 0.0
+//     size 3
+//     secondarySize 4
+//     chance 0.8
+// }
+
+// object EnBulletPuff
+// {
+//     frame PUFFA { light BPUFF1 }
+//     frame PUFFB { light BPUFF2 }
+// }
+
+
+// Rocket
+pointlight ROCKET
 {
-    color 0.5 0.5 0.0
-    size 6
-    secondarySize 8
-    chance 0.8
+    color 1.0 0.7 0.0
+    size 56
 }
 
-flickerlight BPUFF2
+flickerlight ROCKET_X1
 {
-    color 0.5 0.5 0.0
-    size 3
-    secondarySize 4
-    chance 0.8
+    color 1.0 0.7 0.0
+    size 64
+    secondarySize 72
+    chance 0.3
 }
 
-object SmoothBulletPuff
+flickerlight ROCKET_X2
 {
-    frame PUFFA { light BPUFF1 }
-    frame PUFFB { light BPUFF2 }
+    color 0.5 0.1 0.0
+    size 80
+    secondarySize 88
+    chance 0.3
 }
 
-*/
-object Rocket
+flickerlight ROCKET_X3
+{
+    color 0.3 0.0 0.0
+    size 96
+    secondarySize 104
+    chance 0.3
+}
+
+object FRocket
 {
     frame MISLA { light ROCKET    }
 
@@ -33,7 +64,6 @@ object Rocket
 	frame EXPLD { light ROCKET_X3 }
 	frame EXPLE { light ROCKET_X2 }
 	frame EXPLF { light ROCKET_X1 }
-   
 }
 
 // Plasma
@@ -75,7 +105,7 @@ flickerlight PLASMA_X4
     chance 0.4
 }
 
-object smoothblueplasma
+object blueplasma
 {
     frame BLPLA { light PLASMABALL }
     frame BLPLB { light PLASMABALL }
@@ -199,14 +229,12 @@ object PlasmaBall2
 pointlight BFGBALL
 {
     color 0.0 1.0 0.0
-    attenuate 1
     size 80
 }
 
 flickerlight BFGBALL_X1
 {
     color 0.2 1.0 0.2
-    attenuate 1
     size 80
     secondarySize 88
     chance 0.3
@@ -215,7 +243,6 @@ flickerlight BFGBALL_X1
 flickerlight BFGBALL_X2
 {
     color 0.3 1.0 0.3
-    attenuate 1
     size 104
     secondarySize 112
     chance 0.3
@@ -224,7 +251,6 @@ flickerlight BFGBALL_X2
 flickerlight BFGBALL_X3
 {
     color 0.5 1.0 0.5
-    attenuate 1
     size 120
     secondarySize 128
     chance 0.3
@@ -233,7 +259,6 @@ flickerlight BFGBALL_X3
 flickerlight BFGBALL_X4
 {
     color 0.2 0.7 0.2
-    attenuate 1
     size 56
     secondarySize 64
     chance 0.3
@@ -242,136 +267,32 @@ flickerlight BFGBALL_X4
 flickerlight BFGBALL_X5
 {
     color 0.1 0.3 0.1
-    attenuate 1
     size 48
     secondarySize 56
     chance 0.3
 }
 
-object BD_BFGBall
+object bfgplasma
 {
-    frame BFGB { light BFGBALL }
+    frame FUCKA { light BFGBALL_X1 }
+	frame FUCKB { light BFGBALL_X2 }
+	frame FUCKC { light BFGBALL_X3 }
+	frame FUCKD { light BFGBALL_X2 }
 
-    frame BFGXA { light BFGBALL_X1 }
-    frame BFGXB { light BFGBALL_X2 }
-    frame BFGXC { light BFGBALL_X3 }
-    frame BFGXD { light BFGBALL_X4 }
-    frame BFGXE { light BFGBALL_X5 }
-	frame BFGXF { light BFGBALL_X4 }
-    frame BFGXG { light BFGBALL_X4 }
-    frame BFGXH { light BFGBALL_X3 }
-    frame BFGXI { light BFGBALL_X3 }
-    frame BFGXJ { light BFGBALL_X2 }
-    frame BFGXK { light BFGBALL_X1 }
-}
+	frame BFGBA { light BFGBALL }
+    frame BFGBB { light BFGBALL }
 
-flickerlight BFGRailBall_Hold
-{
-	color 0.1 1.0 0.1
-    attenuate 1
-	size 28
-	secondarySize 30
-	chance 0.1
-}
-
-object BFGRailBall_Hold
-{
-	frame PEXP { light BFGRailBall_Hold }
-}
-
-object BFGRailBall
-{
-    frame PEXPA { light BFGBALL_X1 }
-    frame PEXPB { light BFGBALL_X2 }
-    frame PEXPC { light BFGBALL_X3 }
-    frame PEXPD { light BFGBALL_X4 }
-    frame PEXPE { light BFGBALL_X5 }
-	frame PEXPF { light BFGBALL_X4 }
-    frame PEXPG { light BFGBALL_X4 }
-    frame PEXPH { light BFGBALL_X3 }
-    frame PEXPI { light BFGBALL_X3 }
-    frame PEXPJ { light BFGBALL_X2 }
-    frame PEXPK { light BFGBALL_X2 }
-    frame PEXPL { light BFGBALL_X1 }
-    frame PEXPM { light BFGBALL_X1 }
-}
-
-object ModernBFGBall
-{
-    frame COIR { light BFGBALL }
-
-    frame COIXA { light BFGBALL_X1 }
-    frame COIXB { light BFGBALL_X2 }
-    frame COIXC { light BFGBALL_X3 }
-    frame COIXD { light BFGBALL_X4 }
-    frame COIXE { light BFGBALL_X5 }
-	frame COIXF { light BFGBALL_X4 }
-    frame COIXG { light BFGBALL_X4 }
-    frame COIXH { light BFGBALL_X3 }
-    frame COIXI { light BFGBALL_X3 }
-    frame COIXJ { light BFGBALL_X2 }
-    frame COIXK { light BFGBALL_X1 }
-}
-
-// ALTBFG
-pointlight ALTBFGBALL
-{
-    color 0.0 1.0 0.1
-    attenuate 1
-    size 56
-}
-
-flickerlight ALTBFG_X1
-{
-    color 0.2 1.0 0.2
-    attenuate 1
-    size 64
-    secondarySize 72
-    chance 0.4
-}
-
-flickerlight ALTBFG_X2
-{
-    color 0.2 0.8 0.2
-    attenuate 1
-    size 80
-    secondarySize 88
-    chance 0.4
-}
-
-flickerlight ALTBFG_X3
-{
-    color 0.1 0.5 0.1
-    attenuate 1
-    size 64
-    secondarySize 72
-    chance 0.4
-}
-
-flickerlight ALTBFG_X4
-{
-    color 0.0 0.2 0.0
-    attenuate 1
-    size 8
-    secondarySize 16
-    chance 0.4
-}
-
-object BD_BFGExtra
-{
-    frame PEXPA { light BFGBALL_X1 }
-    frame PEXPB { light BFGBALL_X2 }
-    frame PEXPC { light BFGBALL_X3 }
-    frame PEXPD { light BFGBALL_X4 }
-    frame PEXPE { light BFGBALL_X5 }
-	frame PEXPF { light BFGBALL_X4 }
-    frame PEXPG { light BFGBALL_X4 }
-    frame PEXPH { light BFGBALL_X3 }
-    frame PEXPI { light BFGBALL_X3 }
-    frame PEXPJ { light BFGBALL_X2 }
-    frame PEXPK { light BFGBALL_X2 }
-    frame PEXPL { light BFGBALL_X1 }
-    frame PEXPM { light BFGBALL_X1 }
+    frame BFGBA { light BFGBALL_X1 }
+    frame BFGBB { light BFGBALL_X2 }
+    frame BFGBC { light BFGBALL_X5 }
+    frame BFGBD { light BFGBALL_X1 }
+    frame BFGBE { light BFGBALL_X3 }
+    frame BFGBF { light BFGBALL_X5 }
+	frame BFGBG { light BFGBALL_X1 }
+	frame BFGBH { light BFGBALL_X4 }
+	frame BFGBI { light BFGBALL_X4 }
+	frame BFGBJ { light BFGBALL_X5 }
+	frame BFGBK { light BFGBALL_X5 }
 }
 
 // Armour Helmet

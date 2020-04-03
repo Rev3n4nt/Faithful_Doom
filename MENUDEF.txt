@@ -8,9 +8,12 @@ OptionMenu "FDoom_Settings"
 {
 	Title "Faithful DOOM Settings"
 	
-	Option "Player Weapons",		"fdoom_weapons", "fdoom_weapons", "", 1
+	Option "Enhanced weapons sounds",		"enh_snd", "OnOff", "", 1
 	StaticText ""
 	
+	Option "Super Shotun separate barrels",		"ssg_sep", "OnOff", "", 1
+	StaticText ""
+
 	Option "Bullet Tracers",		"fdoom_tracers", "OnOff", "", 1
 	StaticText " "
 	
@@ -24,10 +27,4 @@ OptionValue "OnOff"
 {
 	0, "Off"
 	1, "On"
-}
-
-OptionValue "fdoom_weapons"
-{
-	0, "Vanilla"
-	1, "Enhanced"
 }

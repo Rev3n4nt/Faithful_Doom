@@ -58,7 +58,7 @@ states
 		loop;
 	Select:
 		TNT1 A 0 {
-		If(fdoom_weapons==1)
+		If(ssg_sep==1)
 			return ResolveState("Select.Enhanced");
 		return ResolveState(null);
 		}
@@ -68,7 +68,7 @@ states
 		// goto ready;
 	Deselect:
 		TNT1 A 0 {
-			If(fdoom_weapons==1)
+			If(ssg_sep==1)
 				return ResolveState("Deselect.Enhanced");
 			return ResolveState(null);
 			}	
@@ -76,7 +76,7 @@ states
 		wait;
 	Ready:
 		TNT1 A 0 {
-			If(fdoom_weapons==1)
+			If(ssg_sep==1)
 				return ResolveState("Ready.Enhanced");
 			return ResolveState(null);
 			}
@@ -85,7 +85,7 @@ states
 	Fire:
 	//
 		TNT1 A 0 {
-			If(fdoom_weapons==1)
+			If(ssg_sep==1)
 				return ResolveState("Fire.Enhanced");
 			return ResolveState(null);
 			}
@@ -106,7 +106,7 @@ states
 		TNT1 A 0 A_CheckReload();
 		goto reload;
 	Reload:
-		TNT1 A 0 A_JumpIf(fdoom_weapons==1,"Reload.Enhanced");
+		TNT1 A 0 A_JumpIf(ssg_sep==1,"Reload.Enhanced");
 		
 		//reload double	open
 		SHT2 A 3; //1
