@@ -56,14 +56,13 @@ flickerlight ROCKET_X3
 
 object FRocket
 {
-    frame MISLA { light ROCKET    }
+    frame MISL { light ROCKET    }
 
 	frame EXPLA { light ROCKET_X2 }
-	frame EXPLB { light ROCKET_X1 }
+	frame EXPLB { light ROCKET_X3 }
 	frame EXPLC { light ROCKET_X2 }
-	frame EXPLD { light ROCKET_X3 }
-	frame EXPLE { light ROCKET_X2 }
-	frame EXPLF { light ROCKET_X1 }
+	frame EXPLD { light ROCKET_X1 }
+	frame EXPLE { light ROCKET_X1 }
 }
 
 // Plasma
@@ -275,11 +274,7 @@ flickerlight BFGBALL_X5
 
 object bfgplasma
 {
-    frame FUCKA { light BFGBALL    }
-    frame FUCKB { light BFGBALL    }
-    frame FUCKC { light BFGBALL    }
-    frame FUCKD { light BFGBALL    }
-    
+    frame FUCK { light BFGBALL }
     // frame FUCKA { light BFGBALL_X1 }
 	// frame FUCKB { light BFGBALL_X2 }
 	// frame FUCKC { light BFGBALL_X3 }
