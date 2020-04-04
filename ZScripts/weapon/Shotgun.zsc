@@ -51,7 +51,7 @@ States
 		wait;
 	Select:
 		TNT1 A 0 {
-			if (fdoom_weapons == 1)
+			if (enh_snd == 1)
 				A_PlaySound("weapons/shotgun/draw");
 			}
 		SHTG A 1 A_Raise();
@@ -60,7 +60,7 @@ States
 	Fire: //fire 37 tics, refire 7 tics;
 		SHTG A 3 { 
 				A_AlertMonsters();
-				if(fdoom_weapons == 1) {
+				if(enh_snd == 1) {
 					A_PlaySound("weapons/shotgun/fire"); }
 				else {
 					A_PlaySound("weapons/shotgf");}
@@ -74,7 +74,7 @@ States
 				}
 		SHTW ABCDEFGHIJKL 1;
 		SHTW M 2 {
-				if (fdoom_weapons == 1) {
+				if (enh_snd == 1) {
 					 A_playsound("weapons/shotgun/pump",5); }
 				}
 		SHTG D 3 { 
@@ -83,7 +83,7 @@ States
 				}
 		SHTW MLKJIHGFEDCB 1;
 		SHTW AA 2 {
-			if (fdoom_weapons == 1)
+			if (enh_snd == 1)
 				A_WeaponReady(WRF_NOPRIMARY);
 			}
 		SHTG A 7 A_ReFire();

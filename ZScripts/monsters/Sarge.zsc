@@ -45,7 +45,7 @@ states
 			A_Light2();
 			}
 		SPSR E 2{
-			if (fdoom_weapons == 1){
+			if (enh_snd == 1){
 				A_playsound("weapons/shotgun/pump",5);
 			}
 		}
