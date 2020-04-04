@@ -123,7 +123,7 @@ states
 			A_Explode();
 			}
 		TNT1 A 0 a_quake (2,3,0,600,0);
-		TNT1 A 0 a_quake (1,7,0,1000,0);
+		// TNT1 A 0 a_quake (1,7,0,1000,0);
 			
 		expl ABCDEF 3 bright;
 		stop;

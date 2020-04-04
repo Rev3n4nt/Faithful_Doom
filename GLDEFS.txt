@@ -226,6 +226,7 @@ object PlasmaBall2
 }
 //
 // BFG
+
 pointlight BFGBALL
 {
     color 0.0 1.0 0.0
@@ -274,10 +275,15 @@ flickerlight BFGBALL_X5
 
 object bfgplasma
 {
-    frame FUCKA { light BFGBALL_X1 }
-	frame FUCKB { light BFGBALL_X2 }
-	frame FUCKC { light BFGBALL_X3 }
-	frame FUCKD { light BFGBALL_X2 }
+    frame FUCKA { light BFGBALL    }
+    frame FUCKB { light BFGBALL    }
+    frame FUCKC { light BFGBALL    }
+    frame FUCKD { light BFGBALL    }
+    
+    // frame FUCKA { light BFGBALL_X1 }
+	// frame FUCKB { light BFGBALL_X2 }
+	// frame FUCKC { light BFGBALL_X3 }
+	// frame FUCKD { light BFGBALL_X2 }
 
 	frame BFGBA { light BFGBALL }
     frame BFGBB { light BFGBALL }
