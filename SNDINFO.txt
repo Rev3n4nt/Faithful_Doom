@@ -65,6 +65,7 @@ weapons/shotgun/draw	STGNDRAW
 weapons/shotgun/fire	STGNSHOT
 weapons/shotgun/pump	STGNPUMP
 weapons/shotgun/in		STGNIN
+weapons/shotgun/pickup  DSWPNUP
 
 // Supershotgun
 weapons/ssg/draw	SSGDRAW
