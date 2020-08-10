@@ -5,6 +5,9 @@
 # MacOS
 .DS_Store
 
+# Compiled Object files
+*.js
+
 # Prerequisites
 *.d
 
