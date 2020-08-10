@@ -18,31 +18,49 @@ texture optional BLOOD03
 pic BLOOD01 tics 3600
 pic BLOOD01 tics 3600
 
-texture optional FWATER1
+// Flat	Optional	FWATER1 	Range	FWATER4 	Tics 8
+Flat optional FWATER1
 pic FWATER1 tics 3600
 pic FWATER1 tics 3600
-texture optional FWATER2
+Flat optional FWATER2
 pic FWATER1 tics 3600
 pic FWATER1 tics 3600
-texture optional FWATER3
+Flat optional FWATER3
 pic FWATER1 tics 3600
 pic FWATER1 tics 3600
-texture optional FWATER4
+Flat optional FWATER4
 pic FWATER1 tics 3600
 pic FWATER1 tics 3600
 
-texture optional FWATER01
-pic FWATER01 tics 3600
-pic FWATER01 tics 3600
-texture optional FWATER02
-pic FWATER01 tics 3600
-pic FWATER01 tics 3600
-texture optional FWATER03
-pic FWATER01 tics 3600
-pic FWATER01 tics 3600
-texture optional FWATER04
-pic FWATER01 tics 3600
-pic FWATER01 tics 3600
+// texture optional FWATER01
+// pic FWATER01 tics 3600
+// pic FWATER01 tics 3600
+// texture optional FWATER02
+// pic FWATER01 tics 3600
+// pic FWATER01 tics 3600
+// texture optional FWATER03
+// pic FWATER01 tics 3600
+// pic FWATER01 tics 3600
+// texture optional FWATER04
+// pic FWATER01 tics 3600
+// pic FWATER01 tics 3600
+
+texture optional NUKAGE2
+	 pic NUKAGE2 tics 3600
+	 pic NUKAGE2 tics 3600
+texture optional NUKAGE3
+	 pic NUKAGE2 tics 3600
+	 pic NUKAGE2 tics 3600
+
+// texture optional NUKAGE01
+// 	 pic NUKAGE02 tics 3600
+// 	 pic NUKAGE02 tics 3600
+// texture optional NUKAGE02
+// 	 pic NUKAGE02 tics 3600
+// 	 pic NUKAGE02 tics 3600
+// texture optional NUKAGE03
+// 	 pic NUKAGE02 tics 3600
+// 	 pic NUKAGE02 tics 3600
 
 texture optional LAVA1
 pic LAVA1 tics 3600
@@ -85,114 +103,99 @@ texture optional DBRAIN4
 pic DBRAIN1 tics 3600
 pic DBRAIN1 tics 3600
 
-texture optional SLIME01
-pic SLIME01 tics 3600
-pic SLIME01 tics 3600
-texture optional SLIME02
-pic SLIME02 tics 3600
-pic SLIME02 tics 3600
-texture optional SLIME03
-pic SLIME03 tics 3600
-pic SLIME03 tics 3600
-texture optional SLIME04
-pic SLIME04 tics 3600
-pic SLIME04 tics 3600
-texture optional SLIME05
-pic SLIME05 tics 3600
-pic SLIME05 tics 3600
-texture optional SLIME06
-pic SLIME06 tics 3600
-pic SLIME06 tics 3600
-texture optional SLIME07
-pic SLIME07 tics 3600
-pic SLIME07 tics 3600
-texture optional SLIME08
-pic SLIME08 tics 3600
-pic SLIME08 tics 3600
-warp texture SLIME01
-warp texture SLIME02
-warp texture SLIME03
-warp texture SLIME04
-warp texture SLIME05
-warp texture SLIME06
-warp texture SLIME07
-warp texture SLIME08
-
-texture optional NUKAGE1
-pic NUKAGE1 tics 3600
-pic NUKAGE1 tics 3600
-texture optional NUKAGE2
-pic NUKAGE1 tics 3600
-pic NUKAGE1 tics 3600
-texture optional NUKAGE3
-pic NUKAGE1 tics 3600
-pic NUKAGE1 tics 3600
-
-texture optional NUKAGE01
-pic NUKAGE01 tics 3600
-pic NUKAGE01 tics 3600
-texture optional NUKAGE02
-pic NUKAGE01 tics 3600
-pic NUKAGE01 tics 3600
-texture optional NUKAGE03
-pic NUKAGE01 tics 3600
-pic NUKAGE01 tics 3600
+// texture optional SLIME01
+// 	pic SLIME01 tics 3
+// 	pic SLIME01 tics 3
+// texture optional SLIME02
+// 	pic SLIME02 tics 3
+// 	pic SLIME02 tics 3
+// texture optional SLIME03
+// 	pic SLIME03 tics 3
+// 	pic SLIME03 tics 3
+// texture optional SLIME04
+// 	pic SLIME04 tics 3
+// 	pic SLIME04 tics 3
+// texture optional SLIME05
+// 	pic SLIME05 tics 3
+// 	pic SLIME05 tics 3
+// texture optional SLIME06
+// 	pic SLIME06 tics 3
+// 	pic SLIME06 tics 3
+// texture optional SLIME07
+// 	pic SLIME07 tics 3
+// 	pic SLIME07 tics 3
+// texture optional SLIME08
+// 	pic SLIME08 tics 3
+// 	pic SLIME08 tics 3
+// warp texture SLIME01
+// warp texture SLIME02
+// warp texture SLIME03
+// warp texture SLIME04
+// warp texture SLIME05
+// warp texture SLIME06
+// warp texture SLIME07
+// warp texture SLIME08
 
 // warp texture LAVA1 0.5
 // warp texture DBRAIN1 0.2
-warp2 texture NUKAGE1 0.2
-warp2 texture NUKAGE01
+// warp2 texture NUKAGE01
 // warp texture LAVA01
+
+warp2 texture NUKAGE2 0.5
 warp2 texture BLOOD1
 warp2 texture BLOOD01
 warp2 texture FWATER1
-warp2 texture FWATER01
+// warp2 texture FWATER01
+// Flat	Optional	NUKAGE1 	Range	NUKAGE3 	Tics 3
 
-texture optional SFALL1
-pic SFALL1 tics 3600
-pic SFALL1 tics 3600
-texture optional SFALL2
-pic SFALL1 tics 3600
-pic SFALL1 tics 3600
-texture optional SFALL3
-pic SFALL1 tics 3600
-pic SFALL1 tics 3600
-texture optional SFALL4
-pic SFALL1 tics 3600
-pic SFALL1 tics 3600
+// texture SFALL1
+// 	pic SFALL1 tics 4
+// 	pic SFALL2 tics 4
+// 	pic SFALL3 tics 4
+// 	pic SFALL4 tics 4
+// texture optional SFALL2
+//	 pic SFALL2 tics 3
+//	 pic SFALL2 tics 3
+// texture optional SFALL3
+//	 pic SFALL3 tics 3
+//	 pic SFALL3 tics 3
+// texture optional SFALL4
+//	 pic SFALL4 tics 3
+//	 pic SFALL4 tics 3
+
+texture optional M_SKULL1
+	pic NEWSKULA tics 5
+	pic NEWSKULB tics 5
+	pic NEWSKULC tics 5
+	pic NEWSKULD tics 5
+	pic NEWSKULC tics 5
+	pic NEWSKULB tics 5
 
 texture optional BFALL1
-pic BFALL1 tics 3600
-pic BFALL1 tics 3600
-texture optional BFALL2
-pic BFALL1 tics 3600
-pic BFALL1 tics 3600
-texture optional BFALL3
-pic BFALL1 tics 3600
-pic BFALL1 tics 3600
-texture optional BFALL4
-pic BFALL1 tics 3600
-pic BFALL1 tics 3600
+	pic BFALL1 tics 4
+	pic BFALL2 tics 4
+	pic BFALL3 tics 4
+	pic BFALL4 tics 4
 
-texture optional WFALL1
-pic WFALL1 tics 3600
-pic WFALL1 tics 3600
-texture optional WFALL2
-pic WFALL1 tics 3600
-pic WFALL1 tics 3600
-texture optional WFALL3
-pic WFALL1 tics 3600
-pic WFALL1 tics 3600
-texture optional WFALL4
-pic WFALL1 tics 3600
-pic WFALL1 tics 3600
+// texture optional WFALL1
+// 	pic WFALL1 tics 3600
+// 	pic WFALL1 tics 3600
+// texture optional WFALL2
+// 	pic WFALL2 tics 3600
+// 	pic WFALL2 tics 3600
+// texture optional WFALL3
+// 	pic WFALL3 tics 3600
+// 	pic WFALL3 tics 3600
+// texture optional WFALL4
+// 	pic WFALL4 tics 3600
+// 	pic WFALL4 tics 3600
 
 texture optional LFALL1
-pic LFALL1 tics 3600
-pic LFALL1 tics 3600
+	pic LFALL1 tics 3600
+	pic LFALL1 tics 3600
 texture optional LFALL2
-pic LFALL1 tics 3600
-pic LFALL1 tics 3600
+	pic LFALL1 tics 3600
+	pic LFALL1 tics 3600
 texture optional LFALL3
 pic LFALL1 tics 3600
 pic LFALL1 tics 3600
@@ -200,13 +203,11 @@ texture optional LFALL4
 pic LFALL1 tics 3600
 pic LFALL1 tics 3600
 
-
 // Switches by Enjay
 
 //First the Doom Share Ware Switches
 
 //All Doom1 SW switches have been given custom sounds
-
 
 //Altered doom1 SW switches
 
@@ -234,7 +235,6 @@ switch doom 1 SW1STRTN on sound switches/electri3 pic SW2STRTN tics 0
 
 //All Doom1 registered switches have been given custom sounds
 
-
 //Altered doom1 registered switches
 
 switch doom 2 SW1BLUE on sound switches/clunk pic SW2BLUE tics 0
@@ -250,9 +250,7 @@ switch doom 2 SW1WOOD on sound switches/clunk pic SW2WOOD tics 0
 
 //Now the Doom2 switches
 
-
 switch doom 3 SW1WDMET on pic SW2WDMET tics 0
-
 
 //Altered Doom2 switches
 
@@ -266,4 +264,3 @@ switch doom 3 SW1SKULL on sound switches/clunk pic SW2SKULL tics 0
 switch doom 3 SW1STON6 on sound switches/electri3 pic SW2STON6 tics 0
 switch doom 3 SW1TEK on sound switches/electri2 pic SW2TEK tics 0
 switch doom 3 SW1ZIM on sound switches/clunk pic SW2ZIM tics 0
-
