@@ -22,6 +22,17 @@
 //     frame PUFFB { light BPUFF2 }
 // }
 
+// bullet
+pointlight BULLET_X1
+{
+    color 1.0 0.7 0.0
+    size 48
+}
+
+object BulletTracer
+{
+    frame PUFFA { light BULLET_X1 }
+}
 
 // Rocket
 pointlight ROCKET
@@ -63,6 +74,41 @@ object FRocket
 	frame EXPLC { light ROCKET_X2 }
 	frame EXPLD { light ROCKET_X1 }
 	frame EXPLE { light ROCKET_X1 }
+}
+
+//Ebarrel
+flickerlight BARREL_X3
+{
+    color 1.0 0.7 0.0
+    size 64
+    secondarySize 72
+    chance 0.3
+}
+
+flickerlight RBARREL_X2
+{
+    color 0.5 0.1 0.0
+    size 80
+    secondarySize 88
+    chance 0.3
+}
+
+flickerlight BARREL_X1
+{
+    color 0.3 0.0 0.0
+    size 96
+    secondarySize 104
+    chance 0.3
+}
+
+
+object EBarrel
+{
+	frame BARXC { light BARREL_X1 }
+	frame BARXD { light BARREL_X2 }
+	frame BARXE { light BARREL_X3 }
+	frame BARXF { light BARREL_X3 }
+	frame BARXG { light BARREL_X1 }
 }
 
 // Plasma
