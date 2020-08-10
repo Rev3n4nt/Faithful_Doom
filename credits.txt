@@ -1,9 +1,9 @@
 Credits :
-Rev3n4nt - HD versions spritework animation & coding;
-Jekyll Grim Payne aka Agent_Ash - for Beautiful Doom;
-Gifty - for Smooth Doom;
-hidfan - Doom original Neural Upscale 2X sprites & textures;
+Farid Kemyakov aka Rev3n4nt - HD versions sprites animation & coding;
+Jekyll Grim Payne aka Agent_Ash - Beautiful Doom sprites and code;
+Gifty - Smooth Doom sprites and code;
+hidfan - Neural Upscale 2X sprites & textures;
 Perkristian - smooth weapons animation sprites based upon, Doom HD sound pack which is included;
-Sergeant Mark IV - for Brutal Doom sprites and coding: ceiling & floor bullet decals;
-Z86 - spritework for weapons;
-Blox - spritework for weapons;
+Sergeant Mark IV - Brutal Doom sprites and code: ceiling & floor bullet decals, bullet tracers;
+Z86 - sprites weapons;
+Blox - sprites weapons;

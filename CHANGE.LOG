@@ -1,5 +1,22 @@
 //		CHANGE.LOG:
 
+Commits on 2020-08-10:
+sprites:
+fix barrel sprite size shrinked for explosion;
+light:
+barrel explode had no lights;
+bullet tracer had no lights;
+anims:
+water, blood & nukage is wave effect(for now);
+added: menu skull animation;
+
+Commits on 2020-06-17:
+sprites:
+fix monsters/lostsoul frames 
+lostsoul - stick remove
+barrel frame sprite size shrinked for explosion
+fixed: git ignore
+
 Commits on Jan 27, 2020
 changed: HIRES items/ inisibility & megahealth +bk;
 changed: HIRES items/ hazard suit & invulnerability;
