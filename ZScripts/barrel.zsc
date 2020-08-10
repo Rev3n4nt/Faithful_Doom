@@ -18,30 +18,28 @@ class EBarrel : ExplosiveBarrel replaces ExplosiveBarrel
 	States
 	{
 	Spawn:
-		BAR0 ABCDE random(3,5);
+		BAR0 abcdefghijklm 4;
+		// random(3,5);
 		Loop;
 	Death:
-		bexp AB 5 Bright;
-		bexp C 3 Bright;
-		bexp D 1 Bright A_Scream;
+		barx AB 5 Bright;
+		barx C 3 Bright;
+		barx D 1 Bright A_Scream;
 
 		TNT1 A 0 a_quake (2,3,0,600,0);
 		TNT1 A 0 a_quake (1,7,0,1000,0);
 
-	goto finish;
-		
-	finish:
-		bexp D 1 Bright;
-		bexp E 2 Bright A_Explode();
-		bexp FGH 3 Bright;
-		bexp I 3 Bright;
-		bexp I 1050 Bright A_BarrelDestroy;
-		bexp I 5 A_Respawn;
+		barx D 1 Bright;
+		barx E 2 Bright A_Explode();
+		barx FGH 3 Bright;
+		barx I 3 Bright;
+		barx I 1050 Bright A_BarrelDestroy;
+		barx I 5 A_Respawn;
 	}		
 	// Death:
-	// 	BEXP A 3;
-	// 	BEXP B 3;
-	// 	BEXP C 3 BRIGHT A_Scream;
+	// 	Barx A 3;
+	// 	Barx B 3;
+	// 	Barx C 3 BRIGHT A_Scream;
 	// 	expl A 4 BRIGHT;
 	// 	expl B 4 BRIGHT;
 	// 	expl C 4 BRIGHT;
