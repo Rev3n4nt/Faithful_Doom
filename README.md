@@ -1,6 +1,6 @@
 # Faithful Doom
 
-REQUIRED PORT: GZDoom 3.2.5 or newer.
+REQUIRED PORT: GZDoom 3.2.5 or newer.(up to 4.2.4)
 
 Title                   : Faithful Doom
 Filename                : FaithfulDoom.pk3
@@ -15,7 +15,6 @@ Parts of weapons code & sprites based on other mods for Doom: Smooth Doom, Beaut
 
 # How to launch:
 Download this pack - https://drive.google.com/file/d/1zIPsFW6SZ2HJ-TFwJHk882HOYuxRoHm1/view
-Launch in gzdoom 3.5+
 
 # Use with other mod:
 Neural upscale textures - https://www.doomworld.com/forum/topic/99021/

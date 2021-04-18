@@ -1,5 +1,18 @@
 //		CHANGE.LOG:
 
+Commits on 2021-04-19:
+New sound for secret - e1m1 riff mix;
+Patched soulspere hd sprites;
+Patched soulspere pick-up sound;
+Patched area map pick-up sound;
+Patched invisibility pick-up sound;
+New menu skull animated effect;
+moved folder FX to EFFECTS;
+added imp ball projectile;
+wip:
+    patch bullet hit sparkles;
+    imp ball hit splash;
+
 Commits on 2020-08-10:
 sprites:
 fix barrel sprite size shrinked for explosion;
