@@ -1,34 +1,39 @@
 # Faithful Doom
+### Refined Classic Doom Experience
 
-REQUIRED PORT: GZDoom 3.2.5 or newer.(up to 4.2.4)
+## Overview
+**Required Port:** GZDoom 3.2.5 to 4.1.0 
+**Title:** Faithful Doom  
+**Filename:** FaithfulDoom.pk3  
+**Latest Release:** See GAMEINFO in the mod package  
+**Author:** Farid Kemyakov (aka 'Rev3n4nt')
 
-Title                   : Faithful Doom
-Filename                : FaithfulDoom.pk3
-Release date & version  : (see at GAMEINFO)
-Authors                 : Farid Kemyakov aka 'Rev3n4nt' 
-Email Address           : rev3n4nt@gmail.com
+## About Faithful Doom
+Faithful Doom is a Doom & Doom 2 mod focused on enhancing the classic gameplay experience. Our main goal is to preserve the original Doom atmosphere while introducing Neural Upscaled Smooth animation sprites for weapons, items, and monsters. This project aims to double frame rates and pixel density without exceeding 2x resolution, ensuring that enhancements do not compromise the game's iconic feel.
 
-# What is this: 
-Faithful Doom is mod for Doom & Doom 2 with extra effects & Neural upscaled Smooth animation sprites for: Weapons, Items (& Monsters soon - work in progress).
-Parts of weapons code & sprites based on other mods for Doom: Smooth Doom, Beautiful Doom, Brutal Doom, Neural Upscale 2x, e.t.c
-(full credits update soon).
+## Key Features
+- **Enhanced Visuals:** Utilizing Neural Upscaling for smoother, high-definition animations.
+- **Preservation of Classic Gameplay:** Faithful to the original Doom's style, with minor, optional improvements.
+- **Compatibility:** Designed for ZDoom/GZDoom, not compatible with other ports like Zandronum or Brutal Doom.
 
-# How to launch:
-Download this pack - https://drive.google.com/file/d/1zIPsFW6SZ2HJ-TFwJHk882HOYuxRoHm1/view
+## Installation and Launch
+1. **Download:** Available on [Google Drive](https://drive.google.com/file/d/1zIPsFW6SZ2HJ-TFwJHk882HOYuxRoHm1/view) and [GitHub](https://github.com/Rev3n4nt/Faithful_Doom).
+2. **Optional Enhancements:** Combine with Neural Upscale Textures for improved textures. [Mod forum](https://www.doomworld.com/forum/topic/99021/)
 
-# Use with other mod:
-Neural upscale textures - https://www.doomworld.com/forum/topic/99021/
-(load before Faithful Doom mod).
+## Technical Approach
+- **Neural Networks:** Core code free of Neural Networks, combining manual patching and painting with Neural Network Upscaling for optimal results.
+- **Upscaling Techniques:** A blend of XBRZ and Waifu Neural Networks, alongside contributions from kcghost's [wadsnip project](https://github.com/kcghost/wadsnip).
 
-Latest dev. build version is available on GitHub - https://github.com/Rev3n4nt/Faithful_Doom 
-Downloaded as .zip can be used as .pk3 mod pack.
+## Credits and Sources
+Comprehensive credits for contributions and inspirations:
+- **Rev3n4nt:** Project lead, HD sprite work, animation, and coding.
+- Contributors from the Doom modding community, including Gifty (Smooth Doom), Jekyll Grim Payne aka Agent_Ash (Beautiful Doom), hidfan (Doom Neural Upscale 2X), and others.
+- Full credits detailed in the project's CHANGE.LOG.
 
-# F.A.Q. :
-Does this mod is compatible with Brutal Doom? - No.
-Will it work with other ports? - This is a Zdoom/GZdoom mod (use the latest version) & will NOT work with other ports such as Zandronum. Cross-port compatibility isn't planned. 
-What is main goal? - Original Doom faithfulness, close to original with improvements, few additions will be toggable in options menu.
+## F.A.Q.
+- **Compatibility:** Exclusive to ZDoom/GZDoom, not compatible with Brutal Doom or Zandronum.
+- **Mod's Purpose:** To enhance the original Doom experience while maintaining the game's core essence.
 
-See CHANGE.LOG for changelog of releases.(updates sometimes from GitHub)
-
-Faithful Doom mod Forum thread:
-https://www.doomworld.com/forum/topic/103824/
+## Additional Information
+- **Change Log:** For updates and version history, check the CHANGE.LOG in the mod package.
+- **Forum Thread:** Discussions and updates on [Doomworld Forum](https://www.doomworld.com/forum/topic/103824/).
