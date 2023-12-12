@@ -2,7 +2,7 @@
 ### Refined Classic Doom Experience
 
 ## Overview
-**Required Port:** GZDoom 3.2.5 to 4.1.0 
+**Required Port:** GZDoom 3.2.5 to 4.1.0  
 **Title:** Faithful Doom  
 **Filename:** FaithfulDoom.pk3  
 **Latest Release:** See GAMEINFO in the mod package  
